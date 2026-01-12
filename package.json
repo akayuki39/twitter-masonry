@@ -1,0 +1,22 @@
+{
+  "name": "home-timeline-masonry",
+  "version": "0.1.0",
+  "description": "X/Twitter Home Masonry Timeline Userscript",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "dev": "rollup -c -w"
+  },
+  "keywords": [
+    "twitter",
+    "x",
+    "masonry",
+    "userscript"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "rollup": "^4.22.0"
+  }
+}
