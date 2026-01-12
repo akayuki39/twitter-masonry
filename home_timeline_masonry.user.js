@@ -438,7 +438,7 @@
   `;
     const time = document.createElement("div");
     time.className = "time";
-    time.textContent = formatTime(legacy.created_at);
+    time.textContent = formatTime(displayLegacy.created_at);
     meta.appendChild(userSpan);
     meta.appendChild(time);
 
