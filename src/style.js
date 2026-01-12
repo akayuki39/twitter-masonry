@@ -13,6 +13,10 @@ export const injectStyles = () => {
     .tm-grid { position: relative; padding: 18px; max-width: 1480px; margin: 0 auto; }
     .tm-card { position: absolute; width: 320px; background: #fff; border: 1px solid rgba(15,23,42,0.06); border-radius: 18px; overflow: hidden; box-shadow: 0 12px 30px rgba(15,23,42,0.08); transition: transform 0.15s ease, box-shadow 0.15s ease; will-change: transform; }
     .tm-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(15,23,42,0.12); }
+    .tm-card .retweet-info { padding: 10px 16px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
+    .tm-card .retweet-info svg { flex-shrink: 0; }
+    .tm-card .retweet-info a { color: inherit; text-decoration: none; transition: text-decoration 0.12s ease; }
+    .tm-card .retweet-info a:hover { text-decoration: underline; }
     .tm-card .meta { padding: 14px 16px 0 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
     .tm-card .meta .user { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 10px; min-width: 0; }
     .tm-card .meta .user img { flex-shrink: 0; box-shadow: 0 4px 12px rgba(15,23,42,0.08); }
@@ -48,6 +52,10 @@ export const injectStyles = () => {
     .tm-detail-backdrop.show { display: flex; }
     .tm-detail-modal { position: relative; width: min(960px, 96vw); margin: auto; }
     .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: 1px solid rgba(15,23,42,0.08); overflow: hidden; max-height: calc(100vh - 64px); }
+    .tm-detail-card .retweet-info { padding: 12px 20px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
+    .tm-detail-card .retweet-info svg { flex-shrink: 0; }
+    .tm-detail-card .retweet-info a { color: inherit; text-decoration: none; transition: text-decoration 0.12s ease; }
+    .tm-detail-card .retweet-info a:hover { text-decoration: underline; }
     .tm-detail-card .meta { padding: 18px 20px 0; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
     .tm-detail-card .meta .user { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 12px; min-width: 0; }
     .tm-detail-card .meta .user img { flex-shrink: 0; box-shadow: 0 6px 16px rgba(15,23,42,0.12); width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }

@@ -4,16 +4,39 @@ import { createLikeButton } from "./likeButton.js";
 
 export const createCard = (tweet, openDetail) => {
   const legacy = tweet.legacy || tweet;
-  const text = legacy.full_text || legacy.text || "";
-  const media = pickMedia(tweet);
-  const user = (tweet.core?.user_results?.result?.core?.screen_name) || legacy.user_id_str || "unknown";
-  const avatar = tweet.core?.user_results?.result?.avatar?.image_url;
-  const name = tweet.core?.user_results?.result?.core?.name || user;
-  const id = tweet.rest_id || legacy.id_str;
+  const isRetweet = legacy.retweeted_status_result;
+  const retweetData = isRetweet ? legacy.retweeted_status_result.result : null;
+  const displayLegacy = retweetData?.legacy || legacy;
+  const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
+  const displayCore = retweetData?.core || tweet.core;
+  const displayTweet = retweetData || tweet;
+  
+  const text = displayLegacy.full_text || displayLegacy.text || "";
+  const media = pickMedia(displayTweet);
+  const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
+  const avatar = displayCore?.user_results?.result?.avatar?.image_url;
+  const name = displayUser?.name || user;
+  const id = displayTweet.rest_id || displayLegacy.id_str;
   const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+  
+  const retweetUser = tweet.core?.user_results?.result?.core;
+  const retweetName = retweetUser?.name || "";
+  const retweetScreenName = retweetUser?.screen_name || "";
+  const retweetProfileUrl = retweetScreenName ? `https://x.com/${encodeURIComponent(retweetScreenName)}` : "";
+  
   const card = document.createElement("article");
   card.className = "tm-card";
   card.dataset.tid = id;
+
+  if (isRetweet && retweetName) {
+    const retweetInfo = document.createElement("div");
+    retweetInfo.className = "retweet-info";
+    retweetInfo.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
+      ${retweetProfileUrl ? `<a href="${retweetProfileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(retweetName)} 已转帖</a>` : `<span>${escapeHTML(retweetName)} 已转帖</span>`}
+    `;
+    card.appendChild(retweetInfo);
+  }
 
   const meta = document.createElement("div");
   meta.className = "meta";
@@ -45,7 +68,7 @@ export const createCard = (tweet, openDetail) => {
       img.src = m.url;
       img.addEventListener("click", (e) => {
         e.stopPropagation();
-        openDetail(tweet, index);
+        openDetail(displayTweet, index);
       });
       mediaWrap.appendChild(img);
     } else if (m.type === "video") {
@@ -61,11 +84,11 @@ export const createCard = (tweet, openDetail) => {
   const left = document.createElement("div");
   left.className = "tm-actions-left";
 
-  const likeBtn = createLikeButton(legacy, id);
+  const likeBtn = createLikeButton(displayLegacy, id);
 
   const rtChip = document.createElement("div");
   rtChip.className = "tm-count-chip";
-  rtChip.textContent = `${legacy.retweet_count || 0} 转推`;
+  rtChip.textContent = `${displayLegacy.retweet_count || 0} 转推`;
 
   left.appendChild(likeBtn);
   left.appendChild(rtChip);
@@ -84,7 +107,7 @@ export const createCard = (tweet, openDetail) => {
 
   card.addEventListener("click", (e) => {
     if (e.target.closest(".tm-like") || e.target.closest("a") || e.target.closest("video")) return;
-    openDetail(tweet);
+    openDetail(displayTweet);
   });
   return card;
 };

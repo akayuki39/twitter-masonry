@@ -16,15 +16,18 @@ media的type如果是photo的话，在详情卡里加载原图。原图通过在
 点击用户头像，name，screen name的时候跳转到该用户的推特页面。
 hover到头像的时候让头像略微变暗来做为提示。hover到name的时候添加下划线。screen name不做hover提示
 
----
+在推特卡里点击图片的时候，详情页直接显示对应的图片
 
 被转发的推特现在显示的是转发的人的头像和名字。
 设计被转发推特的显示。
 * 如果是转发推文，legacy里会有一个retweeted_status_result。这里面有被转的推文的result。retweeted_status_result.result.legacy就能获取到被转到推文信息了。
-    * 参考例子json里的"id_str": "2010191615474958371", 直接搜索就行
-    * 推文的信息都要显示被转的推的
-* 如果是quote推文（带文字转发），result.quoted_status_result.result能获得被quote的推文result。跟转发不同这个不在legacy里
+    * 参考old/hometimeline_example.json里的"id_str": "2010191615474958371"部分对应的结构, 直接搜索就行
+    * 推文的信息都要显示被转的推的。在推特卡最上面显示一下是谁转推的就行。retweet icon + 空格 + 转推人的name + 空格 + 以转帖。也许用font awesome的icon就可以？选择一个好看且轻量的就行。
 
+---
+
+设计quote推文的界面。
+* 如果是quote推文（带文字转发），result.quoted_status_result.result能获得被quote的推文result。跟转发不同这个不在legacy里
 
 有图片的推文，文字内容里最后还带着一个图片链接。有办法处理掉吗？
 
@@ -35,10 +38,9 @@ hover到头像的时候让头像略微变暗来做为提示。hover到name的时
 
 hometimeline现在每次刷新之后还会显示之前的推文。
 需要看看实际hometimeline的api调用的时候都带了什么参数。
+* 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
 
 更改详情页的样式。左边图片，右边上面推文，下面是回复。
-
-在推特卡里点击图片的时候，详情页直接显示对应的图片
 
 重构：
 * 改成type script

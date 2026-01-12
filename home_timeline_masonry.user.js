@@ -97,6 +97,10 @@
     .tm-grid { position: relative; padding: 18px; max-width: 1480px; margin: 0 auto; }
     .tm-card { position: absolute; width: 320px; background: #fff; border: 1px solid rgba(15,23,42,0.06); border-radius: 18px; overflow: hidden; box-shadow: 0 12px 30px rgba(15,23,42,0.08); transition: transform 0.15s ease, box-shadow 0.15s ease; will-change: transform; }
     .tm-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(15,23,42,0.12); }
+    .tm-card .retweet-info { padding: 10px 16px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
+    .tm-card .retweet-info svg { flex-shrink: 0; }
+    .tm-card .retweet-info a { color: inherit; text-decoration: none; transition: text-decoration 0.12s ease; }
+    .tm-card .retweet-info a:hover { text-decoration: underline; }
     .tm-card .meta { padding: 14px 16px 0 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
     .tm-card .meta .user { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 10px; min-width: 0; }
     .tm-card .meta .user img { flex-shrink: 0; box-shadow: 0 4px 12px rgba(15,23,42,0.08); }
@@ -132,6 +136,10 @@
     .tm-detail-backdrop.show { display: flex; }
     .tm-detail-modal { position: relative; width: min(960px, 96vw); margin: auto; }
     .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: 1px solid rgba(15,23,42,0.08); overflow: hidden; max-height: calc(100vh - 64px); }
+    .tm-detail-card .retweet-info { padding: 12px 20px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
+    .tm-detail-card .retweet-info svg { flex-shrink: 0; }
+    .tm-detail-card .retweet-info a { color: inherit; text-decoration: none; transition: text-decoration 0.12s ease; }
+    .tm-detail-card .retweet-info a:hover { text-decoration: underline; }
     .tm-detail-card .meta { padding: 18px 20px 0; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
     .tm-detail-card .meta .user { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 12px; min-width: 0; }
     .tm-detail-card .meta .user img { flex-shrink: 0; box-shadow: 0 6px 16px rgba(15,23,42,0.12); width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
@@ -383,16 +391,39 @@
 
   const createCard = (tweet, openDetail) => {
     const legacy = tweet.legacy || tweet;
-    const text = legacy.full_text || legacy.text || "";
-    const media = pickMedia(tweet);
-    const user = (tweet.core?.user_results?.result?.core?.screen_name) || legacy.user_id_str || "unknown";
-    const avatar = tweet.core?.user_results?.result?.avatar?.image_url;
-    const name = tweet.core?.user_results?.result?.core?.name || user;
-    const id = tweet.rest_id || legacy.id_str;
+    const isRetweet = legacy.retweeted_status_result;
+    const retweetData = isRetweet ? legacy.retweeted_status_result.result : null;
+    const displayLegacy = retweetData?.legacy || legacy;
+    const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
+    const displayCore = retweetData?.core || tweet.core;
+    const displayTweet = retweetData || tweet;
+    
+    const text = displayLegacy.full_text || displayLegacy.text || "";
+    const media = pickMedia(displayTweet);
+    const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
+    const avatar = displayCore?.user_results?.result?.avatar?.image_url;
+    const name = displayUser?.name || user;
+    const id = displayTweet.rest_id || displayLegacy.id_str;
     const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+    
+    const retweetUser = tweet.core?.user_results?.result?.core;
+    const retweetName = retweetUser?.name || "";
+    const retweetScreenName = retweetUser?.screen_name || "";
+    const retweetProfileUrl = retweetScreenName ? `https://x.com/${encodeURIComponent(retweetScreenName)}` : "";
+    
     const card = document.createElement("article");
     card.className = "tm-card";
     card.dataset.tid = id;
+
+    if (isRetweet && retweetName) {
+      const retweetInfo = document.createElement("div");
+      retweetInfo.className = "retweet-info";
+      retweetInfo.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
+      ${retweetProfileUrl ? `<a href="${retweetProfileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(retweetName)} 已转帖</a>` : `<span>${escapeHTML(retweetName)} 已转帖</span>`}
+    `;
+      card.appendChild(retweetInfo);
+    }
 
     const meta = document.createElement("div");
     meta.className = "meta";
@@ -424,7 +455,7 @@
         img.src = m.url;
         img.addEventListener("click", (e) => {
           e.stopPropagation();
-          openDetail(tweet, index);
+          openDetail(displayTweet, index);
         });
         mediaWrap.appendChild(img);
       } else if (m.type === "video") {
@@ -440,11 +471,11 @@
     const left = document.createElement("div");
     left.className = "tm-actions-left";
 
-    const likeBtn = createLikeButton(legacy, id);
+    const likeBtn = createLikeButton(displayLegacy, id);
 
     const rtChip = document.createElement("div");
     rtChip.className = "tm-count-chip";
-    rtChip.textContent = `${legacy.retweet_count || 0} 转推`;
+    rtChip.textContent = `${displayLegacy.retweet_count || 0} 转推`;
 
     left.appendChild(likeBtn);
     left.appendChild(rtChip);
@@ -463,7 +494,7 @@
 
     card.addEventListener("click", (e) => {
       if (e.target.closest(".tm-like") || e.target.closest("a") || e.target.closest("video")) return;
-      openDetail(tweet);
+      openDetail(displayTweet);
     });
     return card;
   };
@@ -596,13 +627,25 @@
   const createDetailCard = (tweet, initialImageIndex = 0) => {
     activeCarouselControls = null;
     const legacy = tweet.legacy || tweet;
-    const text = legacy.full_text || legacy.text || "";
-    const media = pickMedia(tweet);
-    const user = (tweet.core?.user_results?.result?.core?.screen_name) || legacy.user_id_str || "unknown";
-    const avatar = tweet.core?.user_results?.result?.avatar?.image_url;
-    const name = tweet.core?.user_results?.result?.core?.name || user;
-    const id = tweet.rest_id || legacy.id_str;
+    const isRetweet = legacy.retweeted_status_result;
+    const retweetData = isRetweet ? legacy.retweeted_status_result.result : null;
+    const displayLegacy = retweetData?.legacy || legacy;
+    const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
+    const displayCore = retweetData?.core || tweet.core;
+    const displayTweet = retweetData || tweet;
+    
+    const text = displayLegacy.full_text || displayLegacy.text || "";
+    const media = pickMedia(displayTweet);
+    const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
+    const avatar = displayCore?.user_results?.result?.avatar?.image_url;
+    const name = displayUser?.name || user;
+    const id = displayTweet.rest_id || displayLegacy.id_str;
     const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+    
+    const retweetUser = tweet.core?.user_results?.result?.core;
+    const retweetName = retweetUser?.name || "";
+    const retweetScreenName = retweetUser?.screen_name || "";
+    const retweetProfileUrl = retweetScreenName ? `https://x.com/${encodeURIComponent(retweetScreenName)}` : "";
 
     const wrapper = document.createElement("div");
     wrapper.className = "tm-detail-card";
@@ -612,6 +655,16 @@
     closeBtn.type = "button";
     closeBtn.textContent = "×";
     closeBtn.onclick = closeDetail;
+
+    if (isRetweet && retweetName) {
+      const retweetInfo = document.createElement("div");
+      retweetInfo.className = "retweet-info";
+      retweetInfo.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
+      ${retweetProfileUrl ? `<a href="${retweetProfileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(retweetName)} 已转帖</a>` : `<span>${escapeHTML(retweetName)} 已转帖</span>`}
+    `;
+      wrapper.appendChild(retweetInfo);
+    }
 
     const meta = document.createElement("div");
     meta.className = "meta";
@@ -626,7 +679,7 @@
   `;
     const time = document.createElement("div");
     time.className = "time";
-    time.textContent = formatTime(legacy.created_at);
+    time.textContent = formatTime(displayLegacy.created_at);
     meta.appendChild(userSpan);
     meta.appendChild(time);
 
@@ -662,11 +715,11 @@
     const left = document.createElement("div");
     left.className = "tm-actions-left";
 
-    const likeBtn = createLikeButton(legacy, id);
+    const likeBtn = createLikeButton(displayLegacy, id);
 
     const rtChip = document.createElement("div");
     rtChip.className = "tm-count-chip";
-    rtChip.textContent = `${legacy.retweet_count || 0} 转推`;
+    rtChip.textContent = `${displayLegacy.retweet_count || 0} 转推`;
 
     left.appendChild(likeBtn);
     left.appendChild(rtChip);
