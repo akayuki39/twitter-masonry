@@ -6,6 +6,7 @@ export const injectStyles = () => {
     a { color: #0f7ae5; }
     .tm-app { min-height: 100vh; background: #f5f6f8; }
     .tm-header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(15,23,42,0.06); box-shadow: 0 8px 20px rgba(15,23,42,0.05); }
+    .tm-header .tm-btn { padding: 9px; display: grid; place-items: center; }
     body.tm-detail-open .tm-header { padding-right: calc(16px + var(--tm-scrollbar-width, 0px)); }
     .tm-title { font-weight: 700; font-size: 18px; letter-spacing: 0.1px; color: #0f172a; }
     .tm-btn { background: linear-gradient(135deg,#3b82f6,#2563eb); color: white; border: none; border-radius: 999px; padding: 9px 16px; font-weight: 600; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; box-shadow: 0 8px 18px rgba(37,99,235,0.25); }
