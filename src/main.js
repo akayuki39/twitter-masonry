@@ -110,7 +110,7 @@ const mountApp = () => {
         if (e.isIntersecting && !detailOpen) loadMore(grid);
       });
     },
-    { rootMargin: "3600px 0px 3600px 0px", threshold: 0 }
+    { rootMargin: "1600px 0px 0px 0px", threshold: 0 }
   );
   io.observe(sentinel);
 
@@ -124,7 +124,7 @@ const mountApp = () => {
         return;
       }
       const rest = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-      if (rest < 3200) loadMore(grid);
+      if (rest < 1200) loadMore(grid);
       ticking = false;
     });
   };
