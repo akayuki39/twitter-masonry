@@ -4,6 +4,96 @@ import { formatTime, escapeHTML, linkify } from "../utils/format.js";
 import { pickMedia } from "../utils/tweet.js";
 
 let activeCarouselControls = null;
+
+const createDetailQuoteTweet = (quotedTweet) => {
+  const quoteLegacy = quotedTweet.legacy || quotedTweet;
+  const quoteCore = quotedTweet.core;
+  const quoteUser = quoteCore?.user_results?.result?.core;
+  const text = quoteLegacy.full_text || quoteLegacy.text || "";
+  const media = pickMedia(quotedTweet);
+  const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
+  const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
+  const name = quoteUser?.name || user;
+  const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+  const createdAt = quoteLegacy.created_at || "";
+
+  const quoteCard = document.createElement("div");
+  quoteCard.className = "tm-quote-card";
+
+  const meta = document.createElement("div");
+  meta.className = "tm-quote-meta";
+
+  const userSpan = document.createElement("div");
+  userSpan.className = "tm-quote-user";
+  if (avatar) {
+    const avatarImg = document.createElement("img");
+    avatarImg.className = "tm-quote-avatar";
+    avatarImg.src = avatar;
+    userSpan.appendChild(avatarImg);
+  }
+
+  const infoDiv = document.createElement("div");
+  infoDiv.className = "tm-quote-info";
+
+  const nameLink = document.createElement("a");
+  nameLink.className = "tm-quote-name-link";
+  nameLink.href = profileUrl;
+  nameLink.target = "_blank";
+  nameLink.rel = "noopener noreferrer";
+  nameLink.textContent = name;
+
+  const screenLink = document.createElement("a");
+  screenLink.className = "tm-quote-screen-link";
+  screenLink.href = profileUrl;
+  screenLink.target = "_blank";
+  screenLink.rel = "noopener noreferrer";
+  screenLink.textContent = `@${user}`;
+
+  infoDiv.appendChild(nameLink);
+  infoDiv.appendChild(screenLink);
+  userSpan.appendChild(infoDiv);
+
+  const timeSpan = document.createElement("div");
+  timeSpan.className = "tm-quote-time";
+  timeSpan.textContent = createdAt ? formatTime(createdAt) : "";
+
+  meta.appendChild(userSpan);
+  meta.appendChild(timeSpan);
+
+  const textDiv = document.createElement("div");
+  textDiv.className = "tm-quote-text";
+  textDiv.innerHTML = linkify(text);
+
+  quoteCard.appendChild(meta);
+  if (text) quoteCard.appendChild(textDiv);
+
+  if (media.length) {
+    const mediaWrap = document.createElement("div");
+    mediaWrap.className = "tm-quote-media";
+    if (media.length > 1) {
+      const { el, controls } = createCarousel(media, 0);
+      mediaWrap.appendChild(el);
+    } else {
+      for (const m of media) {
+        if (m.type === "photo") {
+          const img = document.createElement("img");
+          const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
+          img.src = url;
+          img.loading = "lazy";
+          mediaWrap.appendChild(img);
+        } else if (m.type === "video") {
+          const v = document.createElement("video");
+          v.controls = true;
+          v.src = m.url;
+          mediaWrap.appendChild(v);
+        }
+      }
+    }
+    quoteCard.appendChild(mediaWrap);
+  }
+
+  return quoteCard;
+};
 let detailOverlay = null;
 let detailModal = null;
 let scrollBackup = 0;
@@ -62,7 +152,8 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
   const displayCore = retweetData?.core || tweet.core;
   const displayTweet = retweetData || tweet;
-  
+  const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+
   const text = displayLegacy.full_text || displayLegacy.text || "";
   const media = pickMedia(displayTweet);
   const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
@@ -70,7 +161,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   const name = displayUser?.name || user;
   const id = displayTweet.rest_id || displayLegacy.id_str;
   const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
-  
+
   const retweetUser = tweet.core?.user_results?.result?.core;
   const retweetName = retweetUser?.name || "";
   const retweetScreenName = retweetUser?.screen_name || "";
@@ -164,6 +255,10 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   wrapper.appendChild(meta);
   if (text) wrapper.appendChild(textDiv);
   if (media.length) wrapper.appendChild(mediaWrap);
+  if (quotedData) {
+    const quoteCard = createDetailQuoteTweet(quotedData);
+    wrapper.appendChild(quoteCard);
+  }
   wrapper.appendChild(actions);
   wrapper.addEventListener("click", (e) => e.stopPropagation());
   return wrapper;

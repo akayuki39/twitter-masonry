@@ -26,7 +26,7 @@ export const resetLayout = () => {
   layout.heights = [];
 };
 
-const waitMedia = (card, timeout = 1200) => {
+const waitMedia = (card, timeout = 3000) => {
   const media = card.querySelectorAll("img,video");
   if (!media.length) return Promise.resolve();
   return Promise.race([
@@ -54,6 +54,15 @@ export const placeCard = async (card, grid) => {
   card.style.visibility = "hidden";
   grid.appendChild(card);
   await waitMedia(card);
+
+  const images = card.querySelectorAll("img");
+  let allImagesLoaded = true;
+  images.forEach((img) => {
+    if (!img.complete || img.naturalHeight === 0) {
+      allImagesLoaded = false;
+    }
+  });
+
   const heights = layout.heights;
   let target = 0;
   for (let i = 1; i < heights.length; i++) {
@@ -61,7 +70,13 @@ export const placeCard = async (card, grid) => {
   }
   const x = target * (layout.colWidth + layout.gutter);
   const y = heights[target];
-  const h = card.offsetHeight;
+  let h = card.offsetHeight;
+
+  if (!allImagesLoaded) {
+    const placeholderHeight = 200;
+    h = Math.max(h, placeholderHeight);
+  }
+
   card.style.left = `${x}px`;
   card.style.top = `${y}px`;
   card.style.visibility = "visible";

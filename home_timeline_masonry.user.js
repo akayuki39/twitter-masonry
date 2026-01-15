@@ -136,7 +136,9 @@
     .tm-detail-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.65); display: none; align-items: flex-start; justify-content: center; padding: 32px 18px; z-index: 99999; overflow-y: auto; }
     .tm-detail-backdrop.show { display: flex; }
     .tm-detail-modal { position: relative; width: min(960px, 96vw); margin: auto; }
-    .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: 1px solid rgba(15,23,42,0.08); overflow: hidden; max-height: calc(100vh - 64px); }
+    .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: 1px solid rgba(15,23,42,0.08); overflow-y: auto; max-height: calc(100vh - 64px); }
+    .tm-detail-card::-webkit-scrollbar { width: 0; height: 0; }
+    .tm-detail-card { scrollbar-width: none; -ms-overflow-style: none; }
     .tm-detail-card .retweet-info { padding: 12px 20px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
     .tm-detail-card .retweet-info svg { flex-shrink: 0; }
     .tm-detail-card .retweet-info a { color: inherit; text-decoration: none; transition: text-decoration 0.12s ease; }
@@ -165,6 +167,31 @@
     .tm-carousel:hover .tm-carousel-arrow:disabled, .tm-carousel:focus-within .tm-carousel-arrow:disabled { opacity: 0.3; }
     .tm-carousel-arrow.prev { left: 12px; }
     .tm-carousel-arrow.next { right: 12px; }
+    .tm-quote-card { margin: 10px 16px 14px; padding: 14px; background: rgba(15,23,42,0.04); border-radius: 16px; border: 1px solid rgba(15,23,42,0.08); transition: background 0.12s ease; }
+    .tm-card:hover .tm-quote-card { background: rgba(15,23,42,0.06); }
+    .tm-quote-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .tm-quote-user { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .tm-quote-avatar { width: 28px !important; height: 28px !important; border-radius: 50% !important; object-fit: cover !important; flex-shrink: 0; display: block; box-sizing: border-box; }
+    .tm-quote-info { display: flex; flex-direction: column; gap: 2px; line-height: 1.2; min-width: 0; flex: 1; }
+    .tm-quote-name-link { font-weight: 700; color: #0f172a; font-size: 14px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-quote-name-link:hover { text-decoration: underline; }
+    .tm-quote-screen-link { color: #64748b; font-size: 12px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-quote-time { color: #94a3b8; font-size: 11px; flex-shrink: 0; }
+    .tm-quote-text { padding: 4px 0; line-height: 1.6; color: #1f2937; word-break: break-word; font-size: 14px; }
+    .tm-quote-media { display: grid; gap: 8px; margin-top: 10px; }
+    .tm-quote-media img, .tm-quote-media video { width: 100%; border-radius: 12px; object-fit: cover; background: linear-gradient(180deg,#f8fafc,#e2e8f0); display: block; }
+    .tm-quote-media video { background: #0b1220; }
+    .tm-detail-card .tm-quote-card { margin: 12px 20px 20px; padding: 16px; background: rgba(15,23,42,0.04); border-radius: 16px; border: 1px solid rgba(15,23,42,0.08); }
+    .tm-detail-card .tm-quote-meta { margin-bottom: 10px; }
+    .tm-detail-card .tm-quote-avatar { width: 32px !important; height: 32px !important; }
+    .tm-detail-card .tm-quote-name-link { font-size: 15px; }
+    .tm-detail-card .tm-quote-screen-link { font-size: 13px; }
+    .tm-detail-card .tm-quote-time { font-size: 12px; }
+    .tm-detail-card .tm-quote-text { font-size: 15px; padding: 6px 0; }
+    .tm-detail-card .tm-quote-media { gap: 10px; margin-top: 12px; }
+    .tm-detail-card .tm-quote-media img, .tm-detail-card .tm-quote-media video { border-radius: 14px; width: 100%; }
+    .tm-detail-card .tm-quote-media .tm-carousel { border-radius: 14px; }
+    .tm-detail-card .tm-quote-media .tm-carousel-slide img, .tm-detail-card .tm-quote-media .tm-carousel-slide video { border-radius: 14px; }
   `);
   };
 
@@ -390,6 +417,89 @@
     return btn;
   };
 
+  const createQuoteTweet = (quotedTweet) => {
+    const quoteLegacy = quotedTweet.legacy || quotedTweet;
+    const quoteCore = quotedTweet.core;
+    const quoteUser = quoteCore?.user_results?.result?.core;
+    const text = quoteLegacy.full_text || quoteLegacy.text || "";
+    const media = pickMedia(quotedTweet);
+    const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
+    const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
+    const name = quoteUser?.name || user;
+    quotedTweet.rest_id || quoteLegacy.id_str;
+    const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+    const createdAt = quoteLegacy.created_at || "";
+
+    const quoteCard = document.createElement("div");
+    quoteCard.className = "tm-quote-card";
+
+    const meta = document.createElement("div");
+    meta.className = "tm-quote-meta";
+
+    const userSpan = document.createElement("div");
+    userSpan.className = "tm-quote-user";
+    if (avatar) {
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "tm-quote-avatar";
+      avatarImg.src = avatar;
+      userSpan.appendChild(avatarImg);
+    }
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "tm-quote-info";
+
+    const nameLink = document.createElement("a");
+    nameLink.className = "tm-quote-name-link";
+    nameLink.href = profileUrl;
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.textContent = name;
+
+    const screenLink = document.createElement("a");
+    screenLink.className = "tm-quote-screen-link";
+    screenLink.href = profileUrl;
+    screenLink.target = "_blank";
+    screenLink.rel = "noopener noreferrer";
+    screenLink.textContent = `@${user}`;
+
+    infoDiv.appendChild(nameLink);
+    infoDiv.appendChild(screenLink);
+    userSpan.appendChild(infoDiv);
+
+    const timeSpan = document.createElement("div");
+    timeSpan.className = "tm-quote-time";
+    timeSpan.textContent = createdAt ? formatTime(createdAt) : "";
+
+    meta.appendChild(userSpan);
+    meta.appendChild(timeSpan);
+
+    const textDiv = document.createElement("div");
+    textDiv.className = "tm-quote-text";
+    textDiv.innerHTML = linkify(text);
+
+    const mediaWrap = document.createElement("div");
+    mediaWrap.className = "tm-quote-media";
+    media.forEach((m, index) => {
+      if (m.type === "photo") {
+        const img = document.createElement("img");
+        img.src = m.url;
+        img.loading = "eager";
+        mediaWrap.appendChild(img);
+      } else if (m.type === "video") {
+        const v = document.createElement("video");
+        v.controls = true;
+        v.src = m.url;
+        mediaWrap.appendChild(v);
+      }
+    });
+
+    quoteCard.appendChild(meta);
+    if (text) quoteCard.appendChild(textDiv);
+    if (media.length) quoteCard.appendChild(mediaWrap);
+
+    return quoteCard;
+  };
+
   const createCard = (tweet, openDetail) => {
     const legacy = tweet.legacy || tweet;
     const isRetweet = legacy.retweeted_status_result;
@@ -398,7 +508,8 @@
     const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
     const displayCore = retweetData?.core || tweet.core;
     const displayTweet = retweetData || tweet;
-    
+    const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+
     const text = displayLegacy.full_text || displayLegacy.text || "";
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
@@ -406,12 +517,12 @@
     const name = displayUser?.name || user;
     const id = displayTweet.rest_id || displayLegacy.id_str;
     const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
-    
+
     const retweetUser = tweet.core?.user_results?.result?.core;
     const retweetName = retweetUser?.name || "";
     const retweetScreenName = retweetUser?.screen_name || "";
     const retweetProfileUrl = retweetScreenName ? `https://x.com/${encodeURIComponent(retweetScreenName)}` : "";
-    
+
     const card = document.createElement("article");
     card.className = "tm-card";
     card.dataset.tid = id;
@@ -491,6 +602,10 @@
     card.appendChild(meta);
     if (text) card.appendChild(textDiv);
     if (media.length) card.appendChild(mediaWrap);
+    if (quotedData) {
+      const quoteCard = createQuoteTweet(quotedData);
+      card.appendChild(quoteCard);
+    }
     card.appendChild(actions);
 
     card.addEventListener("click", (e) => {
@@ -580,6 +695,96 @@
   };
 
   let activeCarouselControls = null;
+
+  const createDetailQuoteTweet = (quotedTweet) => {
+    const quoteLegacy = quotedTweet.legacy || quotedTweet;
+    const quoteCore = quotedTweet.core;
+    const quoteUser = quoteCore?.user_results?.result?.core;
+    const text = quoteLegacy.full_text || quoteLegacy.text || "";
+    const media = pickMedia(quotedTweet);
+    const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
+    const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
+    const name = quoteUser?.name || user;
+    const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+    const createdAt = quoteLegacy.created_at || "";
+
+    const quoteCard = document.createElement("div");
+    quoteCard.className = "tm-quote-card";
+
+    const meta = document.createElement("div");
+    meta.className = "tm-quote-meta";
+
+    const userSpan = document.createElement("div");
+    userSpan.className = "tm-quote-user";
+    if (avatar) {
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "tm-quote-avatar";
+      avatarImg.src = avatar;
+      userSpan.appendChild(avatarImg);
+    }
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "tm-quote-info";
+
+    const nameLink = document.createElement("a");
+    nameLink.className = "tm-quote-name-link";
+    nameLink.href = profileUrl;
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.textContent = name;
+
+    const screenLink = document.createElement("a");
+    screenLink.className = "tm-quote-screen-link";
+    screenLink.href = profileUrl;
+    screenLink.target = "_blank";
+    screenLink.rel = "noopener noreferrer";
+    screenLink.textContent = `@${user}`;
+
+    infoDiv.appendChild(nameLink);
+    infoDiv.appendChild(screenLink);
+    userSpan.appendChild(infoDiv);
+
+    const timeSpan = document.createElement("div");
+    timeSpan.className = "tm-quote-time";
+    timeSpan.textContent = createdAt ? formatTime(createdAt) : "";
+
+    meta.appendChild(userSpan);
+    meta.appendChild(timeSpan);
+
+    const textDiv = document.createElement("div");
+    textDiv.className = "tm-quote-text";
+    textDiv.innerHTML = linkify(text);
+
+    quoteCard.appendChild(meta);
+    if (text) quoteCard.appendChild(textDiv);
+
+    if (media.length) {
+      const mediaWrap = document.createElement("div");
+      mediaWrap.className = "tm-quote-media";
+      if (media.length > 1) {
+        const { el} = createCarousel(media, 0);
+        mediaWrap.appendChild(el);
+      } else {
+        for (const m of media) {
+          if (m.type === "photo") {
+            const img = document.createElement("img");
+            const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
+            img.src = url;
+            img.loading = "lazy";
+            mediaWrap.appendChild(img);
+          } else if (m.type === "video") {
+            const v = document.createElement("video");
+            v.controls = true;
+            v.src = m.url;
+            mediaWrap.appendChild(v);
+          }
+        }
+      }
+      quoteCard.appendChild(mediaWrap);
+    }
+
+    return quoteCard;
+  };
   let detailOverlay = null;
   let detailModal = null;
   let scrollBackup = 0;
@@ -634,7 +839,8 @@
     const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
     const displayCore = retweetData?.core || tweet.core;
     const displayTweet = retweetData || tweet;
-    
+    const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+
     const text = displayLegacy.full_text || displayLegacy.text || "";
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
@@ -642,7 +848,7 @@
     const name = displayUser?.name || user;
     const id = displayTweet.rest_id || displayLegacy.id_str;
     const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
-    
+
     const retweetUser = tweet.core?.user_results?.result?.core;
     const retweetName = retweetUser?.name || "";
     const retweetScreenName = retweetUser?.screen_name || "";
@@ -736,6 +942,10 @@
     wrapper.appendChild(meta);
     if (text) wrapper.appendChild(textDiv);
     if (media.length) wrapper.appendChild(mediaWrap);
+    if (quotedData) {
+      const quoteCard = createDetailQuoteTweet(quotedData);
+      wrapper.appendChild(quoteCard);
+    }
     wrapper.appendChild(actions);
     wrapper.addEventListener("click", (e) => e.stopPropagation());
     return wrapper;
@@ -798,7 +1008,7 @@
     layout.heights = [];
   };
 
-  const waitMedia = (card, timeout = 1200) => {
+  const waitMedia = (card, timeout = 3000) => {
     const media = card.querySelectorAll("img,video");
     if (!media.length) return Promise.resolve();
     return Promise.race([
@@ -826,6 +1036,15 @@
     card.style.visibility = "hidden";
     grid.appendChild(card);
     await waitMedia(card);
+
+    const images = card.querySelectorAll("img");
+    let allImagesLoaded = true;
+    images.forEach((img) => {
+      if (!img.complete || img.naturalHeight === 0) {
+        allImagesLoaded = false;
+      }
+    });
+
     const heights = layout.heights;
     let target = 0;
     for (let i = 1; i < heights.length; i++) {
@@ -833,7 +1052,13 @@
     }
     const x = target * (layout.colWidth + layout.gutter);
     const y = heights[target];
-    const h = card.offsetHeight;
+    let h = card.offsetHeight;
+
+    if (!allImagesLoaded) {
+      const placeholderHeight = 200;
+      h = Math.max(h, placeholderHeight);
+    }
+
     card.style.left = `${x}px`;
     card.style.top = `${y}px`;
     card.style.visibility = "visible";

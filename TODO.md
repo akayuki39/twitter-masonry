@@ -24,10 +24,23 @@ hover到头像的时候让头像略微变暗来做为提示。hover到name的时
     * 参考old/hometimeline_example.json里的"id_str": "2010191615474958371"部分对应的结构, 直接搜索就行
     * 推文的信息都要显示被转的推的。在推特卡最上面显示一下是谁转推的就行。retweet icon + 空格 + 转推人的name + 空格 + 以转帖。也许用font awesome的icon就可以？选择一个好看且轻量的就行。
 
----
+被转推的推文如果带着quote的话，quote不会被显示。
+* old/hometimeline_example_retweet_w_quote.jso里可以搜索2010665935150121270查看json数据结构
 
 设计quote推文的界面。
 * 如果是quote推文（带文字转发），result.quoted_status_result.result能获得被quote的推文result。跟转发不同这个不在legacy里
+
+带quote的推文的detail card，会因为quote过长而导致下面的显示不出来。
+暂时先设置成如果过长就可以滚动吧，不过滚动条要隐藏。
+后面要改一下quote卡片的设计
+
+detail里quote部分也用carousel来滚动显示图片
+
+---
+
+点击quote部分显示quote推文的detail
+
+修改quote卡片的设计。
 
 有图片的推文，文字内容里最后还带着一个图片链接。有办法处理掉吗？
 
@@ -41,6 +54,10 @@ hometimeline现在每次刷新之后还会显示之前的推文。
 * 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
 
 更改详情页的样式。左边图片，右边上面推文，下面是回复。
+* 获得回复等信息可能需要访问TweetDetail的api
 
 重构：
 * 改成type script
+
+去除广告。
+* 在old里有带广告的example。可以用for_you_promoted来过滤
