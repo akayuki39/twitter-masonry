@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
-// @namespace    https://github.com/akayuki/twitter-media-collector-simple
+// @namespace    https://github.com/akayuki39/twitter-masonry
 // @version      0.1.0
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
