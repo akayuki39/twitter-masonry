@@ -43,6 +43,13 @@ detail里quote部分也用carousel来滚动显示图片
 修改quote卡片的设计。
 
 有图片的推文，文字内容里最后还带着一个图片链接。有办法处理掉吗？
+* 做一个文本后处理器。来处理这些在entities里的外链的渲染
+* result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
+* result.legacy.entities.url里还有推文里带着的外链。可以用这个去渲染外链。
+    * entites里有各种需要后处理的内容。比如user_mentions，hashtags。
+* 可以在tweet_detail_w_entities.json里查看。https://x.com/spygea_jp/status/2011350045405356043。
+    * https://t.co/YIJP7FOSPM 这个是外链。
+    * https://t.co/7Wr0zKBcwQ 这个是图片
 
 而且文字显示的也不全，内容长的话后面就没了。怀疑用的text来源不对。
 * 超过140个字符的属于note_tweet，在json例子里搜下
@@ -61,3 +68,8 @@ hometimeline现在每次刷新之后还会显示之前的推文。
 
 去除广告。
 * 在old里有带广告的example。可以用for_you_promoted来过滤
+
+竖版排列时顺序不对
+* 推特新更新的功能，点开推文之后竖版显示的顺序可能跟四宫格的时候不一样。也许有参数来指定排列顺序。
+
+推文本身是note_tweet的情况下再quote其他推文，被quote的推文不会被正确显示，而是显示unknown
