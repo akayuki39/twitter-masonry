@@ -1,6 +1,7 @@
-import { formatTime, escapeHTML, linkify } from "../utils/format.js";
+import { formatTime, escapeHTML } from "../utils/format.js";
 import { pickMedia } from "../utils/tweet.js";
 import { createLikeButton } from "./likeButton.js";
+import { processTweetText } from "../utils/textProcessor.js";
 
 export const createQuoteTweet = (quotedTweet) => {
   const quoteLegacy = quotedTweet.legacy || quotedTweet;
@@ -60,7 +61,7 @@ export const createQuoteTweet = (quotedTweet) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "tm-quote-text";
-  textDiv.innerHTML = linkify(text);
+  textDiv.innerHTML = processTweetText(text);
 
   const mediaWrap = document.createElement("div");
   mediaWrap.className = "tm-quote-media";
@@ -141,7 +142,7 @@ export const createCard = (tweet, openDetail) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "text";
-  textDiv.innerHTML = linkify(text);
+  textDiv.innerHTML = processTweetText(text);
 
   const mediaWrap = document.createElement("div");
   mediaWrap.className = "media";

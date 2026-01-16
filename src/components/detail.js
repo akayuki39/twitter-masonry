@@ -1,7 +1,8 @@
 import { createLikeButton, setToast } from "./likeButton.js";
 import { createCarousel } from "./carousel.js";
-import { formatTime, escapeHTML, linkify } from "../utils/format.js";
+import { formatTime, escapeHTML } from "../utils/format.js";
 import { pickMedia } from "../utils/tweet.js";
+import { processTweetText } from "../utils/textProcessor.js";
 
 let activeCarouselControls = null;
 
@@ -62,7 +63,7 @@ const createDetailQuoteTweet = (quotedTweet) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "tm-quote-text";
-  textDiv.innerHTML = linkify(text);
+  textDiv.innerHTML = processTweetText(text);
 
   quoteCard.appendChild(meta);
   if (text) quoteCard.appendChild(textDiv);
@@ -205,7 +206,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "text";
-  textDiv.innerHTML = linkify(text);
+  textDiv.innerHTML = processTweetText(text);
 
   const mediaWrap = document.createElement("div");
   mediaWrap.className = "media";

@@ -42,6 +42,7 @@ detail里quote部分也用carousel来滚动显示图片
 
 修改quote卡片的设计。
 
+Entity相关的渲染
 有图片的推文，文字内容里最后还带着一个图片链接。有办法处理掉吗？
 * 做一个文本后处理器。来处理这些在entities里的外链的渲染
 * result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉

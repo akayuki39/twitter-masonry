@@ -116,7 +116,7 @@
     .tm-screen-link { color: inherit; text-decoration: none; }
     .tm-screen-link:hover { text-decoration: none; }
     .tm-card .meta .time { color: #94a3b8; font-size: 12px; }
-    .tm-card .text { padding: 8px 16px 14px 16px; line-height: 1.6; color: #1f2937; word-break: break-word; }
+    .tm-card .text { padding: 8px 16px 14px 16px; line-height: 1.6; color: #1f2937; word-break: break-word; white-space: pre-wrap; }
     .tm-card .media { display: grid; gap: 10px; padding: 0 14px 14px 14px; }
     .tm-card img { width: 100%; border-radius: 14px; object-fit: cover; background: linear-gradient(180deg,#f8fafc,#e2e8f0); display: block; }
     .tm-card video { width: 100%; border-radius: 14px; background: #0b1220; display: block; }
@@ -150,7 +150,7 @@
     .tm-detail-card .meta .user .name { font-weight: 800; color: #0f172a; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-detail-card .meta .user .screen { color: #64748b; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-detail-card .meta .time { color: #94a3b8; font-size: 12px; }
-    .tm-detail-card .text { padding: 10px 20px 18px; line-height: 1.7; color: #1f2937; word-break: break-word; font-size: 15px; }
+    .tm-detail-card .text { padding: 10px 20px 18px; line-height: 1.7; color: #1f2937; word-break: break-word; font-size: 15px; white-space: pre-wrap; }
     .tm-detail-card .media { display: grid; gap: 12px; padding: 0 18px 20px; max-height: var(--tm-detail-media-max-h); overflow-y: auto; }
     .tm-detail-card .media img { width: 100%; border-radius: 16px; object-fit: contain; background: linear-gradient(180deg,#f8fafc,#e2e8f0); max-height: var(--tm-detail-media-max-h); }
     .tm-detail-card .media video { width: 100%; border-radius: 16px; background: #0b1220; max-height: var(--tm-detail-media-max-h); object-fit: contain; }
@@ -177,7 +177,7 @@
     .tm-quote-name-link:hover { text-decoration: underline; }
     .tm-quote-screen-link { color: #64748b; font-size: 12px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-quote-time { color: #94a3b8; font-size: 11px; flex-shrink: 0; }
-    .tm-quote-text { padding: 4px 0; line-height: 1.6; color: #1f2937; word-break: break-word; font-size: 14px; }
+    .tm-quote-text { padding: 4px 0; line-height: 1.6; color: #1f2937; word-break: break-word; font-size: 14px; white-space: pre-wrap; }
     .tm-quote-media { display: grid; gap: 8px; margin-top: 10px; }
     .tm-quote-media img, .tm-quote-media video { width: 100%; border-radius: 12px; object-fit: cover; background: linear-gradient(180deg,#f8fafc,#e2e8f0); display: block; }
     .tm-quote-media video { background: #0b1220; }
@@ -187,7 +187,7 @@
     .tm-detail-card .tm-quote-name-link { font-size: 15px; }
     .tm-detail-card .tm-quote-screen-link { font-size: 13px; }
     .tm-detail-card .tm-quote-time { font-size: 12px; }
-    .tm-detail-card .tm-quote-text { font-size: 15px; padding: 6px 0; }
+    .tm-detail-card .tm-quote-text { font-size: 15px; padding: 6px 0; white-space: pre-wrap; }
     .tm-detail-card .tm-quote-media { gap: 10px; margin-top: 12px; }
     .tm-detail-card .tm-quote-media img, .tm-detail-card .tm-quote-media video { border-radius: 14px; width: 100%; max-height: var(--tm-detail-media-max-h); object-fit: contain; background: linear-gradient(180deg,#f8fafc,#e2e8f0); }
     .tm-detail-card .tm-quote-media video { background: #0b1220; }
@@ -297,9 +297,6 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
-
-  const linkify = (text = "") =>
-    escapeHTML(text).replace(/(https?:\/\/[\w./?=&%#-]+)/g, '<a href="$1" target="_blank">$1</a>');
 
   const formatTime = (raw) => {
     if (!raw) return "";
@@ -418,6 +415,59 @@
     return btn;
   };
 
+  const TextProcessor = {
+    processors: {
+      htmlDecode: (text) => {
+        const doc = new DOMParser().parseFromString(text, "text/html");
+        return doc.documentElement.textContent;
+      },
+      
+      safeRender: (text) => {
+        const div = document.createElement("div");
+        div.innerHTML = text;
+        return div.innerHTML;
+      },
+      
+      linkify: (text) => {
+        return text.replace(/(https?:\/\/[\w./?=&%#-]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+      },
+      
+      mentionify: (text) => {
+        return text.replace(/@([\p{L}\p{N}_]{1,15})/gu, '<a href="https://x.com/$1" target="_blank" rel="noopener noreferrer">@$1</a>');
+      },
+      
+      hashtagify: (text) => {
+        return text.replace(/#([\p{L}\p{N}_]+)/gu, '<a href="https://x.com/hashtag/$1" target="_blank" rel="noopener noreferrer">#$1</a>');
+      }
+    },
+
+    process(text, pipeline = ["linkify", "mentionify", "hashtagify"]) {
+      let result = text;
+      for (const processorName of pipeline) {
+        const processor = this.processors[processorName];
+        if (typeof processor === "function") {
+          result = processor(result);
+        }
+      }
+      return result;
+    },
+
+    addProcessor(name, processor) {
+      if (typeof processor === "function") {
+        this.processors[name] = processor;
+      }
+    },
+
+    removeProcessor(name) {
+      delete this.processors[name];
+    }
+  };
+
+  const processTweetText = (text) => {
+    const safeHTML = TextProcessor.processors.safeRender(text);
+    return TextProcessor.process(safeHTML);
+  };
+
   const createQuoteTweet = (quotedTweet) => {
     const quoteLegacy = quotedTweet.legacy || quotedTweet;
     const quoteCore = quotedTweet.core;
@@ -476,7 +526,7 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "tm-quote-text";
-    textDiv.innerHTML = linkify(text);
+    textDiv.innerHTML = processTweetText(text);
 
     const mediaWrap = document.createElement("div");
     mediaWrap.className = "tm-quote-media";
@@ -557,7 +607,7 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "text";
-    textDiv.innerHTML = linkify(text);
+    textDiv.innerHTML = processTweetText(text);
 
     const mediaWrap = document.createElement("div");
     mediaWrap.className = "media";
@@ -754,7 +804,7 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "tm-quote-text";
-    textDiv.innerHTML = linkify(text);
+    textDiv.innerHTML = processTweetText(text);
 
     quoteCard.appendChild(meta);
     if (text) quoteCard.appendChild(textDiv);
@@ -893,7 +943,7 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "text";
-    textDiv.innerHTML = linkify(text);
+    textDiv.innerHTML = processTweetText(text);
 
     const mediaWrap = document.createElement("div");
     mediaWrap.className = "media";
