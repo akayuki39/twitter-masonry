@@ -146,13 +146,13 @@ const mountApp = () => {
 const addFloatingButton = () => {
   const btn = document.createElement("div");
   btn.className = "tm-pill";
-  btn.textContent = "Home 瀑布流";
+  btn.textContent = "Home Masonry";
   btn.onclick = () => GM_openInTab(`https://x.com/home?${PARAM_FLAG}=1`, { active: true });
   document.body.appendChild(btn);
 };
 
 const ensureMenu = () => {
-  GM_registerMenuCommand("打开 Home 瀑布流", () => {
+  GM_registerMenuCommand("Open Home Masonry", () => {
     GM_openInTab(`https://x.com/home?${PARAM_FLAG}=1`, { active: true });
   });
 };
