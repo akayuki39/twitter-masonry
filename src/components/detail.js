@@ -176,6 +176,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
 
   const wrapper = document.createElement("div");
   wrapper.className = "tm-detail-card";
+  if (!text) wrapper.classList.add("no-text");
 
   const closeBtn = document.createElement("button");
   closeBtn.className = "tm-detail-close";

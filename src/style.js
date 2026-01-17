@@ -114,5 +114,6 @@ export const injectStyles = () => {
     .tm-detail-card .tm-quote-media video { background: #0b1220; }
     .tm-detail-card .tm-quote-media .tm-carousel { border-radius: 14px; background: linear-gradient(180deg,#f8fafc,#e2e8f0); }
     .tm-detail-card .tm-quote-media .tm-carousel-slide img, .tm-detail-card .tm-quote-media .tm-carousel-slide video { border-radius: 14px; max-height: var(--tm-detail-media-max-h); object-fit: contain; }
+    .tm-card.no-text .media, .tm-detail-card.no-text .media { padding-top: 14px; }
   `);
 };

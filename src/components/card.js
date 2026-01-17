@@ -117,6 +117,7 @@ export const createCard = (tweet, openDetail) => {
 
   const card = document.createElement("article");
   card.className = "tm-card";
+  if (!text) card.classList.add("no-text");
   card.dataset.tid = id;
 
   if (isRetweet && retweetName) {
