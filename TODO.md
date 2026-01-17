@@ -83,3 +83,5 @@ detail中的视频指定最高画质
 关掉detail的时候自动关闭detail中的视频
 
 添加translateTweet功能
+
+有时候会出现转推没有被成功渲染，而是渲染了RT的那条推特。原因暂时未知

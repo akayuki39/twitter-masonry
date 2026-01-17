@@ -27,10 +27,16 @@ const createDetailQuoteTweet = (quotedTweet) => {
   const userSpan = document.createElement("div");
   userSpan.className = "tm-quote-user";
   if (avatar) {
+    const avatarLink = document.createElement("a");
+    avatarLink.href = profileUrl;
+    avatarLink.target = "_blank";
+    avatarLink.rel = "noopener noreferrer";
+    avatarLink.className = "tm-user-link";
     const avatarImg = document.createElement("img");
     avatarImg.className = "tm-quote-avatar";
     avatarImg.src = avatar;
-    userSpan.appendChild(avatarImg);
+    avatarLink.appendChild(avatarImg);
+    userSpan.appendChild(avatarLink);
   }
 
   const infoDiv = document.createElement("div");

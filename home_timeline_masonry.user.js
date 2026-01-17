@@ -114,6 +114,8 @@
     .tm-user-link { display: inline-flex; align-items: center; }
     .tm-user-link .tm-avatar { transition: filter 0.12s ease; }
     .tm-user-link:hover .tm-avatar { filter: brightness(0.9); }
+    .tm-user-link .tm-quote-avatar { transition: filter 0.12s ease; }
+    .tm-user-link:hover .tm-quote-avatar { filter: brightness(0.9); }
     .tm-name-link { color: inherit; text-decoration: none; }
     .tm-name-link:hover { text-decoration: underline; }
     .tm-screen-link { color: inherit; text-decoration: none; }
@@ -493,10 +495,16 @@
     const userSpan = document.createElement("div");
     userSpan.className = "tm-quote-user";
     if (avatar) {
+      const avatarLink = document.createElement("a");
+      avatarLink.href = profileUrl;
+      avatarLink.target = "_blank";
+      avatarLink.rel = "noopener noreferrer";
+      avatarLink.className = "tm-user-link";
       const avatarImg = document.createElement("img");
       avatarImg.className = "tm-quote-avatar";
       avatarImg.src = avatar;
-      userSpan.appendChild(avatarImg);
+      avatarLink.appendChild(avatarImg);
+      userSpan.appendChild(avatarLink);
     }
 
     const infoDiv = document.createElement("div");
@@ -771,10 +779,16 @@
     const userSpan = document.createElement("div");
     userSpan.className = "tm-quote-user";
     if (avatar) {
+      const avatarLink = document.createElement("a");
+      avatarLink.href = profileUrl;
+      avatarLink.target = "_blank";
+      avatarLink.rel = "noopener noreferrer";
+      avatarLink.className = "tm-user-link";
       const avatarImg = document.createElement("img");
       avatarImg.className = "tm-quote-avatar";
       avatarImg.src = avatar;
-      userSpan.appendChild(avatarImg);
+      avatarLink.appendChild(avatarImg);
+      userSpan.appendChild(avatarLink);
     }
 
     const infoDiv = document.createElement("div");
