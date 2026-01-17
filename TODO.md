@@ -42,8 +42,6 @@ detail里quote部分也用carousel来滚动显示图片
 * result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
 * 实际上有个legacy.display_text_range，里面是full_text里实际文本的range。用这个就能去掉最后的链接了。
 
-有些emoji不能被正确显示
-
 ---
 
 点击quote部分显示quote推文的detail
@@ -54,6 +52,7 @@ Entity相关的渲染
 * 做一个文本后处理器。来处理这些在entities里的外链的渲染
     * 在entities里每个都有indices，标志着这个entity在文本中的index。可以利用这个去做渲染
 * result.legacy.entities.url里还有推文里带着的外链。可以用这个去渲染外链。
+    * 里面有实际的url，对应的indices，显示出来的缩短的url等等。
     * entites里有各种需要后处理的内容。比如user_mentions，hashtags。
 * 可以在tweet_detail_w_entities.json里查看。https://x.com/spygea_jp/status/2011350045405356043。
     * https://t.co/YIJP7FOSPM 这个是外链。
@@ -95,3 +94,15 @@ GIF的视频默认播放且循环播放
 
 Hover到头像之后显示profile
 * 数据已经有了，都在core里。直接显示就行
+
+使用twitter的emoji
+* 利用这个库：https://github.com/jdecked/twemoji
+
+脚本头添加github自动更新的字段
+* @updateURL以及@downloadURL等
+
+有些emoji不能被正确显示
+* 是在最末尾的emoji不能正确显示。也许是因为index切割的时候切出了问题？
+    * 确实是因为index切割出了问题。末尾显示成\uD83D\uDE2D，会被切成\uD83D。看样子是编码出问题了
+    * js里用的是UTF-16储存string。需要用Array.from(str)给转过来，这个是Unicode code point单位分割的。
+* 例子：https://x.com/Park_MuJu/status/2012206467273937390

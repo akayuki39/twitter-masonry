@@ -4,7 +4,8 @@ export const getCleanText = (tweet) => {
   const displayRange = legacy.display_text_range;
 
   if (displayRange && Array.isArray(displayRange) && displayRange.length === 2) {
-    return fullText.substring(displayRange[0], displayRange[1]);
+    const chars = Array.from(fullText);
+    return chars.slice(displayRange[0], displayRange[1]).join("");
   }
   return fullText;
 };
