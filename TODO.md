@@ -38,6 +38,10 @@ detail里quote部分也用carousel来滚动显示图片
 
 换行符和html标记也没有渲染出来
 
+有图片的推文，文字内容里最后还带着一个图片链接。有办法处理掉吗？
+* result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
+* 实际上有个legacy.display_text_range，里面是full_text里实际文本的range。用这个就能去掉最后的链接了。
+
 ---
 
 点击quote部分显示quote推文的detail
@@ -45,9 +49,8 @@ detail里quote部分也用carousel来滚动显示图片
 修改quote卡片的设计。
 
 Entity相关的渲染
-有图片的推文，文字内容里最后还带着一个图片链接。有办法处理掉吗？
 * 做一个文本后处理器。来处理这些在entities里的外链的渲染
-* result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
+    * 在entities里每个都有indices，标志着这个entity在文本中的index。可以利用这个去做渲染
 * result.legacy.entities.url里还有推文里带着的外链。可以用这个去渲染外链。
     * entites里有各种需要后处理的内容。比如user_mentions，hashtags。
 * 可以在tweet_detail_w_entities.json里查看。https://x.com/spygea_jp/status/2011350045405356043。
@@ -85,3 +88,5 @@ detail中的视频指定最高画质
 添加translateTweet功能
 
 有时候会出现转推没有被成功渲染，而是渲染了RT的那条推特。原因暂时未知
+
+GIF的视频默认播放且循环播放

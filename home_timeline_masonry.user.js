@@ -311,6 +311,17 @@
     return isNaN(tryD) ? raw : tryD.toLocaleString();
   };
 
+  const getCleanText = (tweet) => {
+    const legacy = tweet.legacy || tweet;
+    const fullText = legacy.full_text || legacy.text || "";
+    const displayRange = legacy.display_text_range;
+
+    if (displayRange && Array.isArray(displayRange) && displayRange.length === 2) {
+      return fullText.substring(displayRange[0], displayRange[1]);
+    }
+    return fullText;
+  };
+
   const pickMedia = (tweet) => {
     const legacy = tweet.legacy || tweet;
     const media = legacy?.extended_entities?.media || [];
@@ -477,7 +488,7 @@
     const quoteLegacy = quotedTweet.legacy || quotedTweet;
     const quoteCore = quotedTweet.core;
     const quoteUser = quoteCore?.user_results?.result?.core;
-    const text = quoteLegacy.full_text || quoteLegacy.text || "";
+    const text = getCleanText(quotedTweet);
     const media = pickMedia(quotedTweet);
     const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
     const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -572,7 +583,7 @@
     const displayTweet = retweetData || tweet;
     const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
 
-    const text = displayLegacy.full_text || displayLegacy.text || "";
+    const text = getCleanText(displayTweet);
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
     const avatar = displayCore?.user_results?.result?.avatar?.image_url;
@@ -762,7 +773,7 @@
     const quoteLegacy = quotedTweet.legacy || quotedTweet;
     const quoteCore = quotedTweet.core;
     const quoteUser = quoteCore?.user_results?.result?.core;
-    const text = quoteLegacy.full_text || quoteLegacy.text || "";
+    const text = getCleanText(quotedTweet);
     const media = pickMedia(quotedTweet);
     const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
     const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -909,7 +920,7 @@
     const displayTweet = retweetData || tweet;
     const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
 
-    const text = displayLegacy.full_text || displayLegacy.text || "";
+    const text = getCleanText(displayTweet);
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
     const avatar = displayCore?.user_results?.result?.avatar?.image_url;

@@ -1,5 +1,5 @@
 import { formatTime, escapeHTML } from "../utils/format.js";
-import { pickMedia } from "../utils/tweet.js";
+import { getCleanText, pickMedia } from "../utils/tweet.js";
 import { createLikeButton } from "./likeButton.js";
 import { processTweetText } from "../utils/textProcessor.js";
 
@@ -7,7 +7,7 @@ export const createQuoteTweet = (quotedTweet) => {
   const quoteLegacy = quotedTweet.legacy || quotedTweet;
   const quoteCore = quotedTweet.core;
   const quoteUser = quoteCore?.user_results?.result?.core;
-  const text = quoteLegacy.full_text || quoteLegacy.text || "";
+  const text = getCleanText(quotedTweet);
   const media = pickMedia(quotedTweet);
   const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
   const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -102,7 +102,7 @@ export const createCard = (tweet, openDetail) => {
   const displayTweet = retweetData || tweet;
   const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
 
-  const text = displayLegacy.full_text || displayLegacy.text || "";
+  const text = getCleanText(displayTweet);
   const media = pickMedia(displayTweet);
   const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
   const avatar = displayCore?.user_results?.result?.avatar?.image_url;
