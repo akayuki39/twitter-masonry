@@ -36,6 +36,8 @@ hover到头像的时候让头像略微变暗来做为提示。hover到name的时
 
 detail里quote部分也用carousel来滚动显示图片
 
+换行符和html标记也没有渲染出来
+
 ---
 
 点击quote部分显示quote推文的detail
@@ -55,7 +57,6 @@ Entity相关的渲染
 而且文字显示的也不全，内容长的话后面就没了。怀疑用的text来源不对。
 * 超过140个字符的属于note_tweet，在json例子里搜下
 * 在详情卡里把全文显示出来
-换行符也没有渲染出来
 
 hometimeline现在每次刷新之后还会显示之前的推文。
 需要看看实际hometimeline的api调用的时候都带了什么参数。
@@ -74,3 +75,11 @@ hometimeline现在每次刷新之后还会显示之前的推文。
 * 推特新更新的功能，点开推文之后竖版显示的顺序可能跟四宫格的时候不一样。也许有参数来指定排列顺序。
 
 推文本身是note_tweet的情况下再quote其他推文，被quote的推文不会被正确显示，而是显示unknown
+* 也有的是因为quoted_status_result.result里的结构不太一样。有的是直接给result，有的需要再调用一层?.tweet才能得到正常的结果。查看tweetdetail_w_special_quote.json
+    * 这个例子里被quote的推文的类型是TweetWithVisibilityResults，而不是Tweet。这个例子里是推文quote推文quote推文，最里面的不在api里显示。
+
+detail中的视频指定最高画质
+
+关掉detail的时候自动关闭detail中的视频
+
+添加translateTweet功能
