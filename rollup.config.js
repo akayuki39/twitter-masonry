@@ -1,10 +1,18 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const userscriptMeta = `// ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.0
+// @version      ${packageJson.version}
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
 // @match        https://x.com/*
@@ -17,6 +25,8 @@ const userscriptMeta = `// ==UserScript==
 // @grant        GM_registerMenuCommand
 // @grant        GM_openInTab
 // @connect      x.com
+// @updateURL    https://raw.githubusercontent.com/akayuki39/twitter-masonry/main/home_timeline_masonry.user.js
+// @downloadURL  https://raw.githubusercontent.com/akayuki39/twitter-masonry/main/home_timeline_masonry.user.js
 // ==/UserScript==
 
 `;

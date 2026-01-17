@@ -14,6 +14,8 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_openInTab
 // @connect      x.com
+// @updateURL    https://raw.githubusercontent.com/akayuki39/twitter-masonry/main/home_timeline_masonry.user.js
+// @downloadURL  https://raw.githubusercontent.com/akayuki39/twitter-masonry/main/home_timeline_masonry.user.js
 // ==/UserScript==
 
 
