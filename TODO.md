@@ -42,6 +42,8 @@ detail里quote部分也用carousel来滚动显示图片
 * result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
 * 实际上有个legacy.display_text_range，里面是full_text里实际文本的range。用这个就能去掉最后的链接了。
 
+有些emoji不能被正确显示
+
 ---
 
 点击quote部分显示quote推文的detail
@@ -90,8 +92,6 @@ detail中的视频指定最高画质
 有时候会出现转推没有被成功渲染，而是渲染了RT的那条推特。原因暂时未知
 
 GIF的视频默认播放且循环播放
-
-有些emoji不能被正确显示
 
 Hover到头像之后显示profile
 * 数据已经有了，都在core里。直接显示就行

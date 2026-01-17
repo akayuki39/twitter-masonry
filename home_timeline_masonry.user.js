@@ -436,14 +436,9 @@
   const TextProcessor = {
     processors: {
       htmlDecode: (text) => {
-        const doc = new DOMParser().parseFromString(text, "text/html");
-        return doc.documentElement.textContent;
-      },
-      
-      safeRender: (text) => {
-        const div = document.createElement("div");
+        const div = document.createElement('div');
         div.innerHTML = text;
-        return div.innerHTML;
+        return div.textContent;
       },
       
       linkify: (text) => {
@@ -482,8 +477,8 @@
   };
 
   const processTweetText = (text) => {
-    const safeHTML = TextProcessor.processors.safeRender(text);
-    return TextProcessor.process(safeHTML);
+    const decodedText = TextProcessor.processors.htmlDecode(text);
+    return TextProcessor.process(decodedText);
   };
 
   const createQuoteTweet = (quotedTweet) => {
