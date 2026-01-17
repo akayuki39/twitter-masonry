@@ -12,17 +12,12 @@
 
 ## 自动更新
 - 脚本已配置自动更新功能，Tampermonkey 会定期检查并自动更新到最新版本。
-- 每次更新时，版本号会自动从 `package.json` 同步，无需手动修改 userscript 文件。
 
 ## 主要功能
 - 直接调用 X GraphQL `HomeTimeline` 接口（使用你的登录 cookie + 官方 bearer token），无需自建服务器。
 - 使用 Tampermonkey 的跨域能力发请求，自动带上 cookie 与 `ct0`，避免 CORS/鉴权问题。
 - Masonry 瀑布流布局，卡片含头像、文本、图片/视频、点赞/转推数，以及「在 X 打开」快捷入口。
-- 无限下拉自动翻页，顶部有刷新按钮。
-- 深色 UI，默认跟随 X 的配色，轻量无第三方依赖。
-
-## 开发
-项目已模块化重构，便于维护。详见 [DEVELOPMENT.md](./DEVELOPMENT.md) 了解项目结构和开发流程。
+- 无限下拉自动翻页。
 
 ## 小贴士
 - 需要你已登录 X 并且 cookie 可用（包含 `ct0`、`auth_token` 等）。
