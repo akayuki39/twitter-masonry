@@ -1,0 +1,1664 @@
+{
+    "data": {
+        "threaded_conversation_with_injections_v2": {
+            "instructions": [
+                {
+                    "type": "TimelineClearCache"
+                },
+                {
+                    "type": "TimelineAddEntries",
+                    "entries": [
+                        {
+                            "entryId": "tweet-2011645200138191116",
+                            "sortIndex": "2012125751402299392",
+                            "content": {
+                                "entryType": "TimelineTimelineItem",
+                                "__typename": "TimelineTimelineItem",
+                                "itemContent": {
+                                    "itemType": "TimelineTweet",
+                                    "__typename": "TimelineTweet",
+                                    "tweet_results": {
+                                        "result": {
+                                            "__typename": "Tweet",
+                                            "rest_id": "2011645200138191116",
+                                            "has_birdwatch_notes": false,
+                                            "core": {
+                                                "user_results": {
+                                                    "result": {
+                                                        "__typename": "User",
+                                                        "id": "VXNlcjoxNzA3MzIyNjA3Njk4NDMyMDAw",
+                                                        "rest_id": "1707322607698432000",
+                                                        "affiliates_highlighted_label": {},
+                                                        "avatar": {
+                                                            "image_url": "https://pbs.twimg.com/profile_images/1985288837208375296/5lox81ig_normal.jpg"
+                                                        },
+                                                        "core": {
+                                                            "created_at": "Thu Sep 28 09:13:33 +0000 2023",
+                                                            "name": "標準化どうしましょう",
+                                                            "screen_name": "local_devya"
+                                                        },
+                                                        "dm_permissions": {
+                                                            "can_dm": true
+                                                        },
+                                                        "follow_request_sent": false,
+                                                        "has_graduated_access": true,
+                                                        "is_blue_verified": true,
+                                                        "legacy": {
+                                                            "default_profile": true,
+                                                            "default_profile_image": false,
+                                                            "description": "自治体システム標準化/行政事務標準文字/MJ+ すべて個人の意見です。/aws CLF・SAA・SAP/質問募集 https://t.co/kfibbI93tt #標どう塾 #塾長 #標どう盛岡",
+                                                            "entities": {
+                                                                "description": {
+                                                                    "urls": [
+                                                                        {
+                                                                            "display_url": "querie.me/user/local_dev…",
+                                                                            "expanded_url": "https://querie.me/user/local_devya",
+                                                                            "url": "https://t.co/kfibbI93tt",
+                                                                            "indices": [
+                                                                                57,
+                                                                                80
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "url": {
+                                                                    "urls": [
+                                                                        {
+                                                                            "display_url": "note.com/local_devya",
+                                                                            "expanded_url": "https://note.com/local_devya",
+                                                                            "url": "https://t.co/P9BkyQc2oy",
+                                                                            "indices": [
+                                                                                0,
+                                                                                23
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "fast_followers_count": 0,
+                                                            "favourites_count": 21040,
+                                                            "followers_count": 2779,
+                                                            "friends_count": 130,
+                                                            "has_custom_timelines": false,
+                                                            "is_translator": false,
+                                                            "listed_count": 38,
+                                                            "media_count": 1351,
+                                                            "normal_followers_count": 2779,
+                                                            "pinned_tweet_ids_str": [],
+                                                            "possibly_sensitive": false,
+                                                            "profile_banner_url": "https://pbs.twimg.com/profile_banners/1707322607698432000/1749190906",
+                                                            "profile_interstitial_type": "",
+                                                            "statuses_count": 10451,
+                                                            "translator_type": "none",
+                                                            "url": "https://t.co/P9BkyQc2oy",
+                                                            "want_retweets": false,
+                                                            "withheld_in_countries": []
+                                                        },
+                                                        "location": {
+                                                            "location": ""
+                                                        },
+                                                        "media_permissions": {
+                                                            "can_media_tag": true
+                                                        },
+                                                        "parody_commentary_fan_label": "None",
+                                                        "profile_image_shape": "Circle",
+                                                        "profile_bio": {
+                                                            "description": "自治体システム標準化/行政事務標準文字/MJ+ すべて個人の意見です。/aws CLF・SAA・SAP/質問募集 https://t.co/kfibbI93tt #標どう塾 #塾長 #標どう盛岡"
+                                                        },
+                                                        "privacy": {
+                                                            "protected": false
+                                                        },
+                                                        "relationship_perspectives": {
+                                                            "following": false
+                                                        },
+                                                        "tipjar_settings": {},
+                                                        "verification": {
+                                                            "verified": false
+                                                        },
+                                                        "profile_description_language": "ja"
+                                                    }
+                                                }
+                                            },
+                                            "unmention_data": {},
+                                            "edit_control": {
+                                                "edit_tweet_ids": [
+                                                    "2011645200138191116"
+                                                ],
+                                                "editable_until_msecs": "1768452164000",
+                                                "is_edit_eligible": true,
+                                                "edits_remaining": "5"
+                                            },
+                                            "is_translatable": true,
+                                            "views": {
+                                                "count": "119239",
+                                                "state": "EnabledWithCount"
+                                            },
+                                            "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+                                            "grok_analysis_button": true,
+                                            "quoted_status_result": {
+                                                "result": {
+                                                    "__typename": "TweetWithVisibilityResults",
+                                                    "tweet": {
+                                                        "rest_id": "2011245577095504337",
+                                                        "has_birdwatch_notes": false,
+                                                        "core": {
+                                                            "user_results": {
+                                                                "result": {
+                                                                    "__typename": "User",
+                                                                    "id": "VXNlcjoxNjQ0NTQ4MDMwOTA4MjAzMDA5",
+                                                                    "rest_id": "1644548030908203009",
+                                                                    "affiliates_highlighted_label": {},
+                                                                    "avatar": {
+                                                                        "image_url": "https://pbs.twimg.com/profile_images/1644552402148945920/p3o9F9HH_normal.jpg"
+                                                                    },
+                                                                    "core": {
+                                                                        "created_at": "Sat Apr 08 03:49:54 +0000 2023",
+                                                                        "name": "hayakawa@localstaff",
+                                                                        "screen_name": "sa_hayakawa"
+                                                                    },
+                                                                    "dm_permissions": {
+                                                                        "can_dm": true
+                                                                    },
+                                                                    "follow_request_sent": false,
+                                                                    "has_graduated_access": true,
+                                                                    "is_blue_verified": true,
+                                                                    "legacy": {
+                                                                        "default_profile": true,
+                                                                        "default_profile_image": false,
+                                                                        "description": "外資系ITゆるキャリ | チャージで動く人 | 自社サ|アーキとデリバリ | PMP所持 | 生粋の日本人 | 都民 | コンサルでもプログラマーでもありません",
+                                                                        "entities": {
+                                                                            "description": {
+                                                                                "urls": []
+                                                                            }
+                                                                        },
+                                                                        "fast_followers_count": 0,
+                                                                        "favourites_count": 45327,
+                                                                        "followers_count": 467,
+                                                                        "friends_count": 275,
+                                                                        "has_custom_timelines": false,
+                                                                        "is_translator": false,
+                                                                        "listed_count": 3,
+                                                                        "media_count": 539,
+                                                                        "normal_followers_count": 467,
+                                                                        "pinned_tweet_ids_str": [
+                                                                            "1977130511656272328"
+                                                                        ],
+                                                                        "possibly_sensitive": false,
+                                                                        "profile_banner_url": "https://pbs.twimg.com/profile_banners/1644548030908203009/1722697950",
+                                                                        "profile_interstitial_type": "",
+                                                                        "statuses_count": 7565,
+                                                                        "translator_type": "none",
+                                                                        "want_retweets": false,
+                                                                        "withheld_in_countries": []
+                                                                    },
+                                                                    "location": {
+                                                                        "location": "Tokyo"
+                                                                    },
+                                                                    "media_permissions": {
+                                                                        "can_media_tag": true
+                                                                    },
+                                                                    "parody_commentary_fan_label": "None",
+                                                                    "profile_image_shape": "Circle",
+                                                                    "profile_bio": {
+                                                                        "description": "外資系ITゆるキャリ | チャージで動く人 | 自社サ|アーキとデリバリ | PMP所持 | 生粋の日本人 | 都民 | コンサルでもプログラマーでもありません"
+                                                                    },
+                                                                    "privacy": {
+                                                                        "protected": false
+                                                                    },
+                                                                    "relationship_perspectives": {
+                                                                        "following": false
+                                                                    },
+                                                                    "tipjar_settings": {},
+                                                                    "verification": {
+                                                                        "verified": false
+                                                                    },
+                                                                    "profile_description_language": "ja"
+                                                                }
+                                                            }
+                                                        },
+                                                        "unmention_data": {},
+                                                        "edit_control": {
+                                                            "initial_tweet_id": "2011244581560730080",
+                                                            "edit_control_initial": {
+                                                                "edit_tweet_ids": [
+                                                                    "2011244581560730080",
+                                                                    "2011244801392594949",
+                                                                    "2011245577095504337"
+                                                                ],
+                                                                "editable_until_msecs": "1768356650000",
+                                                                "is_edit_eligible": false,
+                                                                "edits_remaining": "3"
+                                                            }
+                                                        },
+                                                        "previous_counts": {
+                                                            "bookmark_count": 0,
+                                                            "favorite_count": 0,
+                                                            "quote_count": 0,
+                                                            "reply_count": 0,
+                                                            "retweet_count": 0
+                                                        },
+                                                        "is_translatable": true,
+                                                        "views": {
+                                                            "count": "410884",
+                                                            "state": "EnabledWithCount"
+                                                        },
+                                                        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+                                                        "grok_analysis_button": true,
+                                                        "quotedRefResult": {
+                                                            "result": {
+                                                                "__typename": "Tweet",
+                                                                "rest_id": "2011030463675244589"
+                                                            }
+                                                        },
+                                                        "legacy": {
+                                                            "bookmark_count": 302,
+                                                            "bookmarked": false,
+                                                            "created_at": "Wed Jan 14 01:14:47 +0000 2026",
+                                                            "conversation_control": {
+                                                                "policy": "Verified",
+                                                                "conversation_owner_results": {
+                                                                    "result": {
+                                                                        "__typename": "User",
+                                                                        "core": {
+                                                                            "screen_name": "sa_hayakawa"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "conversation_id_str": "2011245577095504337",
+                                                            "display_text_range": [
+                                                                0,
+                                                                105
+                                                            ],
+                                                            "entities": {
+                                                                "hashtags": [],
+                                                                "symbols": [],
+                                                                "timestamps": [],
+                                                                "urls": [],
+                                                                "user_mentions": []
+                                                            },
+                                                            "favorite_count": 1098,
+                                                            "favorited": false,
+                                                            "full_text": "これ、PM/PMOが仕事をしていないってことだよ。\n\nPM/PMOが客に「仕様確定が期日に間に合わない場合は納期も延期となります。また、仕様変更の内容によっては、開発期間も延長します」と釘を刺さないとダメだよ。",
+                                                            "is_quote_status": true,
+                                                            "lang": "ja",
+                                                            "quote_count": 52,
+                                                            "quoted_status_id_str": "2011030463675244589",
+                                                            "quoted_status_permalink": {
+                                                                "url": "https://t.co/P6TGQcNA7o",
+                                                                "expanded": "https://twitter.com/nxt_gen_eng/status/2011030463675244589",
+                                                                "display": "x.com/nxt_gen_eng/st…"
+                                                            },
+                                                            "reply_count": 3,
+                                                            "retweet_count": 211,
+                                                            "retweeted": false,
+                                                            "user_id_str": "1644548030908203009",
+                                                            "id_str": "2011245577095504337"
+                                                        }
+                                                    },
+                                                    "limitedActionResults": {
+                                                        "limited_actions": [
+                                                            {
+                                                                "action": "Reply",
+                                                                "prompt": {
+                                                                    "__typename": "CtaLimitedActionPrompt",
+                                                                    "cta_type": "SeeConversation",
+                                                                    "headline": {
+                                                                        "text": "Who can reply?",
+                                                                        "entities": []
+                                                                    },
+                                                                    "subtext": {
+                                                                        "text": "People the author mentioned can reply",
+                                                                        "entities": []
+                                                                    }
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "legacy": {
+                                                "bookmark_count": 46,
+                                                "bookmarked": false,
+                                                "created_at": "Thu Jan 15 03:42:44 +0000 2026",
+                                                "conversation_id_str": "2011645200138191116",
+                                                "display_text_range": [
+                                                    0,
+                                                    20
+                                                ],
+                                                "entities": {
+                                                    "hashtags": [],
+                                                    "symbols": [],
+                                                    "timestamps": [],
+                                                    "urls": [],
+                                                    "user_mentions": []
+                                                },
+                                                "favorite_count": 320,
+                                                "favorited": false,
+                                                "full_text": "自治体基幹システムではその考え通用しねぇ",
+                                                "is_quote_status": true,
+                                                "lang": "ja",
+                                                "quote_count": 6,
+                                                "quoted_status_id_str": "2011245577095504337",
+                                                "quoted_status_permalink": {
+                                                    "url": "https://t.co/Xd79Y8aY8r",
+                                                    "expanded": "https://twitter.com/sa_hayakawa/status/2011245577095504337",
+                                                    "display": "x.com/sa_hayakawa/st…"
+                                                },
+                                                "reply_count": 2,
+                                                "retweet_count": 41,
+                                                "retweeted": false,
+                                                "user_id_str": "1707322607698432000",
+                                                "id_str": "2011645200138191116"
+                                            },
+                                            "quick_promote_eligibility": {
+                                                "eligibility": "IneligibleNotProfessional"
+                                            }
+                                        }
+                                    },
+                                    "tweetDisplayType": "Tweet"
+                                },
+                                "clientEventInfo": {
+                                    "component": "tweet",
+                                    "element": "tweet"
+                                }
+                            }
+                        },
+                        {
+                            "entryId": "conversationthread-2011788042458296789",
+                            "sortIndex": "2012125751402299382",
+                            "content": {
+                                "entryType": "TimelineTimelineModule",
+                                "__typename": "TimelineTimelineModule",
+                                "items": [
+                                    {
+                                        "entryId": "conversationthread-2011788042458296789-tweet-2011788042458296789",
+                                        "item": {
+                                            "itemContent": {
+                                                "itemType": "TimelineTweet",
+                                                "__typename": "TimelineTweet",
+                                                "tweet_results": {
+                                                    "result": {
+                                                        "__typename": "Tweet",
+                                                        "rest_id": "2011788042458296789",
+                                                        "has_birdwatch_notes": false,
+                                                        "core": {
+                                                            "user_results": {
+                                                                "result": {
+                                                                    "__typename": "User",
+                                                                    "id": "VXNlcjoxNjIzODAzNDE2MTY5NTcwMzA1",
+                                                                    "rest_id": "1623803416169570305",
+                                                                    "affiliates_highlighted_label": {},
+                                                                    "avatar": {
+                                                                        "image_url": "https://pbs.twimg.com/profile_images/2007021396078309377/xd8Nhfxf_normal.jpg"
+                                                                    },
+                                                                    "core": {
+                                                                        "created_at": "Thu Feb 09 21:58:07 +0000 2023",
+                                                                        "name": "灰音",
+                                                                        "screen_name": "GrayGhost32768"
+                                                                    },
+                                                                    "dm_permissions": {
+                                                                        "can_dm": false
+                                                                    },
+                                                                    "follow_request_sent": false,
+                                                                    "has_graduated_access": true,
+                                                                    "is_blue_verified": false,
+                                                                    "legacy": {
+                                                                        "default_profile": true,
+                                                                        "default_profile_image": false,
+                                                                        "description": "IT何でもやらされる屋さん オキモチーズは回れ右！ハウス！",
+                                                                        "entities": {
+                                                                            "description": {
+                                                                                "urls": []
+                                                                            }
+                                                                        },
+                                                                        "fast_followers_count": 0,
+                                                                        "favourites_count": 40804,
+                                                                        "followers_count": 1225,
+                                                                        "friends_count": 613,
+                                                                        "has_custom_timelines": true,
+                                                                        "is_translator": false,
+                                                                        "listed_count": 13,
+                                                                        "media_count": 3331,
+                                                                        "normal_followers_count": 1225,
+                                                                        "pinned_tweet_ids_str": [],
+                                                                        "possibly_sensitive": false,
+                                                                        "profile_banner_url": "https://pbs.twimg.com/profile_banners/1623803416169570305/1762729428",
+                                                                        "profile_interstitial_type": "",
+                                                                        "statuses_count": 52514,
+                                                                        "translator_type": "none",
+                                                                        "want_retweets": false,
+                                                                        "withheld_in_countries": []
+                                                                    },
+                                                                    "location": {
+                                                                        "location": "0と1の間"
+                                                                    },
+                                                                    "media_permissions": {
+                                                                        "can_media_tag": false
+                                                                    },
+                                                                    "parody_commentary_fan_label": "None",
+                                                                    "profile_image_shape": "Circle",
+                                                                    "profile_bio": {
+                                                                        "description": "IT何でもやらされる屋さん オキモチーズは回れ右！ハウス！"
+                                                                    },
+                                                                    "privacy": {
+                                                                        "protected": false
+                                                                    },
+                                                                    "relationship_perspectives": {
+                                                                        "following": false
+                                                                    },
+                                                                    "tipjar_settings": {},
+                                                                    "verification": {
+                                                                        "verified": false
+                                                                    },
+                                                                    "profile_description_language": "ja"
+                                                                }
+                                                            }
+                                                        },
+                                                        "unmention_data": {},
+                                                        "edit_control": {
+                                                            "edit_tweet_ids": [
+                                                                "2011788042458296789"
+                                                            ],
+                                                            "editable_until_msecs": "1768486221000",
+                                                            "is_edit_eligible": false,
+                                                            "edits_remaining": "5"
+                                                        },
+                                                        "is_translatable": true,
+                                                        "views": {
+                                                            "count": "4658",
+                                                            "state": "EnabledWithCount"
+                                                        },
+                                                        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+                                                        "grok_analysis_button": true,
+                                                        "legacy": {
+                                                            "bookmark_count": 1,
+                                                            "bookmarked": false,
+                                                            "created_at": "Thu Jan 15 13:10:21 +0000 2026",
+                                                            "conversation_id_str": "2011645200138191116",
+                                                            "display_text_range": [
+                                                                13,
+                                                                42
+                                                            ],
+                                                            "entities": {
+                                                                "hashtags": [],
+                                                                "symbols": [],
+                                                                "timestamps": [],
+                                                                "urls": [],
+                                                                "user_mentions": [
+                                                                    {
+                                                                        "id_str": "1707322607698432000",
+                                                                        "name": "標準化どうしましょう",
+                                                                        "screen_name": "local_devya",
+                                                                        "indices": [
+                                                                            0,
+                                                                            12
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "favorite_count": 8,
+                                                            "favorited": false,
+                                                            "full_text": "@local_devya 法施行日とか補助金の条件とか知らない解像度の方々ですから。",
+                                                            "in_reply_to_screen_name": "local_devya",
+                                                            "in_reply_to_status_id_str": "2011645200138191116",
+                                                            "in_reply_to_user_id_str": "1707322607698432000",
+                                                            "is_quote_status": false,
+                                                            "lang": "ja",
+                                                            "quote_count": 0,
+                                                            "reply_count": 0,
+                                                            "retweet_count": 0,
+                                                            "retweeted": false,
+                                                            "user_id_str": "1623803416169570305",
+                                                            "id_str": "2011788042458296789"
+                                                        },
+                                                        "quick_promote_eligibility": {
+                                                            "eligibility": "IneligibleNotProfessional"
+                                                        }
+                                                    }
+                                                },
+                                                "tweetDisplayType": "Tweet"
+                                            },
+                                            "clientEventInfo": {
+                                                "component": "tweet",
+                                                "element": "tweet",
+                                                "details": {
+                                                    "conversationDetails": {
+                                                        "conversationSection": "HighQuality"
+                                                    },
+                                                    "timelinesDetails": {
+                                                        "controllerData": "DAACDAAEDAABCgABAAAAAAAAAAEKAAIAAAAAAAAAAAoAAwAAAZvGk9qCAAAAAA=="
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ],
+                                "metadata": {
+                                    "conversationMetadata": {
+                                        "allTweetIds": [
+                                            "2011788042458296789"
+                                        ],
+                                        "enableDeduplication": true
+                                    }
+                                },
+                                "displayType": "VerticalConversation",
+                                "clientEventInfo": {
+                                    "component": "tweet",
+                                    "details": {
+                                        "conversationDetails": {
+                                            "conversationSection": "HighQuality"
+                                        },
+                                        "timelinesDetails": {
+                                            "controllerData": "DAACDAAEDAABCgABAAAAAAAAAAEKAAIAAAAAAAAAAAoAAwAAAZvGk9qCAAAAAA=="
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "entryId": "tweetdetailrelatedtweets-2012082931246964859",
+                            "sortIndex": "2012125751402299372",
+                            "content": {
+                                "entryType": "TimelineTimelineModule",
+                                "__typename": "TimelineTimelineModule",
+                                "items": [
+                                    {
+                                        "entryId": "tweetdetailrelatedtweets-2012082931246964859-tweet-2012082931246964859",
+                                        "item": {
+                                            "itemContent": {
+                                                "itemType": "TimelineTweet",
+                                                "__typename": "TimelineTweet",
+                                                "tweet_results": {
+                                                    "result": {
+                                                        "__typename": "Tweet",
+                                                        "rest_id": "2012082931246964859",
+                                                        "has_birdwatch_notes": false,
+                                                        "core": {
+                                                            "user_results": {
+                                                                "result": {
+                                                                    "__typename": "User",
+                                                                    "id": "VXNlcjozNzE5Njk4MDky",
+                                                                    "rest_id": "3719698092",
+                                                                    "affiliates_highlighted_label": {},
+                                                                    "avatar": {
+                                                                        "image_url": "https://pbs.twimg.com/profile_images/1968751107204870144/zX9C34gl_normal.jpg"
+                                                                    },
+                                                                    "core": {
+                                                                        "created_at": "Mon Sep 28 23:37:00 +0000 2015",
+                                                                        "name": "セラ",
+                                                                        "screen_name": "mteg_dmesg"
+                                                                    },
+                                                                    "dm_permissions": {
+                                                                        "can_dm": false
+                                                                    },
+                                                                    "follow_request_sent": false,
+                                                                    "has_graduated_access": true,
+                                                                    "is_blue_verified": false,
+                                                                    "legacy": {
+                                                                        "default_profile": true,
+                                                                        "default_profile_image": false,
+                                                                        "description": "#FF14 チョコボ鯖で踊り子と公務員の情報施策担当を兼務しています。 #beatmania IIDX-ID 7457-7898 beatmania専コン自作勢 公務員辞めたいマン！#ゆるキャン△",
+                                                                        "entities": {
+                                                                            "description": {
+                                                                                "urls": []
+                                                                            }
+                                                                        },
+                                                                        "fast_followers_count": 0,
+                                                                        "favourites_count": 12312,
+                                                                        "followers_count": 1107,
+                                                                        "friends_count": 791,
+                                                                        "has_custom_timelines": true,
+                                                                        "is_translator": false,
+                                                                        "listed_count": 15,
+                                                                        "media_count": 7696,
+                                                                        "normal_followers_count": 1107,
+                                                                        "pinned_tweet_ids_str": [
+                                                                            "942154596557889536"
+                                                                        ],
+                                                                        "possibly_sensitive": false,
+                                                                        "profile_interstitial_type": "",
+                                                                        "statuses_count": 80282,
+                                                                        "translator_type": "none",
+                                                                        "want_retweets": false,
+                                                                        "withheld_in_countries": []
+                                                                    },
+                                                                    "location": {
+                                                                        "location": "アルストツカ国 東グレスティン"
+                                                                    },
+                                                                    "media_permissions": {
+                                                                        "can_media_tag": false
+                                                                    },
+                                                                    "parody_commentary_fan_label": "None",
+                                                                    "profile_image_shape": "Circle",
+                                                                    "profile_bio": {
+                                                                        "description": "#FF14 チョコボ鯖で踊り子と公務員の情報施策担当を兼務しています。 #beatmania IIDX-ID 7457-7898 beatmania専コン自作勢 公務員辞めたいマン！#ゆるキャン△"
+                                                                    },
+                                                                    "privacy": {
+                                                                        "protected": false
+                                                                    },
+                                                                    "relationship_perspectives": {
+                                                                        "following": false
+                                                                    },
+                                                                    "tipjar_settings": {},
+                                                                    "verification": {
+                                                                        "verified": false
+                                                                    },
+                                                                    "profile_description_language": "ja"
+                                                                }
+                                                            }
+                                                        },
+                                                        "unmention_data": {},
+                                                        "edit_control": {
+                                                            "edit_tweet_ids": [
+                                                                "2012082931246964859"
+                                                            ],
+                                                            "editable_until_msecs": "1768556528000",
+                                                            "is_edit_eligible": true,
+                                                            "edits_remaining": "5"
+                                                        },
+                                                        "is_translatable": true,
+                                                        "views": {
+                                                            "count": "6640",
+                                                            "state": "EnabledWithCount"
+                                                        },
+                                                        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+                                                        "grok_analysis_button": true,
+                                                        "legacy": {
+                                                            "bookmark_count": 7,
+                                                            "bookmarked": false,
+                                                            "created_at": "Fri Jan 16 08:42:08 +0000 2026",
+                                                            "conversation_id_str": "2012082931246964859",
+                                                            "display_text_range": [
+                                                                0,
+                                                                133
+                                                            ],
+                                                            "entities": {
+                                                                "hashtags": [],
+                                                                "symbols": [],
+                                                                "timestamps": [],
+                                                                "urls": [],
+                                                                "user_mentions": []
+                                                            },
+                                                            "favorite_count": 101,
+                                                            "favorited": false,
+                                                            "full_text": "30分住民記録システム系が止まった\n先程、営業担当、課長さん、部長さんが顔を青ざめて謝罪に来た\n課長さんはすごくしっかりしてる方なので、再発防止策は…と説明してくれたけども\n\n僕は一言\n行政が完璧を求めすぎです。\n一年間で30分の停止。優秀です。金融じゃあるまいしw",
+                                                            "is_quote_status": false,
+                                                            "lang": "ja",
+                                                            "quote_count": 11,
+                                                            "reply_count": 0,
+                                                            "retweet_count": 9,
+                                                            "retweeted": false,
+                                                            "user_id_str": "3719698092",
+                                                            "id_str": "2012082931246964859"
+                                                        },
+                                                        "quick_promote_eligibility": {
+                                                            "eligibility": "IneligibleNotProfessional"
+                                                        }
+                                                    }
+                                                },
+                                                "tweetDisplayType": "Tweet"
+                                            },
+                                            "clientEventInfo": {
+                                                "component": "related_tweet",
+                                                "element": "tweet",
+                                                "details": {
+                                                    "conversationDetails": {
+                                                        "conversationSection": "RelatedTweet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "entryId": "tweetdetailrelatedtweets-2012082931246964859-tweet-2012006330920562763",
+                                        "item": {
+                                            "itemContent": {
+                                                "itemType": "TimelineTweet",
+                                                "__typename": "TimelineTweet",
+                                                "tweet_results": {
+                                                    "result": {
+                                                        "__typename": "Tweet",
+                                                        "rest_id": "2012006330920562763",
+                                                        "has_birdwatch_notes": false,
+                                                        "core": {
+                                                            "user_results": {
+                                                                "result": {
+                                                                    "__typename": "User",
+                                                                    "id": "VXNlcjoxMzAzOTc5MjY5NTYzOTI4NTc2",
+                                                                    "rest_id": "1303979269563928576",
+                                                                    "affiliates_highlighted_label": {},
+                                                                    "avatar": {
+                                                                        "image_url": "https://pbs.twimg.com/profile_images/2006381783093510144/XlbRCkhx_normal.jpg"
+                                                                    },
+                                                                    "core": {
+                                                                        "created_at": "Thu Sep 10 08:51:17 +0000 2020",
+                                                                        "name": "高橋　広和/Hirokazu TAKAHASHI",
+                                                                        "screen_name": "techniczna"
+                                                                    },
+                                                                    "dm_permissions": {
+                                                                        "can_dm": false
+                                                                    },
+                                                                    "follow_request_sent": false,
+                                                                    "has_graduated_access": true,
+                                                                    "is_blue_verified": true,
+                                                                    "legacy": {
+                                                                        "default_profile": true,
+                                                                        "default_profile_image": false,
+                                                                        "description": "名古屋市総務局デジタル改革推進課/ガバクラCoE/ #共創PF アンバサダー/ #Gov_JAWS /ENTJ-A/ポスト内容は全て個人の意見や感想等であり、所属する地方公共団体の公式見解ではありません\n資格試験 @techniczna2 #ドルフロ２ @seria_lodoss\n\n↓詳細はこちら",
+                                                                        "entities": {
+                                                                            "description": {
+                                                                                "urls": []
+                                                                            },
+                                                                            "url": {
+                                                                                "urls": [
+                                                                                    {
+                                                                                        "display_url": "note.com/techniczna/",
+                                                                                        "expanded_url": "https://note.com/techniczna/",
+                                                                                        "url": "https://t.co/O289fYlVkW",
+                                                                                        "indices": [
+                                                                                            0,
+                                                                                            23
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        "fast_followers_count": 0,
+                                                                        "favourites_count": 108620,
+                                                                        "followers_count": 4586,
+                                                                        "friends_count": 552,
+                                                                        "has_custom_timelines": true,
+                                                                        "is_translator": false,
+                                                                        "listed_count": 69,
+                                                                        "media_count": 4313,
+                                                                        "normal_followers_count": 4586,
+                                                                        "pinned_tweet_ids_str": [
+                                                                            "2010584846968746322"
+                                                                        ],
+                                                                        "possibly_sensitive": false,
+                                                                        "profile_banner_url": "https://pbs.twimg.com/profile_banners/1303979269563928576/1767193669",
+                                                                        "profile_interstitial_type": "",
+                                                                        "statuses_count": 48276,
+                                                                        "translator_type": "none",
+                                                                        "url": "https://t.co/O289fYlVkW",
+                                                                        "want_retweets": false,
+                                                                        "withheld_in_countries": []
+                                                                    },
+                                                                    "location": {
+                                                                        "location": "名古屋市"
+                                                                    },
+                                                                    "media_permissions": {
+                                                                        "can_media_tag": false
+                                                                    },
+                                                                    "parody_commentary_fan_label": "None",
+                                                                    "profile_image_shape": "Circle",
+                                                                    "professional": {
+                                                                        "rest_id": "1563887281580425216",
+                                                                        "professional_type": "Creator",
+                                                                        "category": [
+                                                                            {
+                                                                                "id": 984,
+                                                                                "name": "云服务和解决方案",
+                                                                                "icon_name": "IconBriefcaseStroke"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "profile_bio": {
+                                                                        "description": "名古屋市総務局デジタル改革推進課/ガバクラCoE/ #共創PF アンバサダー/ #Gov_JAWS /ENTJ-A/ポスト内容は全て個人の意見や感想等であり、所属する地方公共団体の公式見解ではありません\n資格試験 @techniczna2 #ドルフロ２ @seria_lodoss\n\n↓詳細はこちら"
+                                                                    },
+                                                                    "privacy": {
+                                                                        "protected": false
+                                                                    },
+                                                                    "relationship_perspectives": {
+                                                                        "following": false
+                                                                    },
+                                                                    "tipjar_settings": {},
+                                                                    "verification": {
+                                                                        "verified": false
+                                                                    },
+                                                                    "profile_description_language": "ja"
+                                                                }
+                                                            }
+                                                        },
+                                                        "unmention_data": {},
+                                                        "edit_control": {
+                                                            "edit_tweet_ids": [
+                                                                "2012006330920562763"
+                                                            ],
+                                                            "editable_until_msecs": "1768538265000",
+                                                            "is_edit_eligible": true,
+                                                            "edits_remaining": "5"
+                                                        },
+                                                        "is_translatable": true,
+                                                        "views": {
+                                                            "count": "1587",
+                                                            "state": "EnabledWithCount"
+                                                        },
+                                                        "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+                                                        "grok_analysis_button": true,
+                                                        "legacy": {
+                                                            "bookmark_count": 1,
+                                                            "bookmarked": false,
+                                                            "created_at": "Fri Jan 16 03:37:45 +0000 2026",
+                                                            "conversation_id_str": "2012006330920562763",
+                                                            "display_text_range": [
+                                                                0,
+                                                                138
+                                                            ],
+                                                            "entities": {
+                                                                "hashtags": [],
+                                                                "symbols": [],
+                                                                "timestamps": [],
+                                                                "urls": [],
+                                                                "user_mentions": []
+                                                            },
+                                                            "favorite_count": 31,
+                                                            "favorited": false,
+                                                            "full_text": "あの判決から解釈すると、\n例えば新規参入事業者が「やれます！」って落札して「無理でした！」って投げだしたら違約金とか指名停止とかのペナルティを与えても住民サービスへの影響は免れないから、競争入札に適さない\nという理由でシステム関係全部随意契約に出来るように思える(´・ω・｀)",
+                                                            "is_quote_status": false,
+                                                            "lang": "ja",
+                                                            "quote_count": 1,
+                                                            "reply_count": 0,
+                                                            "retweet_count": 5,
+                                                            "retweeted": false,
+                                                            "user_id_str": "1303979269563928576",
+                                                            "id_str": "2012006330920562763"
+                                                        },
+                                                        "quick_promote_eligibility": {
+                                                            "eligibility": "IneligibleNotProfessional"
+                                                        }
+                                                    }
+                                                },
+                                                "tweetDisplayType": "Tweet"
+                                            },
+                                            "clientEventInfo": {
+                                                "component": "related_tweet",
+                                                "element": "tweet",
+                                                "details": {
+                                                    "conversationDetails": {
+                                                        "conversationSection": "RelatedTweet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "entryId": "tweetdetailrelatedtweets-2012082931246964859-tweet-2011999363514691990",
+                                        "item": {
+                                            "itemContent": {
+                                                "itemType": "TimelineTweet",
+                                                "__typename": "TimelineTweet",
+                                                "tweet_results": {
+                                                    "result": {
+                                                        "__typename": "Tweet",
+                                                        "rest_id": "2011999363514691990",
+                                                        "has_birdwatch_notes": false,
+                                                        "core": {
+                                                            "user_results": {
+                                                                "result": {
+                                                                    "__typename": "User",
+                                                                    "id": "VXNlcjoxMjgyMjcyOTc4Mzc0Mjk1NTUz",
+                                                                    "rest_id": "1282272978374295553",
+                                                                    "affiliates_highlighted_label": {},
+                                                                    "avatar": {
+                                                                        "image_url": "https://pbs.twimg.com/profile_images/1985193175548674048/FkhHnCJy_normal.jpg"
+                                                                    },
+                                                                    "core": {
+                                                                        "created_at": "Sun Jul 12 11:18:19 +0000 2020",
+                                                                        "name": "ヒカセン公務員",
+                                                                        "screen_name": "toaruhokkaido"
+                                                                    },
+                                                                    "dm_permissions": {
+                                                                        "can_dm": false
+                                                                    },
+                                                                    "follow_request_sent": false,
+                                                                    "has_graduated_access": true,
+                                                                    "is_blue_verified": true,
+                                                                    "legacy": {
+                                                                        "default_profile": true,
+                                                                        "default_profile_image": false,
+                                                                        "description": "田舎のイチ公務員としてデジタルの名のつくものはすべて背負いつつシステム標準化も担当してます。個人的標準化基本方針は、「認められる範囲で最適または負担の少ない選択肢をとり事業を乗り越える」です。ここでの発言はあくまで個人の見解です。",
+                                                                        "entities": {
+                                                                            "description": {
+                                                                                "urls": []
+                                                                            }
+                                                                        },
+                                                                        "fast_followers_count": 0,
+                                                                        "favourites_count": 32738,
+                                                                        "followers_count": 981,
+                                                                        "friends_count": 333,
+                                                                        "has_custom_timelines": false,
+                                                                        "is_translator": false,
+                                                                        "listed_count": 18,
+                                                                        "media_count": 219,
+                                                                        "normal_followers_count": 981,
+                                                                        "pinned_tweet_ids_str": [],
+                                                                        "possibly_sensitive": false,
+                                                                        "profile_banner_url": "https://pbs.twimg.com/profile_banners/1282272978374295553/1732267571",
+                                                                        "profile_interstitial_type": "",
+                                                                        "statuses_count": 3634,
+                                                                        "translator_type": "none",
+                                                                        "want_retweets": false,
+                                                                        "withheld_in_countries": []
+                                                                    },
+                                                                    "location": {
+                                                                        "location": ""
+                                                                    },
+                                                                    "media_permissions": {
+                                                                        "can_media_tag": true
+                                                                    },
+                                                                    "parody_commentary_fan_label": "None",
+                                                                    "profile_image_shape": "Circle",
+                                                                    "profile_bio": {
+                                                                        "description": "田舎のイチ公務員としてデジタルの名のつくものはすべて背負いつつシステム標準化も担当してます。個人的標準化基本方針は、「認められる範囲で最適または負担の少ない選択肢をとり事業を乗り越える」です。ここでの発言はあくまで個人の見解です。"
+                                                                    },
+                                                                    "privacy": {
+                                                                        "protected": false
+                                                                    },
+                                                                    "relationship_perspectives": {
+                                                                        "following": false
+                                                                    },
+                                                                    "tipjar_settings": {},
+                                                                    "verification": {
+                                                                        "verified": false
+                                                                    },
+                                                                    "profile_description_language": "ja"
+                                                                }
+                                                            }
+                                                        },
+                                                        "unmention_data": {},
+                                                        "edit_control": {
+                                                            "edit_tweet_ids": [
+                                                                "2011999363514691990"
+                                                            ],
+                                                            "editable_until_msecs": "1768536604000",
+                                                            "is_edit_eligible": true,
+                                                            "edits_remaining": "5"
+                                                        },
+                                                        "is_translatable": false,
+                                                        "views": {
+                                                            "count": "1523",
+                                                            "state": "EnabledWithCount"
+                                                        },
+                                                        "source": "<a href=\"http://twitter.com/download/android\" rel=\"nofollow\">Twitter for Android</a>",
+                                                        "grok_analysis_button": true,
+                                                        "quoted_status_result": {
+                                                            "result": {
+                                                                "__typename": "Tweet",
+                                                                "rest_id": "2011904082215387251",
+                                                                "has_birdwatch_notes": false,
+                                                                "core": {
+                                                                    "user_results": {
+                                                                        "result": {
+                                                                            "__typename": "User",
+                                                                            "id": "VXNlcjoxMzAzOTc5MjY5NTYzOTI4NTc2",
+                                                                            "rest_id": "1303979269563928576",
+                                                                            "affiliates_highlighted_label": {},
+                                                                            "avatar": {
+                                                                                "image_url": "https://pbs.twimg.com/profile_images/2006381783093510144/XlbRCkhx_normal.jpg"
+                                                                            },
+                                                                            "core": {
+                                                                                "created_at": "Thu Sep 10 08:51:17 +0000 2020",
+                                                                                "name": "高橋　広和/Hirokazu TAKAHASHI",
+                                                                                "screen_name": "techniczna"
+                                                                            },
+                                                                            "dm_permissions": {
+                                                                                "can_dm": false
+                                                                            },
+                                                                            "follow_request_sent": false,
+                                                                            "has_graduated_access": true,
+                                                                            "is_blue_verified": true,
+                                                                            "legacy": {
+                                                                                "default_profile": true,
+                                                                                "default_profile_image": false,
+                                                                                "description": "名古屋市総務局デジタル改革推進課/ガバクラCoE/ #共創PF アンバサダー/ #Gov_JAWS /ENTJ-A/ポスト内容は全て個人の意見や感想等であり、所属する地方公共団体の公式見解ではありません\n資格試験 @techniczna2 #ドルフロ２ @seria_lodoss\n\n↓詳細はこちら",
+                                                                                "entities": {
+                                                                                    "description": {
+                                                                                        "urls": []
+                                                                                    },
+                                                                                    "url": {
+                                                                                        "urls": [
+                                                                                            {
+                                                                                                "display_url": "note.com/techniczna/",
+                                                                                                "expanded_url": "https://note.com/techniczna/",
+                                                                                                "url": "https://t.co/O289fYlVkW",
+                                                                                                "indices": [
+                                                                                                    0,
+                                                                                                    23
+                                                                                                ]
+                                                                                            }
+                                                                                        ]
+                                                                                    }
+                                                                                },
+                                                                                "fast_followers_count": 0,
+                                                                                "favourites_count": 108620,
+                                                                                "followers_count": 4586,
+                                                                                "friends_count": 552,
+                                                                                "has_custom_timelines": true,
+                                                                                "is_translator": false,
+                                                                                "listed_count": 69,
+                                                                                "media_count": 4313,
+                                                                                "normal_followers_count": 4586,
+                                                                                "pinned_tweet_ids_str": [
+                                                                                    "2010584846968746322"
+                                                                                ],
+                                                                                "possibly_sensitive": false,
+                                                                                "profile_banner_url": "https://pbs.twimg.com/profile_banners/1303979269563928576/1767193669",
+                                                                                "profile_interstitial_type": "",
+                                                                                "statuses_count": 48276,
+                                                                                "translator_type": "none",
+                                                                                "url": "https://t.co/O289fYlVkW",
+                                                                                "want_retweets": false,
+                                                                                "withheld_in_countries": []
+                                                                            },
+                                                                            "location": {
+                                                                                "location": "名古屋市"
+                                                                            },
+                                                                            "media_permissions": {
+                                                                                "can_media_tag": false
+                                                                            },
+                                                                            "parody_commentary_fan_label": "None",
+                                                                            "profile_image_shape": "Circle",
+                                                                            "professional": {
+                                                                                "rest_id": "1563887281580425216",
+                                                                                "professional_type": "Creator",
+                                                                                "category": [
+                                                                                    {
+                                                                                        "id": 984,
+                                                                                        "name": "云服务和解决方案",
+                                                                                        "icon_name": "IconBriefcaseStroke"
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "profile_bio": {
+                                                                                "description": "名古屋市総務局デジタル改革推進課/ガバクラCoE/ #共創PF アンバサダー/ #Gov_JAWS /ENTJ-A/ポスト内容は全て個人の意見や感想等であり、所属する地方公共団体の公式見解ではありません\n資格試験 @techniczna2 #ドルフロ２ @seria_lodoss\n\n↓詳細はこちら"
+                                                                            },
+                                                                            "privacy": {
+                                                                                "protected": false
+                                                                            },
+                                                                            "relationship_perspectives": {
+                                                                                "following": false
+                                                                            },
+                                                                            "tipjar_settings": {},
+                                                                            "verification": {
+                                                                                "verified": false
+                                                                            },
+                                                                            "profile_description_language": "ja"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "unmention_data": {},
+                                                                "edit_control": {
+                                                                    "edit_tweet_ids": [
+                                                                        "2011904082215387251"
+                                                                    ],
+                                                                    "editable_until_msecs": "1768513887000",
+                                                                    "is_edit_eligible": false,
+                                                                    "edits_remaining": "5"
+                                                                },
+                                                                "is_translatable": true,
+                                                                "views": {
+                                                                    "count": "27831",
+                                                                    "state": "EnabledWithCount"
+                                                                },
+                                                                "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+                                                                "grok_analysis_button": true,
+                                                                "legacy": {
+                                                                    "bookmark_count": 22,
+                                                                    "bookmarked": false,
+                                                                    "created_at": "Thu Jan 15 20:51:27 +0000 2026",
+                                                                    "conversation_id_str": "2011904082215387251",
+                                                                    "display_text_range": [
+                                                                        0,
+                                                                        93
+                                                                    ],
+                                                                    "entities": {
+                                                                        "hashtags": [],
+                                                                        "symbols": [],
+                                                                        "timestamps": [],
+                                                                        "urls": [],
+                                                                        "user_mentions": []
+                                                                    },
+                                                                    "favorite_count": 385,
+                                                                    "favorited": false,
+                                                                    "full_text": "不謹慎な話だけど、頑張って行政がやりきってしまうと、実際要求がどんどんエスカレートするんで、一回大炎上して、なんらか政治サイドのルール作りに持って行った方が長期的には良いと思うんだよな。",
+                                                                    "is_quote_status": false,
+                                                                    "lang": "ja",
+                                                                    "quote_count": 15,
+                                                                    "reply_count": 4,
+                                                                    "retweet_count": 57,
+                                                                    "retweeted": false,
+                                                                    "user_id_str": "1303979269563928576",
+                                                                    "id_str": "2011904082215387251"
+                                                                }
+                                                            }
+                                                        },
+                                                        "legacy": {
+                                                            "bookmark_count": 0,
+                                                            "bookmarked": false,
+                                                            "created_at": "Fri Jan 16 03:10:04 +0000 2026",
+                                                            "conversation_id_str": "2011999363514691990",
+                                                            "display_text_range": [
+                                                                0,
+                                                                0
+                                                            ],
+                                                            "entities": {
+                                                                "hashtags": [],
+                                                                "media": [
+                                                                    {
+                                                                        "display_url": "pic.x.com/sjpSnMneNO",
+                                                                        "expanded_url": "https://x.com/toaruhokkaido/status/2011999363514691990/photo/1",
+                                                                        "id_str": "2011999360926826502",
+                                                                        "indices": [
+                                                                            0,
+                                                                            23
+                                                                        ],
+                                                                        "media_key": "3_2011999360926826502",
+                                                                        "media_url_https": "https://pbs.twimg.com/media/G-wOwjxbQAYAjxi.jpg",
+                                                                        "type": "photo",
+                                                                        "url": "https://t.co/sjpSnMneNO",
+                                                                        "ext_media_availability": {
+                                                                            "status": "Available"
+                                                                        },
+                                                                        "features": {
+                                                                            "large": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 305,
+                                                                                        "y": 14,
+                                                                                        "h": 315,
+                                                                                        "w": 315
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "medium": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 305,
+                                                                                        "y": 14,
+                                                                                        "h": 315,
+                                                                                        "w": 315
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "small": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 223,
+                                                                                        "y": 10,
+                                                                                        "h": 230,
+                                                                                        "w": 230
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "orig": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 305,
+                                                                                        "y": 14,
+                                                                                        "h": 315,
+                                                                                        "w": 315
+                                                                                    }
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        "sizes": {
+                                                                            "large": {
+                                                                                "h": 503,
+                                                                                "w": 928,
+                                                                                "resize": "fit"
+                                                                            },
+                                                                            "medium": {
+                                                                                "h": 503,
+                                                                                "w": 928,
+                                                                                "resize": "fit"
+                                                                            },
+                                                                            "small": {
+                                                                                "h": 369,
+                                                                                "w": 680,
+                                                                                "resize": "fit"
+                                                                            },
+                                                                            "thumb": {
+                                                                                "h": 150,
+                                                                                "w": 150,
+                                                                                "resize": "crop"
+                                                                            }
+                                                                        },
+                                                                        "original_info": {
+                                                                            "height": 503,
+                                                                            "width": 928,
+                                                                            "focus_rects": [
+                                                                                {
+                                                                                    "x": 0,
+                                                                                    "y": 0,
+                                                                                    "w": 898,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 4,
+                                                                                    "y": 0,
+                                                                                    "w": 503,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 35,
+                                                                                    "y": 0,
+                                                                                    "w": 441,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 129,
+                                                                                    "y": 0,
+                                                                                    "w": 252,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 0,
+                                                                                    "y": 0,
+                                                                                    "w": 928,
+                                                                                    "h": 503
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "media_results": {
+                                                                            "result": {
+                                                                                "media_key": "3_2011999360926826502"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ],
+                                                                "symbols": [],
+                                                                "timestamps": [],
+                                                                "urls": [],
+                                                                "user_mentions": []
+                                                            },
+                                                            "extended_entities": {
+                                                                "media": [
+                                                                    {
+                                                                        "display_url": "pic.x.com/sjpSnMneNO",
+                                                                        "expanded_url": "https://x.com/toaruhokkaido/status/2011999363514691990/photo/1",
+                                                                        "id_str": "2011999360926826502",
+                                                                        "indices": [
+                                                                            0,
+                                                                            23
+                                                                        ],
+                                                                        "media_key": "3_2011999360926826502",
+                                                                        "media_url_https": "https://pbs.twimg.com/media/G-wOwjxbQAYAjxi.jpg",
+                                                                        "type": "photo",
+                                                                        "url": "https://t.co/sjpSnMneNO",
+                                                                        "ext_media_availability": {
+                                                                            "status": "Available"
+                                                                        },
+                                                                        "features": {
+                                                                            "large": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 305,
+                                                                                        "y": 14,
+                                                                                        "h": 315,
+                                                                                        "w": 315
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "medium": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 305,
+                                                                                        "y": 14,
+                                                                                        "h": 315,
+                                                                                        "w": 315
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "small": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 223,
+                                                                                        "y": 10,
+                                                                                        "h": 230,
+                                                                                        "w": 230
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "orig": {
+                                                                                "faces": [
+                                                                                    {
+                                                                                        "x": 305,
+                                                                                        "y": 14,
+                                                                                        "h": 315,
+                                                                                        "w": 315
+                                                                                    }
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        "sizes": {
+                                                                            "large": {
+                                                                                "h": 503,
+                                                                                "w": 928,
+                                                                                "resize": "fit"
+                                                                            },
+                                                                            "medium": {
+                                                                                "h": 503,
+                                                                                "w": 928,
+                                                                                "resize": "fit"
+                                                                            },
+                                                                            "small": {
+                                                                                "h": 369,
+                                                                                "w": 680,
+                                                                                "resize": "fit"
+                                                                            },
+                                                                            "thumb": {
+                                                                                "h": 150,
+                                                                                "w": 150,
+                                                                                "resize": "crop"
+                                                                            }
+                                                                        },
+                                                                        "original_info": {
+                                                                            "height": 503,
+                                                                            "width": 928,
+                                                                            "focus_rects": [
+                                                                                {
+                                                                                    "x": 0,
+                                                                                    "y": 0,
+                                                                                    "w": 898,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 4,
+                                                                                    "y": 0,
+                                                                                    "w": 503,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 35,
+                                                                                    "y": 0,
+                                                                                    "w": 441,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 129,
+                                                                                    "y": 0,
+                                                                                    "w": 252,
+                                                                                    "h": 503
+                                                                                },
+                                                                                {
+                                                                                    "x": 0,
+                                                                                    "y": 0,
+                                                                                    "w": 928,
+                                                                                    "h": 503
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "media_results": {
+                                                                            "result": {
+                                                                                "media_key": "3_2011999360926826502"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "favorite_count": 20,
+                                                            "favorited": false,
+                                                            "full_text": "https://t.co/sjpSnMneNO",
+                                                            "is_quote_status": true,
+                                                            "lang": "zxx",
+                                                            "possibly_sensitive": false,
+                                                            "possibly_sensitive_editable": true,
+                                                            "quote_count": 0,
+                                                            "quoted_status_id_str": "2011904082215387251",
+                                                            "quoted_status_permalink": {
+                                                                "url": "https://t.co/cRO17hGbWe",
+                                                                "expanded": "https://twitter.com/techniczna/status/2011904082215387251",
+                                                                "display": "x.com/techniczna/sta…"
+                                                            },
+                                                            "reply_count": 0,
+                                                            "retweet_count": 1,
+                                                            "retweeted": false,
+                                                            "user_id_str": "1282272978374295553",
+                                                            "id_str": "2011999363514691990"
+                                                        },
+                                                        "quick_promote_eligibility": {
+                                                            "eligibility": "IneligibleNotProfessional"
+                                                        }
+                                                    }
+                                                },
+                                                "tweetDisplayType": "Tweet"
+                                            },
+                                            "clientEventInfo": {
+                                                "component": "related_tweet",
+                                                "element": "tweet",
+                                                "details": {
+                                                    "conversationDetails": {
+                                                        "conversationSection": "RelatedTweet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "entryId": "tweetdetailrelatedtweets-2012082931246964859-tweet-2011968495865774246",
+                                        "item": {
+                                            "itemContent": {
+                                                "itemType": "TimelineTweet",
+                                                "__typename": "TimelineTweet",
+                                                "tweet_results": {
+                                                    "result": {
+                                                        "__typename": "Tweet",
+                                                        "rest_id": "2011968495865774246",
+                                                        "has_birdwatch_notes": false,
+                                                        "core": {
+                                                            "user_results": {
+                                                                "result": {
+                                                                    "__typename": "User",
+                                                                    "id": "VXNlcjoxMTMyMDYwNTY=",
+                                                                    "rest_id": "113206056",
+                                                                    "affiliates_highlighted_label": {},
+                                                                    "avatar": {
+                                                                        "image_url": "https://pbs.twimg.com/profile_images/1989880988684759040/w82V6QVW_normal.jpg"
+                                                                    },
+                                                                    "core": {
+                                                                        "created_at": "Thu Feb 11 01:51:58 +0000 2010",
+                                                                        "name": "HAMUUUU｜官と民の翻訳家",
+                                                                        "screen_name": "sky621hnd"
+                                                                    },
+                                                                    "dm_permissions": {
+                                                                        "can_dm": true
+                                                                    },
+                                                                    "follow_request_sent": false,
+                                                                    "has_graduated_access": true,
+                                                                    "is_blue_verified": true,
+                                                                    "legacy": {
+                                                                        "default_profile": false,
+                                                                        "default_profile_image": false,
+                                                                        "description": "霞が関を卒業して、現在は民間の荒波で修行中。\n官と民の「理屈の違い」や、組織の力学についてブツブツ言います。\n歴史と台湾への逃避行が癒やし。",
+                                                                        "entities": {
+                                                                            "description": {
+                                                                                "urls": []
+                                                                            }
+                                                                        },
+                                                                        "fast_followers_count": 0,
+                                                                        "favourites_count": 12496,
+                                                                        "followers_count": 987,
+                                                                        "friends_count": 168,
+                                                                        "has_custom_timelines": false,
+                                                                        "is_translator": false,
+                                                                        "listed_count": 12,
+                                                                        "media_count": 3048,
+                                                                        "normal_followers_count": 987,
+                                                                        "pinned_tweet_ids_str": [
+                                                                            "2000034123130519979"
+                                                                        ],
+                                                                        "possibly_sensitive": false,
+                                                                        "profile_banner_url": "https://pbs.twimg.com/profile_banners/113206056/1748617474",
+                                                                        "profile_interstitial_type": "",
+                                                                        "statuses_count": 36485,
+                                                                        "translator_type": "none",
+                                                                        "want_retweets": false,
+                                                                        "withheld_in_countries": []
+                                                                    },
+                                                                    "location": {
+                                                                        "location": "東京↔️地方↔️台湾"
+                                                                    },
+                                                                    "media_permissions": {
+                                                                        "can_media_tag": false
+                                                                    },
+                                                                    "parody_commentary_fan_label": "None",
+                                                                    "profile_image_shape": "Circle",
+                                                                    "professional": {
+                                                                        "rest_id": "1825096637133603267",
+                                                                        "professional_type": "Creator",
+                                                                        "category": [
+                                                                            {
+                                                                                "id": 477,
+                                                                                "name": "专业服务",
+                                                                                "icon_name": "IconBriefcaseStroke"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "profile_bio": {
+                                                                        "description": "霞が関を卒業して、現在は民間の荒波で修行中。\n官と民の「理屈の違い」や、組織の力学についてブツブツ言います。\n歴史と台湾への逃避行が癒やし。"
+                                                                    },
+                                                                    "privacy": {
+                                                                        "protected": false
+                                                                    },
+                                                                    "relationship_perspectives": {
+                                                                        "following": false
+                                                                    },
+                                                                    "tipjar_settings": {
+                                                                        "is_enabled": true
+                                                                    },
+                                                                    "verification": {
+                                                                        "verified": false
+                                                                    },
+                                                                    "profile_description_language": "ja"
+                                                                }
+                                                            }
+                                                        },
+                                                        "unmention_data": {},
+                                                        "edit_control": {
+                                                            "edit_tweet_ids": [
+                                                                "2011968495865774246"
+                                                            ],
+                                                            "editable_until_msecs": "1768529244000",
+                                                            "is_edit_eligible": true,
+                                                            "edits_remaining": "5"
+                                                        },
+                                                        "is_translatable": true,
+                                                        "views": {
+                                                            "count": "271",
+                                                            "state": "EnabledWithCount"
+                                                        },
+                                                        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+                                                        "note_tweet": {
+                                                            "is_expandable": true,
+                                                            "note_tweet_results": {
+                                                                "result": {
+                                                                    "id": "Tm90ZVR3ZWV0OjIwMTE5Njg0OTU4MTU0MzQyNDA=",
+                                                                    "text": "意思決定という言葉、なんだか「全員が納得する美しい正解を見つけること」だと思われがちですが、本質は少し違う。\n\nむしろ「他の選択肢を捨てて、選ばなかった未来に責任を持つこと」に近い気がする。、\n・調整：不満を最小化するパズル\n・決断：正解のない道を選ぶ賭け\n\n役所時代は前者のプロであろうとし、民間では後者を求められる。どっちが偉いわけでもないんですが、仕組みが違うだけで使う筋肉が全然違うなと。\n\n「決める」というのは、誰かの期待を裏切る可能性をあえて引き受けることでもあるから、そりゃあ胃もキリキリします。\n\n部下に「早く決めてください」とせっつかれるたび、心の中で「まあまあ、そう焦りなさんな」とお茶を濁したくなる。そんな日もありますね。",
+                                                                    "entity_set": {
+                                                                        "hashtags": [],
+                                                                        "symbols": [],
+                                                                        "urls": [],
+                                                                        "user_mentions": []
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "grok_analysis_button": true,
+                                                        "legacy": {
+                                                            "bookmark_count": 0,
+                                                            "bookmarked": false,
+                                                            "created_at": "Fri Jan 16 01:07:24 +0000 2026",
+                                                            "conversation_id_str": "2011968495865774246",
+                                                            "display_text_range": [
+                                                                0,
+                                                                128
+                                                            ],
+                                                            "entities": {
+                                                                "hashtags": [],
+                                                                "symbols": [],
+                                                                "timestamps": [],
+                                                                "urls": [],
+                                                                "user_mentions": []
+                                                            },
+                                                            "favorite_count": 7,
+                                                            "favorited": false,
+                                                            "full_text": "意思決定という言葉、なんだか「全員が納得する美しい正解を見つけること」だと思われがちですが、本質は少し違う。\n\nむしろ「他の選択肢を捨てて、選ばなかった未来に責任を持つこと」に近い気がする。、\n・調整：不満を最小化するパズル\n・決断：正解のない道を選ぶ賭け",
+                                                            "is_quote_status": false,
+                                                            "lang": "ja",
+                                                            "quote_count": 0,
+                                                            "reply_count": 0,
+                                                            "retweet_count": 0,
+                                                            "retweeted": false,
+                                                            "user_id_str": "113206056",
+                                                            "id_str": "2011968495865774246"
+                                                        },
+                                                        "quick_promote_eligibility": {
+                                                            "eligibility": "IneligibleNotProfessional"
+                                                        }
+                                                    }
+                                                },
+                                                "tweetDisplayType": "Tweet"
+                                            },
+                                            "clientEventInfo": {
+                                                "component": "related_tweet",
+                                                "element": "tweet",
+                                                "details": {
+                                                    "conversationDetails": {
+                                                        "conversationSection": "RelatedTweet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ],
+                                "displayType": "Vertical",
+                                "header": {
+                                    "displayType": "Classic",
+                                    "text": "发现更多",
+                                    "socialContext": {
+                                        "type": "TimelineGeneralContext",
+                                        "contextType": "TextOnly",
+                                        "text": "源自于整个 X"
+                                    },
+                                    "sticky": true
+                                },
+                                "clientEventInfo": {
+                                    "component": "related_tweet",
+                                    "details": {
+                                        "conversationDetails": {
+                                            "conversationSection": "RelatedTweet"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "entryId": "cursor-showmorethreads-2012125751402299371",
+                            "sortIndex": "2012125751402299371",
+                            "content": {
+                                "entryType": "TimelineTimelineCursor",
+                                "__typename": "TimelineTimelineCursor",
+                                "value": "DAAFCgABG-yBtc-__-kLAAIAAABcRW1QQzZ3QUFBZlEvZ0dKTjB2R3AvQUFBQUFZYjYwNlEwaHJ4MVJ2c0ZSa1FXM0JMRyt4YXcvZWFJSHNiNnN5bXdGdEJEQnZzRHNMV212R1dHK3Z5citkYlFLWT0IAAMAAAAHAAA",
+                                "cursorType": "ShowMoreThreads",
+                                "displayTreatment": {
+                                    "actionText": "显示可能的垃圾信息"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "TimelineTerminateTimeline",
+                    "direction": "Top"
+                }
+            ],
+            "metadata": {
+                "scribeConfig": {
+                    "page": "ranked_replies"
+                }
+            }
+        }
+    }
+}
