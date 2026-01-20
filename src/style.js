@@ -51,8 +51,8 @@ export const injectStyles = () => {
     .tm-count-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(15,23,42,0.04); color: #475569; border-radius: 999px; padding: 6px 10px; font-weight: 600; }
     .tm-pill { position: fixed; right: 16px; bottom: 150px; background: #fff; color: #0f172a; border-radius: 999px; padding: 10px 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(15,23,42,0.12); z-index: 9999; border: 1px solid rgba(15,23,42,0.1); transition: transform 0.12s ease, box-shadow 0.12s ease; font-size: 14px; }
     .tm-pill:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(15,23,42,0.15); border-color: rgba(15,23,42,0.15); }
-    .tm-toast { position: fixed; top: 14px; right: 14px; background: #0f172a; color: #fff; padding: 11px 15px; border-radius: 12px; box-shadow: 0 16px 38px rgba(0,0,0,0.25); z-index: 9999; opacity: 0; transform: translateY(-8px); transition: all 0.25s ease; letter-spacing: 0.1px; }
-    .tm-toast.show { opacity: 1; transform: translateY(0); }
+    .tm-toast { position: fixed; top: 14px; right: 14px; background: #0f172a; color: #fff; padding: 11px 15px; border-radius: 12px; box-shadow: 0 16px 38px rgba(0,0,0,0.25); z-index: 9999; opacity: 0; transform: translateY(-8px); transition: all 0.25s ease; letter-spacing: 0.1px; pointer-events: none; }
+    .tm-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .tm-loader { padding: 20px; text-align: center; color: #94a3b8; font-weight: 600; }
     :root { --tm-detail-media-max-h: min(72vh, 880px); }
     .tm-detail-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.65); display: none; align-items: flex-start; justify-content: center; padding: 32px 18px; z-index: 99999; overflow-y: auto; }
