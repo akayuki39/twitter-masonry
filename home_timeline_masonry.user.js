@@ -204,10 +204,11 @@
     .tm-detail-card .tm-quote-media .tm-carousel { border-radius: 14px; background: linear-gradient(180deg,#f8fafc,#e2e8f0); }
     .tm-detail-card .tm-quote-media .tm-carousel-slide img, .tm-detail-card .tm-quote-media .tm-carousel-slide video { border-radius: 14px; max-height: var(--tm-detail-media-max-h); object-fit: contain; }
     .tm-card.no-text .media, .tm-detail-card.no-text .media { padding-top: 14px; }
-    .tm-image-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; cursor: zoom-out; }
-    .tm-image-backdrop.show { display: flex; }
+    .tm-image-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; cursor: zoom-out; opacity: 0; transition: opacity 0.2s ease; }
+    .tm-image-backdrop.show { display: flex; opacity: 1; }
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
-    .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: default; }
+    .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: default; transform: scale(0.9); transition: transform 0.15s ease; }
+    .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
   `);
   };
 
