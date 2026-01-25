@@ -47,6 +47,19 @@ detail里quote部分也用carousel来滚动显示图片
 点击quote部分显示quote推文的detail
 
 修改quote卡片的设计。
+quote部分增加hover的效果
+
+重新设计detail的逻辑
+整体设计可以参考小红书的pc页面
+* 我们点开推特卡进到detail的时候访问tweetdetail的api
+    * https://x.com/i/api/graphql/_NvJCnIjOW__EP5-RF197A/TweetDetail
+    * 需要的各种信息全在里面。具体有什么内容可以参考api_examples/tweet_detail_w_entities.json和api_examples/tweetdetail_w_specical_quote.json
+* 点击返回能返回前一个页面。
+    * 小红书能做到在同一个页面打开卡片，背景虚化，同时链接换成卡片的。点击返回直接关闭卡片，链接回到主页。
+* 左边是图片，右边从上到下是原推的内容和引用推文，以及回复的推文。这样能保证图片大小稳定
+    * 图片区域的大小跟着最大的图片的尺寸来，这样能保证在切换的时候图片区域大小不会变动。尺寸数据可以从media里的original_info.height original_info.width获取
+* 点击图片能放大，背景虚化
+* 点开card的时候有放大效果
 
 Entity相关的渲染
 * 做一个文本后处理器。来处理这些在entities里的外链的渲染
@@ -81,6 +94,8 @@ hometimeline现在每次刷新之后还会显示之前的推文。
 推文本身是note_tweet的情况下再quote其他推文，被quote的推文不会被正确显示，而是显示unknown
 * 也有的是因为quoted_status_result.result里的结构不太一样。有的是直接给result，有的需要再调用一层?.tweet才能得到正常的结果。查看tweetdetail_w_special_quote.json
     * 这个例子里被quote的推文的类型是TweetWithVisibilityResults，而不是Tweet。这个例子里是推文quote推文quote推文，最里面的不在api里显示。
+* 有时候是推主自己转自己的情况下也会出这个问题。看看。
+    * https://x.com/calameuyamuya/status/2013818303899410569
 
 detail中的视频指定最高画质
 
@@ -89,6 +104,7 @@ detail中的视频指定最高画质
 添加translateTweet功能
 
 有时候会出现转推没有被成功渲染，而是渲染了RT的那条推特。原因暂时未知
+* https://x.com/7H4ZE/status/2013932246173171878
 
 GIF的视频默认播放且循环播放
 
