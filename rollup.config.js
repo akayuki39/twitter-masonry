@@ -10,6 +10,10 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.3 (2026-01-25)
+  - 修复点击detail中的图片打开预览时触发时间线加载新推文的问题
+  - 增大预加载范围：IntersectionObserver从1600px提升到3000px，scroll监听从1200px提升到2500px
+  - 图片预览现在点击图片本身也能关闭了
   0.1.2 (2025-01-25)
   - Add support for long tweets (note_tweet): Show complete text in detail view, display "Show more" link on homepage for tweets exceeding 140 characters. 
   - 新增长推文（note_tweet）支持：详情页显示完整文字，主页超过140字的推文显示"显示更多"链接

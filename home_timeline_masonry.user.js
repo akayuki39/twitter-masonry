@@ -1,10 +1,15 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.2
+// @version      0.1.3
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
-// @changelog    0.1.2 (2025-01-25)
+// @changelog    0.1.3 (2026-01-25)
+//                 - 修复点击detail中的图片打开预览时触发时间线加载新推文的问题
+//                 - 修复图片预览打开时滚动触发时间线加载的问题
+//                 - 增大预加载范围：IntersectionObserver从1600px提升到3000px，scroll监听从1200px提升到2500px
+//                 - 图片预览现在点击图片本身也能关闭（之前只能点击背景关闭）
+//                 0.1.2 (2025-01-25)
 //                 - Add support for long tweets (note_tweet): Show complete text in detail view, display "Show more" link on homepage for tweets exceeding 140 characters. 
 //                 - 新增长推文（note_tweet）支持：详情页显示完整文字，主页超过140字的推文显示"显示更多"链接
 //                 0.1.1 (2025-01-25)
@@ -723,6 +728,14 @@
     return card;
   };
 
+  let detailOpen = false;
+
+  const isDetailOpen = () => detailOpen;
+
+  const setDetailOpen = (open) => {
+    detailOpen = open;
+  };
+
   let imageOverlay = null;
   let imageModal = null;
 
@@ -746,11 +759,13 @@
   };
 
   const openImagePreview = (imageUrl) => {
+    setDetailOpen(true);
     const { overlay, modal } = ensureImageLayer();
     modal.innerHTML = "";
     const img = document.createElement("img");
     img.src = imageUrl;
     img.className = "tm-preview-image";
+    img.addEventListener("click", closeImagePreview);
     modal.appendChild(img);
     overlay.classList.add("show");
     document.body.classList.add("tm-image-open");
@@ -760,6 +775,7 @@
     if (!imageOverlay) return;
     imageOverlay.classList.remove("show");
     document.body.classList.remove("tm-image-open");
+    setDetailOpen(false);
   };
 
   const createCarousel = (media, initialIndex = 0) => {
@@ -991,6 +1007,7 @@
     document.body.style.paddingRight = "";
     window.scrollTo({ top: scrollBackup, behavior: "auto" });
     activeCarouselControls = null;
+    setDetailOpen(false);
   };
 
   const createDetailCard = (tweet, initialImageIndex = 0) => {
@@ -1121,6 +1138,7 @@
   };
 
   const openDetail = (tweet, initialImageIndex = 0) => {
+    setDetailOpen(true);
     const { overlay, modal } = ensureDetailLayer();
     scrollBackup = window.scrollY;
     scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -1249,10 +1267,7 @@
     loading: false,
     ended: false,
     seen: new Set(),
-    detailOpen: false,
   };
-
-  let detailOpen = false;
 
   const renderTweets = async (tweets, grid) => {
     for (const t of tweets) {
@@ -1265,7 +1280,7 @@
   };
 
   const loadMore = async (grid, reset = false) => {
-    if (state.loading || state.ended || detailOpen) return;
+    if (state.loading || state.ended || isDetailOpen()) return;
     const anchor = reset ? null : pickAnchor();
     const startScroll = window.scrollY;
     state.loading = true;
@@ -1349,10 +1364,10 @@
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting && !detailOpen) loadMore(grid);
+          if (e.isIntersecting && !isDetailOpen()) loadMore(grid);
         });
       },
-      { rootMargin: "1600px 0px 0px 0px", threshold: 0 }
+      { rootMargin: "3000px 0px 0px 0px", threshold: 0 }
     );
     io.observe(sentinel);
 
@@ -1361,8 +1376,12 @@
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
+        if (isDetailOpen()) {
+          ticking = false;
+          return;
+        }
         const rest = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-        if (rest < 1200) loadMore(grid);
+        if (rest < 2500) loadMore(grid);
         ticking = false;
       });
     };

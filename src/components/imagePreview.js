@@ -1,3 +1,5 @@
+import { setDetailOpen } from "../utils/state.js";
+
 let imageOverlay = null;
 let imageModal = null;
 
@@ -21,11 +23,13 @@ export const ensureImageLayer = () => {
 };
 
 export const openImagePreview = (imageUrl) => {
+  setDetailOpen(true);
   const { overlay, modal } = ensureImageLayer();
   modal.innerHTML = "";
   const img = document.createElement("img");
   img.src = imageUrl;
   img.className = "tm-preview-image";
+  img.addEventListener("click", closeImagePreview);
   modal.appendChild(img);
   overlay.classList.add("show");
   document.body.classList.add("tm-image-open");
@@ -35,4 +39,5 @@ export const closeImagePreview = () => {
   if (!imageOverlay) return;
   imageOverlay.classList.remove("show");
   document.body.classList.remove("tm-image-open");
+  setDetailOpen(false);
 };

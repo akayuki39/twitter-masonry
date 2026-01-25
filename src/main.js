@@ -7,19 +7,13 @@ import { openDetail } from "./components/detail.js";
 import { createToast } from "./components/toast.js";
 import { setToast } from "./components/likeButton.js";
 import { ensureLayout, placeCard, resetLayout, pickAnchor } from "./masonry.js";
+import { isDetailOpen } from "./utils/state.js";
 
 const state = {
   cursor: null,
   loading: false,
   ended: false,
   seen: new Set(),
-  detailOpen: false,
-};
-
-let detailOpen = false;
-
-const setDetailOpen = (open) => {
-  detailOpen = open;
 };
 
 const renderTweets = async (tweets, grid) => {
@@ -33,7 +27,7 @@ const renderTweets = async (tweets, grid) => {
 };
 
 const loadMore = async (grid, reset = false) => {
-  if (state.loading || state.ended || detailOpen) return;
+  if (state.loading || state.ended || isDetailOpen()) return;
   const anchor = reset ? null : pickAnchor();
   const startScroll = window.scrollY;
   state.loading = true;
@@ -117,10 +111,10 @@ const mountApp = () => {
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
-        if (e.isIntersecting && !detailOpen) loadMore(grid);
+        if (e.isIntersecting && !isDetailOpen()) loadMore(grid);
       });
     },
-    { rootMargin: "1600px 0px 0px 0px", threshold: 0 }
+    { rootMargin: "3000px 0px 0px 0px", threshold: 0 }
   );
   io.observe(sentinel);
 
@@ -129,12 +123,12 @@ const mountApp = () => {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      if (detailOpen) {
+      if (isDetailOpen()) {
         ticking = false;
         return;
       }
       const rest = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-      if (rest < 1200) loadMore(grid);
+      if (rest < 2500) loadMore(grid);
       ticking = false;
     });
   };

@@ -4,6 +4,7 @@ import { formatTime, escapeHTML } from "../utils/format.js";
 import { getCleanText, pickMedia, getNoteTweetText } from "../utils/tweet.js";
 import { processTweetText } from "../utils/textProcessor.js";
 import { openImagePreview } from "./imagePreview.js";
+import { setDetailOpen } from "../utils/state.js";
 
 let activeCarouselControls = null;
 
@@ -156,6 +157,7 @@ export const closeDetail = () => {
   document.body.style.paddingRight = "";
   window.scrollTo({ top: scrollBackup, behavior: "auto" });
   activeCarouselControls = null;
+  setDetailOpen(false);
 };
 
 export const createDetailCard = (tweet, initialImageIndex = 0) => {
@@ -286,6 +288,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
 };
 
 export const openDetail = (tweet, initialImageIndex = 0) => {
+  setDetailOpen(true);
   const { overlay, modal } = ensureDetailLayer();
   scrollBackup = window.scrollY;
   scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
