@@ -15,6 +15,7 @@ const userscriptMeta = `// ==UserScript==
 // @version      ${packageJson.version}
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
+// @changelog    0.1.1 (2025-01-25) - 新增图片全屏预览功能：点击detail卡中的图片可全屏查看，背景虚化，点击外部或按ESC退出
 // @match        https://x.com/*
 // @match        https://*.x.com/*
 // @match        https://twitter.com/*

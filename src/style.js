@@ -3,6 +3,7 @@ export const injectStyles = () => {
     :root { color-scheme: light; }
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f6f8; color: #1f2d3d; }
     body.tm-detail-open { overflow: hidden; padding-right: var(--tm-scrollbar-width, 0px); }
+    body.tm-image-open { overflow: hidden; }
     a { color: #0f7ae5; }
     .tm-app { min-height: 100vh; background: #f5f6f8; }
     .tm-header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(15,23,42,0.06); box-shadow: 0 8px 20px rgba(15,23,42,0.05); }
@@ -116,5 +117,9 @@ export const injectStyles = () => {
     .tm-detail-card .tm-quote-media .tm-carousel { border-radius: 14px; background: linear-gradient(180deg,#f8fafc,#e2e8f0); }
     .tm-detail-card .tm-quote-media .tm-carousel-slide img, .tm-detail-card .tm-quote-media .tm-carousel-slide video { border-radius: 14px; max-height: var(--tm-detail-media-max-h); object-fit: contain; }
     .tm-card.no-text .media, .tm-detail-card.no-text .media { padding-top: 14px; }
+    .tm-image-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; cursor: zoom-out; }
+    .tm-image-backdrop.show { display: flex; }
+    .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
+    .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: default; }
   `);
 };

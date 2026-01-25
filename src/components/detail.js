@@ -3,6 +3,7 @@ import { createCarousel } from "./carousel.js";
 import { formatTime, escapeHTML } from "../utils/format.js";
 import { getCleanText, pickMedia } from "../utils/tweet.js";
 import { processTweetText } from "../utils/textProcessor.js";
+import { openImagePreview } from "./imagePreview.js";
 
 let activeCarouselControls = null;
 
@@ -87,6 +88,11 @@ const createDetailQuoteTweet = (quotedTweet) => {
           const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
           img.src = url;
           img.loading = "lazy";
+          img.style.cursor = "pointer";
+          img.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openImagePreview(url);
+          });
           mediaWrap.appendChild(img);
         } else if (m.type === "video") {
           const v = document.createElement("video");
@@ -109,6 +115,8 @@ let scrollbarWidth = 0;
 export const setActiveCarouselControls = (controls) => {
   activeCarouselControls = controls;
 };
+
+export { openImagePreview } from "./imagePreview.js";
 
 export const ensureDetailLayer = () => {
   if (detailOverlay && detailModal) return { overlay: detailOverlay, modal: detailModal };
@@ -228,6 +236,11 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
         const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
         img.src = url;
         img.loading = "lazy";
+        img.style.cursor = "pointer";
+        img.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openImagePreview(url);
+        });
         mediaWrap.appendChild(img);
       } else if (m.type === "video") {
         const v = document.createElement("video");

@@ -1,3 +1,5 @@
+import { openImagePreview } from "./imagePreview.js";
+
 export const createCarousel = (media, initialIndex = 0) => {
   const carousel = document.createElement("div");
   carousel.className = "tm-carousel";
@@ -14,6 +16,11 @@ export const createCarousel = (media, initialIndex = 0) => {
       const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
       img.src = url;
       img.loading = "lazy";
+      img.style.cursor = "pointer";
+      img.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openImagePreview(url);
+      });
       slide.appendChild(img);
     } else if (m.type === "video") {
       const v = document.createElement("video");
