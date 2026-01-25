@@ -1,5 +1,5 @@
 import { formatTime, escapeHTML } from "../utils/format.js";
-import { getCleanText, pickMedia } from "../utils/tweet.js";
+import { getCleanText, pickMedia, isNoteTweet } from "../utils/tweet.js";
 import { createLikeButton } from "./likeButton.js";
 import { processTweetText } from "../utils/textProcessor.js";
 
@@ -150,6 +150,16 @@ export const createCard = (tweet, openDetail) => {
   const textDiv = document.createElement("div");
   textDiv.className = "text";
   textDiv.innerHTML = processTweetText(text);
+  if (isNoteTweet(displayTweet)) {
+    const showMoreDiv = document.createElement("div");
+    showMoreDiv.className = "tm-show-more";
+    showMoreDiv.textContent = "显示更多";
+    showMoreDiv.onclick = (e) => {
+      e.stopPropagation();
+      openDetail(displayTweet);
+    };
+    textDiv.appendChild(showMoreDiv);
+  }
 
   const mediaWrap = document.createElement("div");
   mediaWrap.className = "media";

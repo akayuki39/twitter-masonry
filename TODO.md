@@ -42,12 +42,17 @@ detail里quote部分也用carousel来滚动显示图片
 * result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
 * 实际上有个legacy.display_text_range，里面是full_text里实际文本的range。用这个就能去掉最后的链接了。
 
+
+脚本头添加github自动更新的字段
+* @updateURL以及@downloadURL等
+
+
 ---
 
 点击quote部分显示quote推文的detail
 
 修改quote卡片的设计。
-quote部分增加hover的效果
+quote部分增加hover时高亮的效果
 
 重新设计detail的逻辑
 整体设计可以参考小红书的pc页面
@@ -158,9 +163,6 @@ Hover到头像之后显示profile
 
 使用twitter的emoji
 * 利用这个库：https://github.com/jdecked/twemoji
-
-脚本头添加github自动更新的字段
-* @updateURL以及@downloadURL等
 
 有些emoji不能被正确显示
 * 是在最末尾的emoji不能正确显示。也许是因为index切割的时候切出了问题？

@@ -122,5 +122,7 @@ export const injectStyles = () => {
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
     .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: default; transform: scale(0.9); transition: transform 0.15s ease; }
     .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
+    .tm-show-more { color: #0f7ae5; cursor: pointer; font-size: 14px; font-weight: 500; transition: color 0.12s ease; }
+    .tm-show-more:hover { color: #2563eb; }
   `);
 };

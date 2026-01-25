@@ -1,7 +1,7 @@
 import { createLikeButton, setToast } from "./likeButton.js";
 import { createCarousel } from "./carousel.js";
 import { formatTime, escapeHTML } from "../utils/format.js";
-import { getCleanText, pickMedia } from "../utils/tweet.js";
+import { getCleanText, pickMedia, getNoteTweetText } from "../utils/tweet.js";
 import { processTweetText } from "../utils/textProcessor.js";
 import { openImagePreview } from "./imagePreview.js";
 
@@ -169,7 +169,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   const displayTweet = retweetData || tweet;
   const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
 
-  const text = getCleanText(displayTweet);
+  const text = getNoteTweetText(displayTweet);
   const media = pickMedia(displayTweet);
   const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
   const avatar = displayCore?.user_results?.result?.avatar?.image_url;

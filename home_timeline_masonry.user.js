@@ -1,10 +1,14 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.1
+// @version      0.1.2
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
-// @changelog    0.1.1 (2025-01-25) - 新增图片全屏预览功能：点击detail卡中的图片可全屏查看，背景虚化，点击外部或按ESC退出
+// @changelog    0.1.2 (2025-01-25)
+//               - Add support for long tweets (note_tweet): Show complete text in detail view, display "Show more" link on homepage for tweets exceeding 140 characters. 
+//               - 新增长推文（note_tweet）支持：详情页显示完整文字，主页超过140字的推文显示"显示更多"链接
+//               0.1.1 (2025-01-25)
+//               - 新增图片全屏预览功能：点击detail卡中的图片可全屏查看，背景虚化，点击外部或按ESC退出
 // @match        https://x.com/*
 // @match        https://*.x.com/*
 // @match        https://twitter.com/*
@@ -209,6 +213,8 @@
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
     .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: default; transform: scale(0.9); transition: transform 0.15s ease; }
     .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
+    .tm-show-more { color: #0f7ae5; cursor: pointer; font-size: 14px; font-weight: 500; transition: color 0.12s ease; }
+    .tm-show-more:hover { color: #2563eb; }
   `);
   };
 
@@ -332,6 +338,17 @@
       return chars.slice(displayRange[0], displayRange[1]).join("");
     }
     return fullText;
+  };
+
+  const isNoteTweet = (tweet) => {
+    return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
+  };
+
+  const getNoteTweetText = (tweet) => {
+    if (isNoteTweet(tweet)) {
+      return tweet.note_tweet.note_tweet_results.result.text;
+    }
+    return getCleanText(tweet);
   };
 
   const pickMedia = (tweet) => {
@@ -638,6 +655,16 @@
     const textDiv = document.createElement("div");
     textDiv.className = "text";
     textDiv.innerHTML = processTweetText(text);
+    if (isNoteTweet(displayTweet)) {
+      const showMoreDiv = document.createElement("div");
+      showMoreDiv.className = "tm-show-more";
+      showMoreDiv.textContent = "显示更多";
+      showMoreDiv.onclick = (e) => {
+        e.stopPropagation();
+        openDetail(displayTweet);
+      };
+      textDiv.appendChild(showMoreDiv);
+    }
 
     const mediaWrap = document.createElement("div");
     mediaWrap.className = "media";
@@ -977,7 +1004,7 @@
     const displayTweet = retweetData || tweet;
     const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
 
-    const text = getCleanText(displayTweet);
+    const text = getNoteTweetText(displayTweet);
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
     const avatar = displayCore?.user_results?.result?.avatar?.image_url;

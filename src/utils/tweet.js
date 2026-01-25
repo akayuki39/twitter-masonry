@@ -10,6 +10,17 @@ export const getCleanText = (tweet) => {
   return fullText;
 };
 
+export const isNoteTweet = (tweet) => {
+  return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
+};
+
+export const getNoteTweetText = (tweet) => {
+  if (isNoteTweet(tweet)) {
+    return tweet.note_tweet.note_tweet_results.result.text;
+  }
+  return getCleanText(tweet);
+};
+
 export const pickMedia = (tweet) => {
   const legacy = tweet.legacy || tweet;
   const media = legacy?.extended_entities?.media || [];
