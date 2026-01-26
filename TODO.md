@@ -56,6 +56,26 @@ detail里quote部分也用carousel来滚动显示图片
     * https://x.com/calameuyamuya/status/2013818303899410569
 * 原因是因为TweetWithVisibilityResults。针对这种情况做处理
 
+有时候会出现转推没有被成功渲染，而是渲染了RT的那条推特。原因暂时未知
+* https://x.com/7H4ZE/status/2013932246173171878
+
+有些emoji不能被正确显示
+* 是在最末尾的emoji不能正确显示。也许是因为index切割的时候切出了问题？
+    * 确实是因为index切割出了问题。末尾显示成\uD83D\uDE2D，会被切成\uD83D。看样子是编码出问题了
+    * js里用的是UTF-16储存string。需要用Array.from(str)给转过来，这个是Unicode code point单位分割的。
+* 例子：https://x.com/Park_MuJu/status/2012206467273937390
+
+Entity相关的渲染
+* 做一个文本后处理器。来处理这些在entities里的外链的渲染
+    * 在entities里每个都有indices，标志着这个entity在文本中的index。可以利用这个去做渲染
+* result.legacy.entities.url里还有推文里带着的外链。可以用这个去渲染外链。
+    * 里面有实际的url，对应的indices，显示出来的缩短的url等等。
+    * entites里有各种需要后处理的内容。比如user_mentions，hashtags。
+* 可以在tweet_detail_w_entities.json里查看。https://x.com/spygea_jp/status/2011350045405356043。
+    * https://t.co/YIJP7FOSPM 这个是外链。
+    * https://t.co/7Wr0zKBcwQ 这个是图片
+* Solution: 新建utils/entity.js来解决entity渲染
+
 ---
 
 点击quote部分显示quote推文的detail
@@ -120,16 +140,6 @@ quote部分增加hover时高亮的效果
       }
 ```
 
-Entity相关的渲染
-* 做一个文本后处理器。来处理这些在entities里的外链的渲染
-    * 在entities里每个都有indices，标志着这个entity在文本中的index。可以利用这个去做渲染
-* result.legacy.entities.url里还有推文里带着的外链。可以用这个去渲染外链。
-    * 里面有实际的url，对应的indices，显示出来的缩短的url等等。
-    * entites里有各种需要后处理的内容。比如user_mentions，hashtags。
-* 可以在tweet_detail_w_entities.json里查看。https://x.com/spygea_jp/status/2011350045405356043。
-    * https://t.co/YIJP7FOSPM 这个是外链。
-    * https://t.co/7Wr0zKBcwQ 这个是图片
-
 hometimeline现在每次刷新之后还会显示之前的推文。
 需要看看实际hometimeline的api调用的时候都带了什么参数。
 * 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
@@ -152,9 +162,6 @@ detail中的视频指定最高画质
 
 添加translateTweet功能
 
-有时候会出现转推没有被成功渲染，而是渲染了RT的那条推特。原因暂时未知
-* https://x.com/7H4ZE/status/2013932246173171878
-
 GIF的视频默认播放且循环播放
 
 Hover到头像之后显示profile
@@ -162,9 +169,3 @@ Hover到头像之后显示profile
 
 使用twitter的emoji
 * 利用这个库：https://github.com/jdecked/twemoji
-
-有些emoji不能被正确显示
-* 是在最末尾的emoji不能正确显示。也许是因为index切割的时候切出了问题？
-    * 确实是因为index切割出了问题。末尾显示成\uD83D\uDE2D，会被切成\uD83D。看样子是编码出问题了
-    * js里用的是UTF-16储存string。需要用Array.from(str)给转过来，这个是Unicode code point单位分割的。
-* 例子：https://x.com/Park_MuJu/status/2012206467273937390
