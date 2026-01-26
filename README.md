@@ -38,7 +38,7 @@ English | [简体中文](docs/README_CN.md)
 ### Activation Methods
 
 - **URL Parameter**: Add `?tm-masonry=1` to the X home URL
-- **Button Method**: Click the "Home 瀑布流" button in the bottom right corner while on X
+- **Button Method**: Click the "Home Masonry" button in the bottom right corner while on X
 
 ### Browsing Content
 
