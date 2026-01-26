@@ -1,10 +1,16 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.3
+// @version      0.1.5
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
-// @changelog    0.1.3 (2026-01-25)
+// @changelog    0.1.5 (2026-01-26)
+//                 - 修复转推（retweet）和引用推文（quote）有时无法显示原推内容的问题
+//                 - 原因：Twitter API 部分响应使用 TweetWithVisibilityResults 包装类型，需要解包后访问
+//                 - 添加 unwrapTweetResult 工具函数统一处理 Tweet 和 TweetWithVisibilityResults 两种类型
+//                 0.1.4 (2026-01-26)
+//                 - 统一图片预览界面的鼠标样式，图片区域也显示放大镜缩小图标
+//                 0.1.3 (2026-01-25)
 //                 - 修复点击detail中的图片打开预览时触发时间线加载新推文的问题
 //                 - 增大预加载范围：IntersectionObserver从1600px提升到3000px，scroll监听从1200px提升到2500px
 //                 - 图片预览现在点击图片本身也能关闭了
@@ -374,6 +380,12 @@
     return pics;
   };
 
+  const unwrapTweetResult = (result) => {
+    if (!result) return null;
+    if (result.__typename === "TweetWithVisibilityResults") return result.tweet || result;
+    return result;
+  };
+
   const favoriteTweet = async (tweetId) => {
     const body = JSON.stringify({
       variables: { tweet_id: String(tweetId) },
@@ -604,12 +616,13 @@
   const createCard = (tweet, openDetail) => {
     const legacy = tweet.legacy || tweet;
     const isRetweet = legacy.retweeted_status_result;
-    const retweetData = isRetweet ? legacy.retweeted_status_result.result : null;
+    const retweetData = isRetweet ? unwrapTweetResult(legacy.retweeted_status_result.result) : null;
     const displayLegacy = retweetData?.legacy || legacy;
     const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
     const displayCore = retweetData?.core || tweet.core;
     const displayTweet = retweetData || tweet;
-    const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+    const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+    const quotedData = unwrapTweetResult(quotedDataRaw);
 
     const text = getCleanText(displayTweet);
     const media = pickMedia(displayTweet);
@@ -1013,12 +1026,13 @@
     activeCarouselControls = null;
     const legacy = tweet.legacy || tweet;
     const isRetweet = legacy.retweeted_status_result;
-    const retweetData = isRetweet ? legacy.retweeted_status_result.result : null;
+    const retweetData = isRetweet ? unwrapTweetResult(legacy.retweeted_status_result.result) : null;
     const displayLegacy = retweetData?.legacy || legacy;
     const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
     const displayCore = retweetData?.core || tweet.core;
     const displayTweet = retweetData || tweet;
-    const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+    const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+    const quotedData = unwrapTweetResult(quotedDataRaw);
 
     const text = getNoteTweetText(displayTweet);
     const media = pickMedia(displayTweet);

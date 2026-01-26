@@ -10,6 +10,10 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.5 (2026-01-26)
+  - 修复转推（retweet）和引用推文（quote）有时无法显示原推内容的问题
+  - 原因：Twitter API 部分响应使用 TweetWithVisibilityResults 包装类型，需要解包后访问
+  - 添加 unwrapTweetResult 工具函数统一处理 Tweet 和 TweetWithVisibilityResults 两种类型
   0.1.4 (2026-01-26)
   - 统一图片预览界面的鼠标样式，图片区域也显示放大镜缩小图标
   0.1.3 (2026-01-25)

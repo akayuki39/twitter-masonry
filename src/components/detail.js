@@ -1,7 +1,7 @@
 import { createLikeButton, setToast } from "./likeButton.js";
 import { createCarousel } from "./carousel.js";
 import { formatTime, escapeHTML } from "../utils/format.js";
-import { getCleanText, pickMedia, getNoteTweetText } from "../utils/tweet.js";
+import { getCleanText, pickMedia, isNoteTweet, unwrapTweetResult, getNoteTweetText } from "../utils/tweet.js";
 import { processTweetText } from "../utils/textProcessor.js";
 import { openImagePreview } from "./imagePreview.js";
 import { setDetailOpen } from "../utils/state.js";
@@ -164,12 +164,13 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   activeCarouselControls = null;
   const legacy = tweet.legacy || tweet;
   const isRetweet = legacy.retweeted_status_result;
-  const retweetData = isRetweet ? legacy.retweeted_status_result.result : null;
+  const retweetData = isRetweet ? unwrapTweetResult(legacy.retweeted_status_result.result) : null;
   const displayLegacy = retweetData?.legacy || legacy;
   const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
   const displayCore = retweetData?.core || tweet.core;
   const displayTweet = retweetData || tweet;
-  const quotedData = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+  const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+  const quotedData = unwrapTweetResult(quotedDataRaw);
 
   const text = getNoteTweetText(displayTweet);
   const media = pickMedia(displayTweet);

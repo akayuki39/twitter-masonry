@@ -39,3 +39,9 @@ export const pickMedia = (tweet) => {
   }
   return pics;
 };
+
+export const unwrapTweetResult = (result) => {
+  if (!result) return null;
+  if (result.__typename === "TweetWithVisibilityResults") return result.tweet || result;
+  return result;
+};
