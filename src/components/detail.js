@@ -2,7 +2,7 @@ import { createLikeButton, setToast } from "./likeButton.js";
 import { createCarousel } from "./carousel.js";
 import { formatTime, escapeHTML } from "../utils/format.js";
 import { getCleanText, pickMedia, isNoteTweet, unwrapTweetResult, getNoteTweetText } from "../utils/tweet.js";
-import { processTweetText } from "../utils/textProcessor.js";
+import { processEntities } from "../utils/entity.js";
 import { openImagePreview } from "./imagePreview.js";
 import { setDetailOpen } from "../utils/state.js";
 
@@ -71,7 +71,10 @@ const createDetailQuoteTweet = (quotedTweet) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "tm-quote-text";
-  textDiv.innerHTML = processTweetText(text);
+  const entities = quoteLegacy.entities || {};
+  const displayRange = quoteLegacy.display_text_range;
+  const processedText = processEntities(text, entities, displayRange);
+  textDiv.appendChild(processedText);
 
   quoteCard.appendChild(meta);
   if (text) quoteCard.appendChild(textDiv);
@@ -224,7 +227,10 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "text";
-  textDiv.innerHTML = processTweetText(text);
+  const entities = displayLegacy.entities || {};
+  const displayRange = displayLegacy.display_text_range;
+  const processedText = processEntities(text, entities, displayRange);
+  textDiv.appendChild(processedText);
 
   const mediaWrap = document.createElement("div");
   mediaWrap.className = "media";

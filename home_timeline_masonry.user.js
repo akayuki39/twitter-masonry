@@ -1,10 +1,15 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.5
+// @version      0.1.6
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
-// @changelog    0.1.5 (2026-01-26)
+// @changelog    0.1.6 (2026-01-26)
+//                 - 新增entity处理模块：支持正确渲染推文文本中的hashtag、@提及、URL、股票符号等entities
+//                 - 添加 processEntities 函数，根据Twitter API返回的entities数据正确渲染可交互链接
+//                 - 支持 display_text_range 属性，只显示推文的实际显示文本部分
+//                 - 移除旧的 processTweetText 处理方式，改用API提供的entities进行精确渲染
+//                 0.1.5 (2026-01-26)
 //                 - 修复转推（retweet）和引用推文（quote）有时无法显示原推内容的问题
 //                 - 原因：Twitter API 部分响应使用 TweetWithVisibilityResults 包装类型，需要解包后访问
 //                 - 添加 unwrapTweetResult 工具函数统一处理 Tweet 和 TweetWithVisibilityResults 两种类型
@@ -476,52 +481,206 @@
     return btn;
   };
 
-  const TextProcessor = {
-    processors: {
-      htmlDecode: (text) => {
-        const div = document.createElement('div');
-        div.innerHTML = text;
-        return div.textContent;
-      },
-      
-      linkify: (text) => {
-        return text.replace(/(https?:\/\/[\w./?=&%#-]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-      },
-      
-      mentionify: (text) => {
-        return text.replace(/@([\p{L}\p{N}_]{1,15})/gu, '<a href="https://x.com/$1" target="_blank" rel="noopener noreferrer">@$1</a>');
-      },
-      
-      hashtagify: (text) => {
-        return text.replace(/#([\p{L}\p{N}_]+)/gu, '<a href="https://x.com/hashtag/$1" target="_blank" rel="noopener noreferrer">#$1</a>');
-      }
-    },
-
-    process(text, pipeline = ["linkify", "mentionify", "hashtagify"]) {
-      let result = text;
-      for (const processorName of pipeline) {
-        const processor = this.processors[processorName];
-        if (typeof processor === "function") {
-          result = processor(result);
-        }
-      }
-      return result;
-    },
-
-    addProcessor(name, processor) {
-      if (typeof processor === "function") {
-        this.processors[name] = processor;
-      }
-    },
-
-    removeProcessor(name) {
-      delete this.processors[name];
-    }
+  const htmlDecode = (text) => {
+    if (!text) return text;
+    const div = document.createElement('div');
+    div.innerHTML = text;
+    return div.textContent || div.innerText || '';
   };
 
-  const processTweetText = (text) => {
-    const decodedText = TextProcessor.processors.htmlDecode(text);
-    return TextProcessor.process(decodedText);
+  const createEntityLink = (text, url, isExternal = true) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.textContent = text;
+    if (isExternal) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+    return link;
+  };
+
+  const createHashtag = (hashtag) => {
+    const { text } = hashtag;
+    return createEntityLink(`#${text}`, `https://x.com/hashtag/${encodeURIComponent(text)}`);
+  };
+
+  const createUserMention = (mention) => {
+    const { screen_name, name } = mention;
+    const link = createEntityLink(`@${screen_name}`, `https://x.com/${screen_name}`);
+    if (name) {
+      link.title = htmlDecode(name);
+    }
+    return link;
+  };
+
+  const createUrl = (urlEntity) => {
+    const { display_url, expanded_url, url } = urlEntity;
+    return createEntityLink(display_url, expanded_url);
+  };
+
+  const createSymbol = (symbol) => {
+    const { text } = symbol;
+    return createEntityLink(`$${text}`, `https://x.com/search?q=%24${encodeURIComponent(text)}`);
+  };
+
+  const createTimestamp = (timestamp) => {
+    const { text } = timestamp;
+    return createEntityLink(text, `https://x.com/search?q=%24${encodeURIComponent(text)}`);
+  };
+
+  const processEntities = (text, entitiesArg = null, displayTextRange = null) => {
+    const container = document.createElement('span');
+
+    if (!text) {
+      return container;
+    }
+
+    const entities = entitiesArg || {};
+    const {hashtags = [], user_mentions = [], urls = [], symbols = [], timestamps = []} = entities;
+    const hasEntities = hashtags.length > 0 || user_mentions.length > 0 || urls.length > 0 || symbols.length > 0 || timestamps.length > 0;
+
+    const allEntities = [];
+
+    [...hashtags, ...user_mentions, ...urls, ...symbols, ...timestamps].forEach((entity) => {
+      if (!entity.indices || !Array.isArray(entity.indices) || entity.indices.length !== 2) {
+        return;
+      }
+
+      allEntities.push({
+        type: entity.text ? 'hashtag' : entity.screen_name ? 'user_mention' : entity.display_url ? 'url' : entity.url ? 'media_url' : 'symbol',
+        indices: entity.indices,
+        data: entity
+      });
+    });
+
+    allEntities.sort((a, b) => a.indices[0] - b.indices[0]);
+
+    const hasValidEntities = hasEntities && allEntities.length > 0;
+
+    if (!hasValidEntities) {
+      const decodedText = htmlDecode(text);
+
+      const mentionRegex = /@([\p{L}\p{N}_]{1,15})/gu;
+      const hashtagRegex = /#([\p{L}\p{N}_]+)/gu;
+      const urlRegex = /(https?:\/\/[\w./?=&%#-]+)/g;
+
+      const allMatches = [];
+
+      const patterns = [
+        { regex: mentionRegex, type: 'mention' },
+        { regex: hashtagRegex, type: 'hashtag' },
+        { regex: urlRegex, type: 'url' }
+      ];
+
+      patterns.forEach(({ regex, type }) => {
+        let match;
+        let regexCopy = new RegExp(regex);
+        while ((match = regexCopy.exec(decodedText)) !== null) {
+          allMatches.push({
+            start: match.index,
+            end: regexCopy.lastIndex,
+            match: match[0],
+            type: type
+          });
+        }
+      });
+
+      allMatches.sort((a, b) => a.start - b.start);
+
+      let lastIndex = 0;
+
+      for (const { start, end, match, type } of allMatches) {
+        if (start < lastIndex) continue;
+        if (start >= decodedText.length) break;
+
+        if (start > lastIndex) {
+          const plainText = decodedText.slice(lastIndex, start);
+          container.appendChild(document.createTextNode(plainText));
+        }
+
+        switch (type) {
+          case 'mention':
+            const screenName = match.slice(1);
+            container.appendChild(createEntityLink(match, `https://x.com/${screenName}`));
+            break;
+          case 'hashtag':
+            const hashtag = match.slice(1);
+            container.appendChild(createEntityLink(match, `https://x.com/hashtag/${encodeURIComponent(hashtag)}`));
+            break;
+          case 'url':
+            container.appendChild(createEntityLink(match, match));
+            break;
+        }
+
+        lastIndex = end;
+      }
+
+      if (lastIndex < decodedText.length) {
+        const plainText = decodedText.slice(lastIndex);
+        container.appendChild(document.createTextNode(plainText));
+      }
+
+      return container;
+    }
+
+    const chars = Array.from(text);
+    const length = chars.length;
+
+    let currentIndex = displayTextRange && Array.isArray(displayTextRange) && displayTextRange.length === 2
+      ? displayTextRange[0]
+      : 0;
+
+    const finalEndIndex = displayTextRange && Array.isArray(displayTextRange) && displayTextRange.length === 2
+      ? displayTextRange[1]
+      : length;
+
+    for (const entity of allEntities) {
+      const [startIndex, endIndex] = entity.indices;
+
+      if (startIndex < currentIndex) {
+        continue;
+      }
+
+      if (startIndex >= finalEndIndex) {
+        break;
+      }
+
+      if (startIndex > currentIndex) {
+        const rawChars = chars.slice(currentIndex, startIndex);
+        const rawText = rawChars.join('');
+        const decodedText = htmlDecode(rawText);
+        container.appendChild(document.createTextNode(decodedText));
+      }
+
+      switch (entity.type) {
+        case 'hashtag':
+          container.appendChild(createHashtag(entity.data));
+          break;
+        case 'user_mention':
+          container.appendChild(createUserMention(entity.data));
+          break;
+        case 'url':
+          container.appendChild(createUrl(entity.data));
+          break;
+        case 'symbol':
+          container.appendChild(createSymbol(entity.data));
+          break;
+        case 'timestamp':
+          container.appendChild(createTimestamp(entity.data));
+          break;
+      }
+
+      currentIndex = endIndex;
+    }
+
+    if (currentIndex < finalEndIndex) {
+      const rawChars = chars.slice(currentIndex, finalEndIndex);
+      const rawText = rawChars.join('');
+      const decodedText = htmlDecode(rawText);
+      container.appendChild(document.createTextNode(decodedText));
+    }
+
+    return container;
   };
 
   const createQuoteTweet = (quotedTweet) => {
@@ -588,7 +747,10 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "tm-quote-text";
-    textDiv.innerHTML = processTweetText(text);
+    const entities = quoteLegacy.entities || {};
+    const displayRange = quoteLegacy.display_text_range;
+    const processedText = processEntities(text, entities, displayRange);
+    textDiv.appendChild(processedText);
 
     const mediaWrap = document.createElement("div");
     mediaWrap.className = "tm-quote-media";
@@ -671,7 +833,10 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "text";
-    textDiv.innerHTML = processTweetText(text);
+    const entities = displayLegacy.entities || {};
+    const displayRange = displayLegacy.display_text_range;
+    const processedText = processEntities(text, entities, displayRange);
+    textDiv.appendChild(processedText);
     if (isNoteTweet(displayTweet)) {
       const showMoreDiv = document.createElement("div");
       showMoreDiv.className = "tm-show-more";
@@ -939,7 +1104,10 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "tm-quote-text";
-    textDiv.innerHTML = processTweetText(text);
+    const entities = quoteLegacy.entities || {};
+    const displayRange = quoteLegacy.display_text_range;
+    const processedText = processEntities(text, entities, displayRange);
+    textDiv.appendChild(processedText);
 
     quoteCard.appendChild(meta);
     if (text) quoteCard.appendChild(textDiv);
@@ -1086,7 +1254,10 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "text";
-    textDiv.innerHTML = processTweetText(text);
+    const entities = displayLegacy.entities || {};
+    const displayRange = displayLegacy.display_text_range;
+    const processedText = processEntities(text, entities, displayRange);
+    textDiv.appendChild(processedText);
 
     const mediaWrap = document.createElement("div");
     mediaWrap.className = "media";

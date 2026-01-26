@@ -10,6 +10,11 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.6 (2026-01-26)
+  - 新增entity处理模块：支持正确渲染推文文本中的hashtag、@提及、URL、股票符号等entities
+  - 添加 processEntities 函数，根据Twitter API返回的entities数据正确渲染可交互链接
+  - 支持 display_text_range 属性，只显示推文的实际显示文本部分
+  - 移除旧的 processTweetText 处理方式，改用API提供的entities进行精确渲染
   0.1.5 (2026-01-26)
   - 修复转推（retweet）和引用推文（quote）有时无法显示原推内容的问题
   - 原因：Twitter API 部分响应使用 TweetWithVisibilityResults 包装类型，需要解包后访问

@@ -1,7 +1,7 @@
 import { formatTime, escapeHTML } from "../utils/format.js";
 import { getCleanText, pickMedia, isNoteTweet, unwrapTweetResult } from "../utils/tweet.js";
 import { createLikeButton } from "./likeButton.js";
-import { processTweetText } from "../utils/textProcessor.js";
+import { processEntities } from "../utils/entity.js";
 
 export const createQuoteTweet = (quotedTweet) => {
   const quoteLegacy = quotedTweet.legacy || quotedTweet;
@@ -67,7 +67,10 @@ export const createQuoteTweet = (quotedTweet) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "tm-quote-text";
-  textDiv.innerHTML = processTweetText(text);
+  const entities = quoteLegacy.entities || {};
+  const displayRange = quoteLegacy.display_text_range;
+  const processedText = processEntities(text, entities, displayRange);
+  textDiv.appendChild(processedText);
 
   const mediaWrap = document.createElement("div");
   mediaWrap.className = "tm-quote-media";
@@ -150,7 +153,10 @@ export const createCard = (tweet, openDetail) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "text";
-  textDiv.innerHTML = processTweetText(text);
+  const entities = displayLegacy.entities || {};
+  const displayRange = displayLegacy.display_text_range;
+  const processedText = processEntities(text, entities, displayRange);
+  textDiv.appendChild(processedText);
   if (isNoteTweet(displayTweet)) {
     const showMoreDiv = document.createElement("div");
     showMoreDiv.className = "tm-show-more";
