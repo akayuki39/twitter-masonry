@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.6
+// @version      0.1.7
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
-// @changelog    0.1.6 (2026-01-26)
+// @changelog    0.1.7 (2026-01-27)
+//                 - 调整detail卡片中文本字体大小：15px -> 17px，更接近X官网的显示效果
+//                 0.1.6 (2026-01-26)
 //                 - 新增entity处理模块：支持正确渲染推文文本中的hashtag、@提及、URL、股票符号等entities
 //                 - 添加 processEntities 函数，根据Twitter API返回的entities数据正确渲染可交互链接
 //                 - 支持 display_text_range 属性，只显示推文的实际显示文本部分
@@ -179,7 +181,7 @@
     .tm-detail-card .meta .user .name { font-weight: 800; color: #0f172a; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-detail-card .meta .user .screen { color: #64748b; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-detail-card .meta .time { color: #94a3b8; font-size: 12px; }
-    .tm-detail-card .text { padding: 10px 20px 18px; line-height: 1.7; color: #1f2937; word-break: break-word; font-size: 15px; white-space: pre-wrap; }
+    .tm-detail-card .text { padding: 10px 20px 18px; line-height: 1.7; color: #1f2937; word-break: break-word; font-size: 17px; white-space: pre-wrap; }
     .tm-detail-card .media { display: grid; gap: 12px; padding: 0 18px 20px; max-height: var(--tm-detail-media-max-h); overflow-y: auto; }
     .tm-detail-card .media img { width: 100%; border-radius: 16px; object-fit: contain; background: linear-gradient(180deg,#f8fafc,#e2e8f0); max-height: var(--tm-detail-media-max-h); }
     .tm-detail-card .media video { width: 100%; border-radius: 16px; background: #0b1220; max-height: var(--tm-detail-media-max-h); object-fit: contain; }

@@ -10,6 +10,8 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.7 (2026-01-27)
+  - 调整detail卡片中文本字体大小：15px -> 17px，更接近X官网的显示效果
   0.1.6 (2026-01-26)
   - 新增entity处理模块：支持正确渲染推文文本中的hashtag、@提及、URL、股票符号等entities
   - 添加 processEntities 函数，根据Twitter API返回的entities数据正确渲染可交互链接

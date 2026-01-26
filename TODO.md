@@ -169,3 +169,35 @@ Hover到头像之后显示profile
 
 使用twitter的emoji
 * 利用这个库：https://github.com/jdecked/twemoji
+    * 不行，发现用不了，有CSP限制访问不了外界CDN
+有CSP限制不能访问外界CDN
+但是我们可以用推特自己的emoji链接。推特的emoji规则是这样：
+链接为：https://abs-0.twimg.com/emoji/v2/svg/1f600.svg，这个链接对应着U+1F600也就是😀这个emoji。也就是说我们要用emoji的Unicode code point（16 进制，小写）来获得对应的emoji。
+复合emoji比如🇺🇸 = U+1F1FA + U+1F1F8，对应的链接则为https://abs-0.twimg.com/emoji/v2/svg/1f1fa-1f1f8.svg
+但是之前的尝试全都在匹配emoji这一步失败了
+和emoji相关的逻辑都放到twemoji文件里。相关的config的名字也命名为twemoji
+```
+const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+const text = "👨‍👩‍👧‍👦👍🏽🇯🇵a";
+const emojis = [...segmenter.segment(text)].map(s => s.segment);
+console.log(emojis);
+// ["👨‍👩‍👧‍👦", "👍🏽", "🇯🇵", "a"]
+```
+处理emoji直接用现成的库最好。
+我知道为什么parse总是出问题了，我们之前用Array.from去处理字符串，但是这种面对复合emoji的时候就失效了，依然会把复合emoji当成多个code point。
+所以我们需要把这些全部换成Intl.Segmenter
+https://gist.githubusercontent.com/mkkane/fcb6c686ee35b007f9b2/raw/0c5a1c435ed4fdd1068404305dd2859285a05590/emoji-dict.json
+* 这个说不定也能起到作用
+样式有问题
+* 在推特卡里，emoji充满了一整行。detail里反而没问题
+* 但是detail里emoji和emoji之间没有任何空隙，都是紧挨着的
+    * 推特官方会在emoji左右两侧设置0.075em的margin，宽度和高度设置1.2em
+需要修改。让推特卡和detail里都能正确显示
+
+超过140字的note tweet的entity没有被渲染。
+
+note tweet不只是长度超过140字的。有别的类型的也被归类为了note tweet，
+比如：
+* https://x.com/LilAtole/status/1961523013741887774
+这种字数没有超140，但是还是有一个「显示更多」
+我们需要研究一下都有哪些种类，对应进行处理
