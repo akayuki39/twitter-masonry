@@ -6,9 +6,8 @@
 // @author       you
 // @changelog    0.1.3 (2026-01-25)
 //                 - 修复点击detail中的图片打开预览时触发时间线加载新推文的问题
-//                 - 修复图片预览打开时滚动触发时间线加载的问题
 //                 - 增大预加载范围：IntersectionObserver从1600px提升到3000px，scroll监听从1200px提升到2500px
-//                 - 图片预览现在点击图片本身也能关闭（之前只能点击背景关闭）
+//                 - 图片预览现在点击图片本身也能关闭了
 //                 0.1.2 (2025-01-25)
 //                 - Add support for long tweets (note_tweet): Show complete text in detail view, display "Show more" link on homepage for tweets exceeding 140 characters. 
 //                 - 新增长推文（note_tweet）支持：详情页显示完整文字，主页超过140字的推文显示"显示更多"链接
@@ -216,7 +215,7 @@
     .tm-image-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; cursor: zoom-out; opacity: 0; transition: opacity 0.2s ease; }
     .tm-image-backdrop.show { display: flex; opacity: 1; }
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
-    .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: default; transform: scale(0.9); transition: transform 0.15s ease; }
+    .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: zoom-out; transform: scale(0.9); transition: transform 0.15s ease; }
     .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
     .tm-show-more { color: #0f7ae5; cursor: pointer; font-size: 14px; font-weight: 500; transition: color 0.12s ease; }
     .tm-show-more:hover { color: #2563eb; }
