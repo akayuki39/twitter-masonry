@@ -42,10 +42,19 @@ detail里quote部分也用carousel来滚动显示图片
 * result.legacy.extended_entities.url里会有这个链接。如果在这里就给去掉
 * 实际上有个legacy.display_text_range，里面是full_text里实际文本的range。用这个就能去掉最后的链接了。
 
-
 脚本头添加github自动更新的字段
 * @updateURL以及@downloadURL等
 
+而且文字显示的也不全，内容长的话后面就没了。怀疑用的text来源不对。
+* 超过140个字符的属于note_tweet，在json例子里搜下
+* 在详情卡里把全文显示出来
+
+推文本身是note_tweet的情况下再quote其他推文，被quote的推文不会被正确显示，而是显示unknown
+* 也有的是因为quoted_status_result.result里的结构不太一样。有的是直接给result，有的需要再调用一层?.tweet才能得到正常的结果。查看tweetdetail_w_special_quote.json
+    * 这个例子里被quote的推文的类型是TweetWithVisibilityResults，而不是Tweet。这个例子里是推文quote推文quote推文，最里面的不在api里显示。
+* 有时候是推主自己转自己的情况下也会出这个问题。看看。
+    * https://x.com/calameuyamuya/status/2013818303899410569
+* 原因是因为TweetWithVisibilityResults。针对这种情况做处理
 
 ---
 
@@ -121,10 +130,6 @@ Entity相关的渲染
     * https://t.co/YIJP7FOSPM 这个是外链。
     * https://t.co/7Wr0zKBcwQ 这个是图片
 
-而且文字显示的也不全，内容长的话后面就没了。怀疑用的text来源不对。
-* 超过140个字符的属于note_tweet，在json例子里搜下
-* 在详情卡里把全文显示出来
-
 hometimeline现在每次刷新之后还会显示之前的推文。
 需要看看实际hometimeline的api调用的时候都带了什么参数。
 * 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
@@ -140,12 +145,6 @@ hometimeline现在每次刷新之后还会显示之前的推文。
 
 竖版排列时顺序不对
 * 推特新更新的功能，点开推文之后竖版显示的顺序可能跟四宫格的时候不一样。也许有参数来指定排列顺序。
-
-推文本身是note_tweet的情况下再quote其他推文，被quote的推文不会被正确显示，而是显示unknown
-* 也有的是因为quoted_status_result.result里的结构不太一样。有的是直接给result，有的需要再调用一层?.tweet才能得到正常的结果。查看tweetdetail_w_special_quote.json
-    * 这个例子里被quote的推文的类型是TweetWithVisibilityResults，而不是Tweet。这个例子里是推文quote推文quote推文，最里面的不在api里显示。
-* 有时候是推主自己转自己的情况下也会出这个问题。看看。
-    * https://x.com/calameuyamuya/status/2013818303899410569
 
 detail中的视频指定最高画质
 
