@@ -10,6 +10,12 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.8 (2026-01-28)
+  - 修复长推文（note_tweet）中的entities无法正确渲染的问题
+  - 原因：长推文使用note_tweet.text和entity_set，与普通推文的legacy格式不同
+  - 重构文本获取函数：添加getDisplayTweetText（卡片页）和getFullTweetText（详情页），语义更清晰
+  - 简化getEntities函数：直接返回entity_set或legacy.entities，无需转换
+  - 添加函数注释：提高代码可维护性
   0.1.7 (2026-01-27)
   - 调整detail卡片中文本字体大小：15px -> 17px，更接近X官网的显示效果
   0.1.6 (2026-01-26)

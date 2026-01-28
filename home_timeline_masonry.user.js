@@ -1,10 +1,16 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.7
+// @version      0.1.8
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       you
-// @changelog    0.1.7 (2026-01-27)
+// @changelog    0.1.8 (2026-01-28)
+//                 - 修复长推文（note_tweet）中的entities无法正确渲染的问题
+//                 - 原因：长推文使用note_tweet.text和entity_set，与普通推文的legacy格式不同
+//                 - 重构文本获取函数：添加getDisplayTweetText（卡片页）和getFullTweetText（详情页），语义更清晰
+//                 - 简化getEntities函数：直接返回entity_set或legacy.entities，无需转换
+//                 - 添加函数注释：提高代码可维护性
+//                 0.1.7 (2026-01-27)
 //                 - 调整detail卡片中文本字体大小：15px -> 17px，更接近X官网的显示效果
 //                 0.1.6 (2026-01-26)
 //                 - 新增entity处理模块：支持正确渲染推文文本中的hashtag、@提及、URL、股票符号等entities
@@ -345,11 +351,17 @@
     return isNaN(tryD) ? raw : tryD.toLocaleString();
   };
 
-  const getCleanText = (tweet) => {
+  // 判断是否为长推文
+  const isNoteTweet = (tweet) => {
+    return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
+  };
+
+
+  // 获取卡片显示的文本（普通推文截取，长推文完整）
+  const getDisplayTweetText = (tweet) => {
     const legacy = tweet.legacy || tweet;
     const fullText = legacy.full_text || legacy.text || "";
     const displayRange = legacy.display_text_range;
-
     if (displayRange && Array.isArray(displayRange) && displayRange.length === 2) {
       const chars = Array.from(fullText);
       return chars.slice(displayRange[0], displayRange[1]).join("");
@@ -357,15 +369,24 @@
     return fullText;
   };
 
-  const isNoteTweet = (tweet) => {
-    return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
-  };
 
-  const getNoteTweetText = (tweet) => {
+  // 获取详情页完整文本
+  const getFullTweetText = (tweet) => {
     if (isNoteTweet(tweet)) {
       return tweet.note_tweet.note_tweet_results.result.text;
     }
-    return getCleanText(tweet);
+    const legacy = tweet.legacy || tweet;
+    return legacy.full_text || legacy.text || "";
+  };
+
+
+  // 获取推文entities（hashtag、mention、URL等）
+  const getEntities = (tweet) => {
+    if (isNoteTweet(tweet)) {
+      return tweet.note_tweet?.note_tweet_results?.result?.entity_set || {};
+    }
+    const legacy = tweet.legacy || tweet;
+    return legacy.entities || {};
   };
 
   const pickMedia = (tweet) => {
@@ -689,7 +710,7 @@
     const quoteLegacy = quotedTweet.legacy || quotedTweet;
     const quoteCore = quotedTweet.core;
     const quoteUser = quoteCore?.user_results?.result?.core;
-    const text = getCleanText(quotedTweet);
+    const text = getDisplayTweetText(quotedTweet);
     const media = pickMedia(quotedTweet);
     const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
     const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -749,8 +770,8 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "tm-quote-text";
-    const entities = quoteLegacy.entities || {};
-    const displayRange = quoteLegacy.display_text_range;
+    const entities = getEntities(quotedTweet);
+    const displayRange = isNoteTweet(quotedTweet) ? null : quoteLegacy.display_text_range;
     const processedText = processEntities(text, entities, displayRange);
     textDiv.appendChild(processedText);
 
@@ -788,7 +809,7 @@
     const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
     const quotedData = unwrapTweetResult(quotedDataRaw);
 
-    const text = getCleanText(displayTweet);
+    const text = getDisplayTweetText(displayTweet);
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
     const avatar = displayCore?.user_results?.result?.avatar?.image_url;
@@ -835,8 +856,8 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "text";
-    const entities = displayLegacy.entities || {};
-    const displayRange = displayLegacy.display_text_range;
+    const entities = getEntities(displayTweet);
+    const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
     const processedText = processEntities(text, entities, displayRange);
     textDiv.appendChild(processedText);
     if (isNoteTweet(displayTweet)) {
@@ -1047,7 +1068,7 @@
     const quoteLegacy = quotedTweet.legacy || quotedTweet;
     const quoteCore = quotedTweet.core;
     const quoteUser = quoteCore?.user_results?.result?.core;
-    const text = getCleanText(quotedTweet);
+    const text = getFullTweetText(quotedTweet);
     const media = pickMedia(quotedTweet);
     const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
     const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -1106,8 +1127,8 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "tm-quote-text";
-    const entities = quoteLegacy.entities || {};
-    const displayRange = quoteLegacy.display_text_range;
+    const entities = getEntities(quotedTweet);
+    const displayRange = isNoteTweet(quotedTweet) ? null : quoteLegacy.display_text_range;
     const processedText = processEntities(text, entities, displayRange);
     textDiv.appendChild(processedText);
 
@@ -1204,7 +1225,7 @@
     const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
     const quotedData = unwrapTweetResult(quotedDataRaw);
 
-    const text = getNoteTweetText(displayTweet);
+    const text = getFullTweetText(displayTweet);
     const media = pickMedia(displayTweet);
     const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
     const avatar = displayCore?.user_results?.result?.avatar?.image_url;
@@ -1256,8 +1277,8 @@
 
     const textDiv = document.createElement("div");
     textDiv.className = "text";
-    const entities = displayLegacy.entities || {};
-    const displayRange = displayLegacy.display_text_range;
+    const entities = getEntities(displayTweet);
+    const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
     const processedText = processEntities(text, entities, displayRange);
     textDiv.appendChild(processedText);
 

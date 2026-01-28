@@ -1,5 +1,5 @@
 import { formatTime, escapeHTML } from "../utils/format.js";
-import { getCleanText, pickMedia, isNoteTweet, unwrapTweetResult } from "../utils/tweet.js";
+import { pickMedia, isNoteTweet, unwrapTweetResult, getEntities, getDisplayTweetText } from "../utils/tweet.js";
 import { createLikeButton } from "./likeButton.js";
 import { processEntities } from "../utils/entity.js";
 
@@ -7,7 +7,7 @@ export const createQuoteTweet = (quotedTweet) => {
   const quoteLegacy = quotedTweet.legacy || quotedTweet;
   const quoteCore = quotedTweet.core;
   const quoteUser = quoteCore?.user_results?.result?.core;
-  const text = getCleanText(quotedTweet);
+  const text = getDisplayTweetText(quotedTweet);
   const media = pickMedia(quotedTweet);
   const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
   const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -67,8 +67,8 @@ export const createQuoteTweet = (quotedTweet) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "tm-quote-text";
-  const entities = quoteLegacy.entities || {};
-  const displayRange = quoteLegacy.display_text_range;
+  const entities = getEntities(quotedTweet);
+  const displayRange = isNoteTweet(quotedTweet) ? null : quoteLegacy.display_text_range;
   const processedText = processEntities(text, entities, displayRange);
   textDiv.appendChild(processedText);
 
@@ -106,7 +106,7 @@ export const createCard = (tweet, openDetail) => {
   const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
   const quotedData = unwrapTweetResult(quotedDataRaw);
 
-  const text = getCleanText(displayTweet);
+  const text = getDisplayTweetText(displayTweet);
   const media = pickMedia(displayTweet);
   const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
   const avatar = displayCore?.user_results?.result?.avatar?.image_url;
@@ -153,8 +153,8 @@ export const createCard = (tweet, openDetail) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "text";
-  const entities = displayLegacy.entities || {};
-  const displayRange = displayLegacy.display_text_range;
+  const entities = getEntities(displayTweet);
+  const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
   const processedText = processEntities(text, entities, displayRange);
   textDiv.appendChild(processedText);
   if (isNoteTweet(displayTweet)) {

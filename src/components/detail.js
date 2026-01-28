@@ -1,7 +1,7 @@
 import { createLikeButton, setToast } from "./likeButton.js";
 import { createCarousel } from "./carousel.js";
 import { formatTime, escapeHTML } from "../utils/format.js";
-import { getCleanText, pickMedia, isNoteTweet, unwrapTweetResult, getNoteTweetText } from "../utils/tweet.js";
+import { pickMedia, isNoteTweet, unwrapTweetResult, getFullTweetText, getEntities } from "../utils/tweet.js";
 import { processEntities } from "../utils/entity.js";
 import { openImagePreview } from "./imagePreview.js";
 import { setDetailOpen } from "../utils/state.js";
@@ -12,7 +12,7 @@ const createDetailQuoteTweet = (quotedTweet) => {
   const quoteLegacy = quotedTweet.legacy || quotedTweet;
   const quoteCore = quotedTweet.core;
   const quoteUser = quoteCore?.user_results?.result?.core;
-  const text = getCleanText(quotedTweet);
+  const text = getFullTweetText(quotedTweet);
   const media = pickMedia(quotedTweet);
   const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
   const avatar = quoteCore?.user_results?.result?.avatar?.image_url;
@@ -71,8 +71,8 @@ const createDetailQuoteTweet = (quotedTweet) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "tm-quote-text";
-  const entities = quoteLegacy.entities || {};
-  const displayRange = quoteLegacy.display_text_range;
+  const entities = getEntities(quotedTweet);
+  const displayRange = isNoteTweet(quotedTweet) ? null : quoteLegacy.display_text_range;
   const processedText = processEntities(text, entities, displayRange);
   textDiv.appendChild(processedText);
 
@@ -175,7 +175,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
   const quotedData = unwrapTweetResult(quotedDataRaw);
 
-  const text = getNoteTweetText(displayTweet);
+  const text = getFullTweetText(displayTweet);
   const media = pickMedia(displayTweet);
   const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
   const avatar = displayCore?.user_results?.result?.avatar?.image_url;
@@ -227,8 +227,8 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
 
   const textDiv = document.createElement("div");
   textDiv.className = "text";
-  const entities = displayLegacy.entities || {};
-  const displayRange = displayLegacy.display_text_range;
+  const entities = getEntities(displayTweet);
+  const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
   const processedText = processEntities(text, entities, displayRange);
   textDiv.appendChild(processedText);
 

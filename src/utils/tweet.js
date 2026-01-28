@@ -1,8 +1,14 @@
-export const getCleanText = (tweet) => {
+// 判断是否为长推文
+export const isNoteTweet = (tweet) => {
+  return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
+};
+
+
+// 获取卡片显示的文本（普通推文截取，长推文完整）
+export const getDisplayTweetText = (tweet) => {
   const legacy = tweet.legacy || tweet;
   const fullText = legacy.full_text || legacy.text || "";
   const displayRange = legacy.display_text_range;
-
   if (displayRange && Array.isArray(displayRange) && displayRange.length === 2) {
     const chars = Array.from(fullText);
     return chars.slice(displayRange[0], displayRange[1]).join("");
@@ -10,15 +16,24 @@ export const getCleanText = (tweet) => {
   return fullText;
 };
 
-export const isNoteTweet = (tweet) => {
-  return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
-};
 
-export const getNoteTweetText = (tweet) => {
+// 获取详情页完整文本
+export const getFullTweetText = (tweet) => {
   if (isNoteTweet(tweet)) {
     return tweet.note_tweet.note_tweet_results.result.text;
   }
-  return getCleanText(tweet);
+  const legacy = tweet.legacy || tweet;
+  return legacy.full_text || legacy.text || "";
+};
+
+
+// 获取推文entities（hashtag、mention、URL等）
+export const getEntities = (tweet) => {
+  if (isNoteTweet(tweet)) {
+    return tweet.note_tweet?.note_tweet_results?.result?.entity_set || {};
+  }
+  const legacy = tweet.legacy || tweet;
+  return legacy.entities || {};
 };
 
 export const pickMedia = (tweet) => {
