@@ -3,7 +3,8 @@
 // @namespace    https://github.com/akayuki39/twitter-masonry
 // @version      0.1.9
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
-// @author       you
+// @author       akayuki39
+// @homepage     https://github.com/akayuki39/twitter-masonry
 // @changelog    0.1.9 (2026-01-29)
 //                 - 修复无 entities 时不处理 displayTextRange 的问题（现在所有文本都会正确截断）
 //                 - 重构文本处理模块

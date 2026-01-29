@@ -78,6 +78,8 @@ Entity相关的渲染
 
 超过140字的note tweet的entity没有被渲染。
 
+detail的文本，现在只有有entity的时候才会被处理。
+但是本身文本处理都是要做的，比如处理disply range。需要修正
 ---
 
 点击quote部分显示quote推文的detail
@@ -145,6 +147,8 @@ quote部分增加hover时高亮的效果
 hometimeline现在每次刷新之后还会显示之前的推文。
 需要看看实际hometimeline的api调用的时候都带了什么参数。
 * 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
+    * 这个是通过websocket的streaming api事实更新推文的互动数据的。[参考](https://blog.gitcode.com/a858f26c23782c9163adda2db535f25a.html)
+* 感觉得研究hometimeline api
 
 更改详情页的样式。左边图片，右边上面推文，下面是回复。
 * 获得回复等信息可能需要访问TweetDetail的api
@@ -201,6 +205,3 @@ note tweet不只是长度超过140字的。有别的类型的也被归类为了n
 * https://x.com/LilAtole/status/1961523013741887774
 这种字数没有超140，但是还是有一个「显示更多」
 我们需要研究一下都有哪些种类，对应进行处理
-
-detail的文本，现在只有有entity的时候才会被处理。
-但是本身文本处理都是要做的，比如处理disply range。需要修正

@@ -52,7 +52,8 @@ const userscriptMeta = `// ==UserScript==
 // @namespace    https://github.com/akayuki39/twitter-masonry
 // @version      ${packageJson.version}
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
-// @author       you
+// @author       akayuki39
+// @homepage     https://github.com/akayuki39/twitter-masonry
 // @changelog    ${changelogFormatted}
 // @match        https://x.com/*
 // @match        https://*.x.com/*
