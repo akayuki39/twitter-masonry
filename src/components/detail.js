@@ -2,7 +2,7 @@ import { createLikeButton, setToast } from "./likeButton.js";
 import { createCarousel } from "./carousel.js";
 import { formatTime, escapeHTML } from "../utils/format.js";
 import { pickMedia, isNoteTweet, unwrapTweetResult, getFullTweetText, getEntities } from "../utils/tweet.js";
-import { processEntities } from "../utils/entity.js";
+import { processText } from "../utils/entity.js";
 import { openImagePreview } from "./imagePreview.js";
 import { setDetailOpen } from "../utils/state.js";
 
@@ -73,7 +73,7 @@ const createDetailQuoteTweet = (quotedTweet) => {
   textDiv.className = "tm-quote-text";
   const entities = getEntities(quotedTweet);
   const displayRange = isNoteTweet(quotedTweet) ? null : quoteLegacy.display_text_range;
-  const processedText = processEntities(text, entities, displayRange);
+  const processedText = processText(text, entities, displayRange);
   textDiv.appendChild(processedText);
 
   quoteCard.appendChild(meta);
@@ -229,7 +229,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
   textDiv.className = "text";
   const entities = getEntities(displayTweet);
   const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
-  const processedText = processEntities(text, entities, displayRange);
+  const processedText = processText(text, entities, displayRange);
   textDiv.appendChild(processedText);
 
   const mediaWrap = document.createElement("div");

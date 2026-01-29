@@ -76,6 +76,8 @@ Entity相关的渲染
     * https://t.co/7Wr0zKBcwQ 这个是图片
 * Solution: 新建utils/entity.js来解决entity渲染
 
+超过140字的note tweet的entity没有被渲染。
+
 ---
 
 点击quote部分显示quote推文的detail
@@ -194,10 +196,11 @@ https://gist.githubusercontent.com/mkkane/fcb6c686ee35b007f9b2/raw/0c5a1c435ed4f
     * 推特官方会在emoji左右两侧设置0.075em的margin，宽度和高度设置1.2em
 需要修改。让推特卡和detail里都能正确显示
 
-超过140字的note tweet的entity没有被渲染。
-
 note tweet不只是长度超过140字的。有别的类型的也被归类为了note tweet，
 比如：
 * https://x.com/LilAtole/status/1961523013741887774
 这种字数没有超140，但是还是有一个「显示更多」
 我们需要研究一下都有哪些种类，对应进行处理
+
+detail的文本，现在只有有entity的时候才会被处理。
+但是本身文本处理都是要做的，比如处理disply range。需要修正

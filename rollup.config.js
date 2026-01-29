@@ -10,7 +10,12 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
-  0.1.8 (2026-01-28)
+  0.1.9 (2026-01-29)
+  - 修复无 entities 时不处理 displayTextRange 的问题（现在所有文本都会正确截断）
+  - 重构文本处理模块
+  - 统一处理有/无 entities 的情况，消除 displayRange 和 htmlDecode 的重复代码
+  - 添加完整的文件级和函数级 JSDoc 注释，提高代码可维护性
+  - 0.1.8 (2026-01-28)
   - 修复长推文（note_tweet）中的entities无法正确渲染的问题
   - 原因：长推文使用note_tweet.text和entity_set，与普通推文的legacy格式不同
   - 重构文本获取函数：添加getDisplayTweetText（卡片页）和getFullTweetText（详情页），语义更清晰
