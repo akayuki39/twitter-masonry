@@ -80,6 +80,16 @@ Entity相关的渲染
 
 detail的文本，现在只有有entity的时候才会被处理。
 但是本身文本处理都是要做的，比如处理disply range。需要修正
+
+Hover到头像之后显示profile
+* 数据已经有了，都在core里。直接显示就行
+修正：
+* 如果用户profile没有banner的话，渲染就直接少了一块，头像也只有下半部分了。添加针对没有banner的情况。
+* 用户头像加载的图片清晰度太低，在profile card里会很模糊
+* profile description需要通过和tweet文本相同的处理流程
+* profile card里的name有时候会离banner非常近，主要是非英文的时候。显得很不自然。
+* location的icon不太好看，改成推特的
+* 不只是tweet card，在detail以及quote里也需要添加这个hover显示profile的功能
 ---
 
 点击quote部分显示quote推文的detail
@@ -170,9 +180,6 @@ detail中的视频指定最高画质
 
 GIF的视频默认播放且循环播放
 
-Hover到头像之后显示profile
-* 数据已经有了，都在core里。直接显示就行
-
 使用twitter的emoji
 * 利用这个库：https://github.com/jdecked/twemoji
     * 不行，发现用不了，有CSP限制访问不了外界CDN
@@ -205,3 +212,9 @@ note tweet不只是长度超过140字的。有别的类型的也被归类为了n
 * https://x.com/LilAtole/status/1961523013741887774
 这种字数没有超140，但是还是有一个「显示更多」
 我们需要研究一下都有哪些种类，对应进行处理
+
+改名。waterfall比较直观
+readme里加截图
+
+文本解析还是有问题。现在如果视频来源是别人，那么带视频的推文后面都会带一个链接，而且链接没有被渲染。需要移除
+* 发现display_text_range就是把这个链接带在里面的。这个链接也是个entity，在media里面。所以这个链接被渲染成视频了。
