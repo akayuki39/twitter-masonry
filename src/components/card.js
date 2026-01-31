@@ -2,11 +2,13 @@ import { formatTime, escapeHTML } from "../utils/format.js";
 import { pickMedia, isNoteTweet, unwrapTweetResult, getEntities, getDisplayTweetText } from "../utils/tweet.js";
 import { createLikeButton } from "./likeButton.js";
 import { processText } from "../utils/entity.js";
+import { attachProfileCardHover } from "./profileCard.js";
 
 export const createQuoteTweet = (quotedTweet) => {
   const quoteLegacy = quotedTweet.legacy || quotedTweet;
   const quoteCore = quotedTweet.core;
   const quoteUser = quoteCore?.user_results?.result?.core;
+  const quoteUserFull = quoteCore?.user_results?.result;
   const text = getDisplayTweetText(quotedTweet);
   const media = pickMedia(quotedTweet);
   const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
@@ -35,6 +37,10 @@ export const createQuoteTweet = (quotedTweet) => {
     avatarImg.src = avatar;
     avatarLink.appendChild(avatarImg);
     userSpan.appendChild(avatarLink);
+    
+    if (quoteUserFull) {
+      attachProfileCardHover(avatarLink, quoteUserFull);
+    }
   }
 
   const infoDiv = document.createElement("div");
@@ -57,6 +63,10 @@ export const createQuoteTweet = (quotedTweet) => {
   infoDiv.appendChild(nameLink);
   infoDiv.appendChild(screenLink);
   userSpan.appendChild(infoDiv);
+  
+  if (quoteUserFull) {
+    attachProfileCardHover(infoDiv, quoteUserFull);
+  }
 
   const timeSpan = document.createElement("div");
   timeSpan.className = "tm-quote-time";
@@ -103,6 +113,7 @@ export const createCard = (tweet, openDetail) => {
   const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
   const displayCore = retweetData?.core || tweet.core;
   const displayTweet = retweetData || tweet;
+  const displayUserFull = retweetData?.core?.user_results?.result || tweet.core?.user_results?.result;
   const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
   const quotedData = unwrapTweetResult(quotedDataRaw);
 
@@ -138,13 +149,50 @@ export const createCard = (tweet, openDetail) => {
   meta.className = "meta";
   const userSpan = document.createElement("div");
   userSpan.className = "user";
-  userSpan.innerHTML = `
-    ${avatar ? `<a class="tm-user-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer"><img class="tm-avatar" src="${avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;"></a>` : ""}
-    <div class="info">
-      <a class="name tm-name-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>
-      <a class="screen tm-screen-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">@${escapeHTML(user)}</a>
-    </div>
-  `;
+
+  if (avatar) {
+    const avatarLink = document.createElement("a");
+    avatarLink.href = profileUrl;
+    avatarLink.target = "_blank";
+    avatarLink.rel = "noopener noreferrer";
+    avatarLink.className = "tm-user-link";
+    const avatarImg = document.createElement("img");
+    avatarImg.className = "tm-avatar";
+    avatarImg.src = avatar;
+    avatarImg.style.cssText = "width:36px;height:36px;border-radius:50%;object-fit:cover;";
+    avatarLink.appendChild(avatarImg);
+    userSpan.appendChild(avatarLink);
+    
+    if (displayUserFull) {
+      attachProfileCardHover(avatarLink, displayUserFull);
+    }
+  }
+
+  const infoDiv = document.createElement("div");
+  infoDiv.className = "info";
+
+  const nameLink = document.createElement("a");
+  nameLink.className = "name tm-name-link";
+  nameLink.href = profileUrl;
+  nameLink.target = "_blank";
+  nameLink.rel = "noopener noreferrer";
+  nameLink.textContent = name;
+
+  const screenLink = document.createElement("a");
+  screenLink.className = "screen tm-screen-link";
+  screenLink.href = profileUrl;
+  screenLink.target = "_blank";
+  screenLink.rel = "noopener noreferrer";
+  screenLink.textContent = `@${user}`;
+
+  infoDiv.appendChild(nameLink);
+  infoDiv.appendChild(screenLink);
+  userSpan.appendChild(infoDiv);
+
+  if (displayUserFull) {
+    attachProfileCardHover(infoDiv, displayUserFull);
+  }
+  
   const time = document.createElement("div");
   time.className = "time";
   time.textContent = formatTime(displayLegacy.created_at);

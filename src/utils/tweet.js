@@ -60,3 +60,9 @@ export const unwrapTweetResult = (result) => {
   if (result.__typename === "TweetWithVisibilityResults") return result.tweet || result;
   return result;
 };
+
+// 获取高清头像URL（将_normal替换为_200x200）
+export const getHighResAvatar = (avatarUrl) => {
+  if (!avatarUrl) return "";
+  return avatarUrl.replace(/_normal\.(jpg|jpeg|png)$/i, "_200x200.$1");
+};

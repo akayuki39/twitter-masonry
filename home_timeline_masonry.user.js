@@ -1,16 +1,18 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.9
+// @version      0.1.10
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       akayuki39
 // @homepage     https://github.com/akayuki39/twitter-masonry
-// @changelog    0.1.9 (2026-01-29)
+// @changelog    0.1.10 (2026-01-31)
+//                 - 新增用户Profile Card功能：hover到头像0.5秒后显示用户资料卡片，显示banner、高清头像、简介、位置、关注数等信息
+//                 0.1.9 (2026-01-29)
 //                 - 修复无 entities 时不处理 displayTextRange 的问题（现在所有文本都会正确截断）
 //                 - 重构文本处理模块
 //                 - 统一处理有/无 entities 的情况，消除 displayRange 和 htmlDecode 的重复代码
 //                 - 添加完整的文件级和函数级 JSDoc 注释，提高代码可维护性
-//                 - 0.1.8 (2026-01-28)
+//                 0.1.8 (2026-01-28)
 //                 - 修复长推文（note_tweet）中的entities无法正确渲染的问题
 //                 - 原因：长推文使用note_tweet.text和entity_set，与普通推文的legacy格式不同
 //                 - 重构文本获取函数：添加getDisplayTweetText（卡片页）和getFullTweetText（详情页），语义更清晰
@@ -244,6 +246,34 @@
     .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
     .tm-show-more { color: #0f7ae5; cursor: pointer; font-size: 14px; font-weight: 500; transition: color 0.12s ease; }
     .tm-show-more:hover { color: #2563eb; }
+    
+    .tm-profile-card { position: absolute; z-index: 1000; width: 320px; background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); border: 1px solid rgba(15,23,42,0.08); overflow: hidden; animation: tm-profile-card-fade-in 0.15s ease; }
+    @keyframes tm-profile-card-fade-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .tm-profile-banner { width: 100%; height: 100px; overflow: hidden; background: linear-gradient(180deg,#f8fafc,#e2e8f0); border-radius: 16px 16px 0 0; }
+    .tm-profile-banner img { width: 100%; height: 100%; object-fit: cover; }
+    .tm-profile-content { padding: 0 16px 16px; }
+    .tm-profile-header { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-end; }
+    .tm-profile-header.with-banner { margin-top: -36px; }
+    .tm-profile-header.no-banner { margin-top: 16px; }
+    .tm-profile-avatar-link { display: block; flex-shrink: 0; }
+    .tm-profile-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 12px rgba(15,23,42,0.15); background: #fff; }
+    .tm-profile-names { flex: 1; min-width: 0; padding-bottom: 8px; padding-top: 44px; }
+    .tm-profile-name-row { display: flex; align-items: center; gap: 4px; }
+    .tm-profile-name { font-weight: 800; color: #0f172a; font-size: 16px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-profile-name:hover { text-decoration: underline; }
+    .tm-profile-verified { color: #1d9bf0; display: flex; align-items: center; flex-shrink: 0; }
+    .tm-profile-screen-name { color: #64748b; font-size: 14px; text-decoration: none; }
+    .tm-profile-screen-name:hover { text-decoration: underline; }
+    .tm-profile-description { color: #334155; font-size: 14px; line-height: 1.5; margin-bottom: 12px; word-break: break-word; white-space: pre-wrap; }
+    .tm-profile-description a { color: #0f7ae5; text-decoration: none; }
+    .tm-profile-description a:hover { text-decoration: underline; }
+    .tm-profile-location { display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 13px; margin-bottom: 12px; }
+    .tm-profile-location svg { color: #94a3b8; flex-shrink: 0; }
+    .tm-profile-stats { display: flex; gap: 16px; }
+    .tm-profile-stat { display: flex; align-items: center; gap: 4px; text-decoration: none; color: inherit; }
+    .tm-profile-stat:hover { text-decoration: underline; }
+    .tm-profile-stat-value { font-weight: 700; color: #0f172a; font-size: 14px; }
+    .tm-profile-stat-label { color: #64748b; font-size: 14px; }
   `);
   };
 
@@ -357,6 +387,16 @@
     return isNaN(tryD) ? raw : tryD.toLocaleString();
   };
 
+  const formatNumber = (num) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return num.toString();
+  };
+
   // 判断是否为长推文
   const isNoteTweet = (tweet) => {
     return !!(tweet?.note_tweet?.note_tweet_results?.result?.text);
@@ -418,6 +458,12 @@
     if (!result) return null;
     if (result.__typename === "TweetWithVisibilityResults") return result.tweet || result;
     return result;
+  };
+
+  // 获取高清头像URL（将_normal替换为_200x200）
+  const getHighResAvatar = (avatarUrl) => {
+    if (!avatarUrl) return "";
+    return avatarUrl.replace(/_normal\.(jpg|jpeg|png)$/i, "_200x200.$1");
   };
 
   const favoriteTweet = async (tweetId) => {
@@ -809,10 +855,207 @@
     return renderWithIndex(chars, normalizedEntities, start, end);
   };
 
+  let activeCard = null;
+  let hoverTimeout = null;
+  let leaveTimeout = null;
+  const HOVER_DELAY = 500;
+
+  const removeActiveCard = () => {
+    if (activeCard) {
+      activeCard.remove();
+      activeCard = null;
+    }
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = null;
+    }
+    if (leaveTimeout) {
+      clearTimeout(leaveTimeout);
+      leaveTimeout = null;
+    }
+  };
+
+  const createProfileCard = (userData) => {
+    const card = document.createElement("div");
+    card.className = "tm-profile-card";
+
+    const core = userData?.core || {};
+    const legacy = userData?.legacy || {};
+    const avatar = userData?.avatar?.image_url;
+    const banner = legacy?.profile_banner_url;
+    const isVerified = userData?.is_blue_verified;
+
+    const name = core.name || "";
+    const screenName = core.screen_name || "";
+    const description = legacy.description || "";
+    const location = userData?.location?.location || "";
+    const followersCount = legacy.followers_count || 0;
+    const followingCount = legacy.friends_count || 0;
+
+    const profileUrl = screenName ? `https://x.com/${encodeURIComponent(screenName)}` : "";
+
+    const content = document.createElement("div");
+    content.className = "tm-profile-content";
+
+    const header = document.createElement("div");
+    header.className = banner ? "tm-profile-header with-banner" : "tm-profile-header no-banner";
+
+    if (banner) {
+      const bannerEl = document.createElement("div");
+      bannerEl.className = "tm-profile-banner";
+      const bannerImg = document.createElement("img");
+      bannerImg.src = banner;
+      bannerEl.appendChild(bannerImg);
+      card.appendChild(bannerEl);
+    }
+
+    if (avatar) {
+      const avatarLink = document.createElement("a");
+      avatarLink.href = profileUrl;
+      avatarLink.target = "_blank";
+      avatarLink.rel = "noopener noreferrer";
+      avatarLink.className = "tm-profile-avatar-link";
+      const avatarImg = document.createElement("img");
+      avatarImg.src = getHighResAvatar(avatar);
+      avatarImg.className = "tm-profile-avatar";
+      avatarLink.appendChild(avatarImg);
+      header.appendChild(avatarLink);
+    }
+
+    const nameSection = document.createElement("div");
+    nameSection.className = "tm-profile-names";
+
+    const nameRow = document.createElement("div");
+    nameRow.className = "tm-profile-name-row";
+
+    const nameLink = document.createElement("a");
+    nameLink.href = profileUrl;
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.className = "tm-profile-name";
+    nameLink.textContent = name;
+    nameRow.appendChild(nameLink);
+
+    if (isVerified) {
+      const verifiedBadge = document.createElement("span");
+      verifiedBadge.className = "tm-profile-verified";
+      verifiedBadge.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.084.965.238 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-3-3c-.293-.293-.293-.768 0-1.06.293-.294.768-.294 1.06 0l2.3 2.3 3.7-5.6c.19-.29.58-.35.87-.16.29.18.36.57.18.86z"/></svg>`;
+      nameRow.appendChild(verifiedBadge);
+    }
+
+    nameSection.appendChild(nameRow);
+
+    const screenNameEl = document.createElement("a");
+    screenNameEl.href = profileUrl;
+    screenNameEl.target = "_blank";
+    screenNameEl.rel = "noopener noreferrer";
+    screenNameEl.className = "tm-profile-screen-name";
+    screenNameEl.textContent = `@${screenName}`;
+    nameSection.appendChild(screenNameEl);
+
+    header.appendChild(nameSection);
+    content.appendChild(header);
+
+    if (description) {
+      const desc = document.createElement("div");
+      desc.className = "tm-profile-description";
+      
+      const entities = legacy.entities?.description || {};
+      const processedDesc = processText(description, entities, null);
+      desc.appendChild(processedDesc);
+      content.appendChild(desc);
+    }
+
+    if (location) {
+      const loc = document.createElement("div");
+      loc.className = "tm-profile-location";
+      loc.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" width="14" height="14"><g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g></svg><span>${escapeHTML(location)}</span>`;
+      content.appendChild(loc);
+    }
+
+    const stats = document.createElement("div");
+    stats.className = "tm-profile-stats";
+    stats.innerHTML = `
+    <a href="${profileUrl}/following" target="_blank" rel="noopener noreferrer" class="tm-profile-stat">
+      <span class="tm-profile-stat-value">${formatNumber(followingCount)}</span>
+      <span class="tm-profile-stat-label">正在关注</span>
+    </a>
+    <a href="${profileUrl}/followers" target="_blank" rel="noopener noreferrer" class="tm-profile-stat">
+      <span class="tm-profile-stat-value">${formatNumber(followersCount)}</span>
+      <span class="tm-profile-stat-label">关注者</span>
+    </a>
+  `;
+    content.appendChild(stats);
+
+    card.appendChild(content);
+
+    card.addEventListener("mouseenter", () => {
+      if (leaveTimeout) {
+        clearTimeout(leaveTimeout);
+        leaveTimeout = null;
+      }
+    });
+
+    card.addEventListener("mouseleave", () => {
+      leaveTimeout = setTimeout(() => {
+        removeActiveCard();
+      }, 200);
+    });
+
+    return card;
+  };
+
+  const attachProfileCardHover = (element, userData) => {
+    if (!element || !userData) return;
+
+    element.addEventListener("mouseenter", (e) => {
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      if (leaveTimeout) clearTimeout(leaveTimeout);
+
+      hoverTimeout = setTimeout(() => {
+        removeActiveCard();
+
+        const card = createProfileCard(userData);
+        document.body.appendChild(card);
+        activeCard = card;
+
+        const rect = element.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+
+        let left = rect.left + rect.width / 2 - cardRect.width / 2;
+        let top = rect.bottom + 8;
+
+        if (left < 10) left = 10;
+        if (left + cardRect.width > window.innerWidth - 10) {
+          left = window.innerWidth - cardRect.width - 10;
+        }
+
+        if (top + cardRect.height > window.innerHeight - 10) {
+          top = rect.top - cardRect.height - 8;
+        }
+
+        card.style.left = `${left + window.scrollX}px`;
+        card.style.top = `${top + window.scrollY}px`;
+      }, HOVER_DELAY);
+    });
+
+    element.addEventListener("mouseleave", () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+
+      leaveTimeout = setTimeout(() => {
+        removeActiveCard();
+      }, 200);
+    });
+  };
+
   const createQuoteTweet = (quotedTweet) => {
     const quoteLegacy = quotedTweet.legacy || quotedTweet;
     const quoteCore = quotedTweet.core;
     const quoteUser = quoteCore?.user_results?.result?.core;
+    const quoteUserFull = quoteCore?.user_results?.result;
     const text = getDisplayTweetText(quotedTweet);
     const media = pickMedia(quotedTweet);
     const user = quoteUser?.screen_name || quoteLegacy.user_id_str || "unknown";
@@ -841,6 +1084,10 @@
       avatarImg.src = avatar;
       avatarLink.appendChild(avatarImg);
       userSpan.appendChild(avatarLink);
+      
+      if (quoteUserFull) {
+        attachProfileCardHover(avatarLink, quoteUserFull);
+      }
     }
 
     const infoDiv = document.createElement("div");
@@ -863,6 +1110,10 @@
     infoDiv.appendChild(nameLink);
     infoDiv.appendChild(screenLink);
     userSpan.appendChild(infoDiv);
+    
+    if (quoteUserFull) {
+      attachProfileCardHover(infoDiv, quoteUserFull);
+    }
 
     const timeSpan = document.createElement("div");
     timeSpan.className = "tm-quote-time";
@@ -909,6 +1160,7 @@
     const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
     const displayCore = retweetData?.core || tweet.core;
     const displayTweet = retweetData || tweet;
+    const displayUserFull = retweetData?.core?.user_results?.result || tweet.core?.user_results?.result;
     const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
     const quotedData = unwrapTweetResult(quotedDataRaw);
 
@@ -944,13 +1196,50 @@
     meta.className = "meta";
     const userSpan = document.createElement("div");
     userSpan.className = "user";
-    userSpan.innerHTML = `
-    ${avatar ? `<a class="tm-user-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer"><img class="tm-avatar" src="${avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;"></a>` : ""}
-    <div class="info">
-      <a class="name tm-name-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>
-      <a class="screen tm-screen-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">@${escapeHTML(user)}</a>
-    </div>
-  `;
+
+    if (avatar) {
+      const avatarLink = document.createElement("a");
+      avatarLink.href = profileUrl;
+      avatarLink.target = "_blank";
+      avatarLink.rel = "noopener noreferrer";
+      avatarLink.className = "tm-user-link";
+      const avatarImg = document.createElement("img");
+      avatarImg.className = "tm-avatar";
+      avatarImg.src = avatar;
+      avatarImg.style.cssText = "width:36px;height:36px;border-radius:50%;object-fit:cover;";
+      avatarLink.appendChild(avatarImg);
+      userSpan.appendChild(avatarLink);
+      
+      if (displayUserFull) {
+        attachProfileCardHover(avatarLink, displayUserFull);
+      }
+    }
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "info";
+
+    const nameLink = document.createElement("a");
+    nameLink.className = "name tm-name-link";
+    nameLink.href = profileUrl;
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.textContent = name;
+
+    const screenLink = document.createElement("a");
+    screenLink.className = "screen tm-screen-link";
+    screenLink.href = profileUrl;
+    screenLink.target = "_blank";
+    screenLink.rel = "noopener noreferrer";
+    screenLink.textContent = `@${user}`;
+
+    infoDiv.appendChild(nameLink);
+    infoDiv.appendChild(screenLink);
+    userSpan.appendChild(infoDiv);
+
+    if (displayUserFull) {
+      attachProfileCardHover(infoDiv, displayUserFull);
+    }
+    
     const time = document.createElement("div");
     time.className = "time";
     time.textContent = formatTime(displayLegacy.created_at);
