@@ -1,11 +1,15 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.10
+// @version      0.1.11
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       akayuki39
 // @homepage     https://github.com/akayuki39/twitter-masonry
-// @changelog    0.1.10 (2026-01-31)
+// @changelog    0.1.11 (2026-02-02)
+//                 - 修复时间线重复问题：通过准确的seenTweetIds让服务器返回更个性化的时间线
+//                 - 重构状态管理模块，将时间线状态和可见性追踪逻辑提取到独立模块，提高可维护性
+//                 - 新增"已查看推文"检测：用户需在卡片上停留5秒且50%可见才算已查看
+//                 0.1.10 (2026-01-31)
 //                 - 新增用户Profile Card功能：hover到头像0.5秒后显示用户资料卡片，显示banner、高清头像、简介、位置、关注数等信息
 //                 0.1.9 (2026-01-29)
 //                 - 修复无 entities 时不处理 displayTextRange 的问题（现在所有文本都会正确截断）
@@ -315,13 +319,13 @@
     };
   };
 
-  const buildUrl = (cursor) => {
+  const buildUrl = (cursor, seenTweetIds = []) => {
     const variables = {
       count: 100,
       includePromotedContent: false,
       latestControlAvailable: true,
       withCommunity: true,
-      seenTweetIds: [],
+      seenTweetIds: seenTweetIds,
       withVoice: true,
       withV2Timeline: true,
     };
@@ -1861,38 +1865,223 @@
     return null;
   };
 
-  const state = {
-    cursor: null,
-    loading: false,
-    ended: false,
-    seen: new Set(),
+  /**
+   * @fileoverview 时间线状态管理模块
+   * 管理时间线加载状态、分页游标和已渲染推文的去重
+   */
+
+  /** @type {string|null} 分页游标 */
+  let cursor = null;
+
+  /** @type {boolean} 是否正在加载中 */
+  let loading = false;
+
+  /** @type {boolean} 是否已加载完所有推文 */
+  let ended = false;
+
+  /** @type {Set<string>} 已渲染的推文ID集合（用于去重） */
+  const seen = new Set();
+
+  /**
+   * 获取当前游标
+   * @returns {string|null}
+   */
+  const getCursor = () => cursor;
+
+  /**
+   * 设置游标
+   * @param {string|null} value
+   */
+  const setCursor = (value) => {
+    cursor = value;
   };
 
+  /**
+   * 获取加载状态
+   * @returns {boolean}
+   */
+  const isLoading = () => loading;
+
+  /**
+   * 设置加载状态
+   * @param {boolean} value
+   */
+  const setLoading = (value) => {
+    loading = value;
+  };
+
+  /**
+   * 获取结束状态
+   * @returns {boolean}
+   */
+  const isEnded = () => ended;
+
+  /**
+   * 设置结束状态
+   * @param {boolean} value
+   */
+  const setEnded = (value) => {
+    ended = value;
+  };
+
+  /**
+   * 检查推文是否已渲染过
+   * @param {string} tweetId
+   * @returns {boolean}
+   */
+  const hasSeen = (tweetId) => seen.has(tweetId);
+
+  /**
+   * 标记推文为已渲染
+   * @param {string} tweetId
+   */
+  const addSeen = (tweetId) => {
+    seen.add(tweetId);
+  };
+
+  /**
+   * 重置所有状态（用于刷新页面）
+   */
+  const resetState = () => {
+    cursor = null;
+    loading = false;
+    ended = false;
+    seen.clear();
+  };
+
+  /**
+   * @fileoverview 推文可见性追踪模块
+   * 使用 IntersectionObserver 和 5秒停留时间检测，追踪用户实际看到的推文
+   */
+
+  /** @type {Set<string>} 已查看的推文ID集合（停留超过5秒） */
+  const viewed = new Set();
+
+  /** @type {Map<string, number>} 存储每个卡片的停留计时器 */
+  const timers = new Map();
+
+  /** 停留时间阈值（毫秒）。超过则记录为已查看 */
+  const DWELL_TIME = 5000;
+
+  /** 可见度阈值（0-1） */
+  const VISIBILITY_THRESHOLD = 0.5;
+
+  /**
+   * IntersectionObserver 回调处理
+   * @param {IntersectionObserverEntry[]} entries
+   */
+  const handleIntersection = (entries) => {
+    entries.forEach((entry) => {
+      const tweetId = entry.target.dataset.tweetId;
+      if (!tweetId) return;
+
+      // 如果已经记录为已查看，不再处理
+      if (viewed.has(tweetId)) {
+        observer.unobserve(entry.target);
+        return;
+      }
+
+      if (entry.isIntersecting) {
+        // 卡片进入视口，启动停留计时器
+        if (!timers.has(tweetId)) {
+          const timerId = setTimeout(() => {
+            viewed.add(tweetId);
+            timers.delete(tweetId);
+            observer.unobserve(entry.target);
+          }, DWELL_TIME);
+          timers.set(tweetId, timerId);
+        }
+      } else {
+        // 卡片离开视口，清除计时器（如果存在）
+        if (timers.has(tweetId)) {
+          clearTimeout(timers.get(tweetId));
+          timers.delete(tweetId);
+        }
+      }
+    });
+  };
+
+  /** @type {IntersectionObserver} */
+  const observer = new IntersectionObserver(handleIntersection, {
+    threshold: VISIBILITY_THRESHOLD,
+  });
+
+  /**
+   * 开始观察卡片
+   * @param {HTMLElement} card - 推文卡片元素
+   */
+  const observeCard = (card) => {
+    observer.observe(card);
+  };
+
+  /**
+   * 获取已查看的推文ID数组（用于发送给API）
+   * @returns {string[]}
+   */
+  const getViewedTweetIds = () => {
+    return Array.from(viewed);
+  };
+
+  /**
+   * 清空已查看的推文记录（发送给API后调用）
+   */
+  const clearViewed = () => {
+    viewed.clear();
+  };
+
+  /**
+   * 重置所有状态（用于刷新页面）
+   * 清理所有计时器防止内存泄漏
+   */
+  const resetViewed = () => {
+    // 清理所有未完成的计时器
+    timers.forEach((timerId) => clearTimeout(timerId));
+    timers.clear();
+    viewed.clear();
+  };
+
+  /**
+   * 渲染推文列表到网格
+   * @param {Array} tweets - 推文数据数组
+   * @param {HTMLElement} grid - 网格容器元素
+   */
   const renderTweets = async (tweets, grid) => {
     for (const t of tweets) {
       const id = t.rest_id || t.legacy?.id_str;
-      if (!id || state.seen.has(id)) continue;
-      state.seen.add(id);
+      if (!id || hasSeen(id)) continue;
+      addSeen(id);
       const card = createCard(t, openDetail);
+      card.dataset.tweetId = id;
+      observeCard(card);
       await placeCard(card, grid);
     }
   };
 
+  /**
+   * 加载更多推文
+   * @param {HTMLElement} grid - 网格容器元素
+   * @param {boolean} reset - 是否重置状态（刷新页面）
+   */
   const loadMore = async (grid, reset = false) => {
-    if (state.loading || state.ended || isDetailOpen()) return;
+    if (isLoading() || isEnded() || isDetailOpen()) return;
     const anchor = reset ? null : pickAnchor();
     const startScroll = window.scrollY;
-    state.loading = true;
+    setLoading(true);
     const loader = document.querySelector(".tm-loader");
     if (loader) loader.textContent = "加载中...";
     try {
-      const url = buildUrl(reset ? null : state.cursor);
+      // 获取已查看的推文ID并清空，避免累积
+      const seenTweetIds = reset ? [] : getViewedTweetIds();
+      if (!reset && seenTweetIds.length > 0) {
+        clearViewed();
+      }
+      const url = buildUrl(reset ? null : getCursor(), seenTweetIds);
       const data = await xhr(url, { headers: buildHeaders() });
       const { tweets, cursor } = extractEntries(data);
       if (tweets.length) await renderTweets(tweets, grid);
-      state.cursor = cursor || state.cursor;
+      setCursor(cursor || getCursor());
       if (!cursor) {
-        state.ended = true;
+        setEnded(true);
         if (loader) loader.textContent = "没有更多了";
       } else if (loader) {
         loader.textContent = "下滑加载更多";
@@ -1900,7 +2089,7 @@
     } catch (err) {
       toast(`加载失败: ${err.message || err}`);
     } finally {
-      state.loading = false;
+      setLoading(false);
       const scrollDelta = Math.abs(window.scrollY - startScroll);
       const movedFar = scrollDelta > 200;
       if (!movedFar && anchor && anchor.el.isConnected) {
@@ -1911,6 +2100,9 @@
     }
   };
 
+  /**
+   * 挂载应用主体
+   */
   const mountApp = () => {
     if (!document.body) {
       document.body = document.createElement("body");
@@ -1929,9 +2121,8 @@
     reloadBtn.className = "tm-btn";
     reloadBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
     reloadBtn.onclick = () => {
-      state.cursor = null;
-      state.ended = false;
-      state.seen.clear();
+      resetState();
+      resetViewed();
       resetLayout();
       grid.innerHTML = "";
       loadMore(grid, true);
@@ -1989,6 +2180,9 @@
     loadMore(grid, true).catch((err) => toast(err.message || String(err)));
   };
 
+  /**
+   * 添加悬浮按钮（非Masonry页面）
+   */
   const addFloatingButton = () => {
     const btn = document.createElement("div");
     btn.className = "tm-pill";
@@ -1997,12 +2191,19 @@
     document.body.appendChild(btn);
   };
 
+  /**
+   * 注册Tampermonkey菜单命令
+   */
   const ensureMenu = () => {
     GM_registerMenuCommand("Open Home Masonry", () => {
       GM_openInTab(`https://x.com/home?${PARAM_FLAG}=1`, { active: true });
     });
   };
 
+  /**
+   * 检查是否应该挂载Masonry应用
+   * @returns {boolean}
+   */
   const shouldMount = () => {
     const url = new URL(location.href);
     return url.searchParams.has(PARAM_FLAG) || url.hash.includes(PARAM_FLAG);
@@ -2011,6 +2212,9 @@
   const toast = createToast();
   setToast(toast);
 
+  /**
+   * 启动应用
+   */
   const bootstrap = () => {
     console.info("[tm-masonry] script loaded");
     ensureMenu();

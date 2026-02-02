@@ -1,13 +1,13 @@
 import { API_ENDPOINTS, FEATURES, FIELD_TOGGLES } from "../config.js";
 import { xhr, buildHeaders } from "../utils/xhr.js";
 
-export const buildUrl = (cursor) => {
+export const buildUrl = (cursor, seenTweetIds = []) => {
   const variables = {
     count: 100,
     includePromotedContent: false,
     latestControlAvailable: true,
     withCommunity: true,
-    seenTweetIds: [],
+    seenTweetIds: seenTweetIds,
     withVoice: true,
     withV2Timeline: true,
   };

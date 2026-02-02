@@ -10,6 +10,10 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.11 (2026-02-02)
+  - 修复时间线重复问题：通过准确的seenTweetIds让服务器返回更个性化的时间线
+  - 重构状态管理模块，将时间线状态和可见性追踪逻辑提取到独立模块，提高可维护性
+  - 新增"已查看推文"检测：用户需在卡片上停留5秒且50%可见才算已查看
   0.1.10 (2026-01-31)
   - 新增用户Profile Card功能：hover到头像0.5秒后显示用户资料卡片，显示banner、高清头像、简介、位置、关注数等信息
   0.1.9 (2026-01-29)

@@ -8,39 +8,66 @@ import { createToast } from "./components/toast.js";
 import { setToast } from "./components/likeButton.js";
 import { ensureLayout, placeCard, resetLayout, pickAnchor } from "./masonry.js";
 import { isDetailOpen } from "./utils/state.js";
+import {
+  getCursor,
+  setCursor,
+  isLoading,
+  setLoading,
+  isEnded,
+  setEnded,
+  hasSeen,
+  addSeen,
+  resetState,
+} from "./state/timeline.js";
+import {
+  observeCard,
+  getViewedTweetIds,
+  clearViewed,
+  resetViewed,
+} from "./state/viewed.js";
 
-const state = {
-  cursor: null,
-  loading: false,
-  ended: false,
-  seen: new Set(),
-};
-
+/**
+ * 渲染推文列表到网格
+ * @param {Array} tweets - 推文数据数组
+ * @param {HTMLElement} grid - 网格容器元素
+ */
 const renderTweets = async (tweets, grid) => {
   for (const t of tweets) {
     const id = t.rest_id || t.legacy?.id_str;
-    if (!id || state.seen.has(id)) continue;
-    state.seen.add(id);
+    if (!id || hasSeen(id)) continue;
+    addSeen(id);
     const card = createCard(t, openDetail);
+    card.dataset.tweetId = id;
+    observeCard(card);
     await placeCard(card, grid);
   }
 };
 
+/**
+ * 加载更多推文
+ * @param {HTMLElement} grid - 网格容器元素
+ * @param {boolean} reset - 是否重置状态（刷新页面）
+ */
 const loadMore = async (grid, reset = false) => {
-  if (state.loading || state.ended || isDetailOpen()) return;
+  if (isLoading() || isEnded() || isDetailOpen()) return;
   const anchor = reset ? null : pickAnchor();
   const startScroll = window.scrollY;
-  state.loading = true;
+  setLoading(true);
   const loader = document.querySelector(".tm-loader");
   if (loader) loader.textContent = "加载中...";
   try {
-    const url = buildUrl(reset ? null : state.cursor);
+    // 获取已查看的推文ID并清空，避免累积
+    const seenTweetIds = reset ? [] : getViewedTweetIds();
+    if (!reset && seenTweetIds.length > 0) {
+      clearViewed();
+    }
+    const url = buildUrl(reset ? null : getCursor(), seenTweetIds);
     const data = await xhr(url, { headers: buildHeaders() });
     const { tweets, cursor } = extractEntries(data);
     if (tweets.length) await renderTweets(tweets, grid);
-    state.cursor = cursor || state.cursor;
+    setCursor(cursor || getCursor());
     if (!cursor) {
-      state.ended = true;
+      setEnded(true);
       if (loader) loader.textContent = "没有更多了";
     } else if (loader) {
       loader.textContent = "下滑加载更多";
@@ -48,7 +75,7 @@ const loadMore = async (grid, reset = false) => {
   } catch (err) {
     toast(`加载失败: ${err.message || err}`);
   } finally {
-    state.loading = false;
+    setLoading(false);
     const scrollDelta = Math.abs(window.scrollY - startScroll);
     const movedFar = scrollDelta > 200;
     if (!movedFar && anchor && anchor.el.isConnected) {
@@ -59,6 +86,9 @@ const loadMore = async (grid, reset = false) => {
   }
 };
 
+/**
+ * 挂载应用主体
+ */
 const mountApp = () => {
   if (!document.body) {
     document.body = document.createElement("body");
@@ -77,9 +107,8 @@ const mountApp = () => {
   reloadBtn.className = "tm-btn";
   reloadBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
   reloadBtn.onclick = () => {
-    state.cursor = null;
-    state.ended = false;
-    state.seen.clear();
+    resetState();
+    resetViewed();
     resetLayout();
     grid.innerHTML = "";
     loadMore(grid, true);
@@ -137,6 +166,9 @@ const mountApp = () => {
   loadMore(grid, true).catch((err) => toast(err.message || String(err)));
 };
 
+/**
+ * 添加悬浮按钮（非Masonry页面）
+ */
 const addFloatingButton = () => {
   const btn = document.createElement("div");
   btn.className = "tm-pill";
@@ -145,12 +177,19 @@ const addFloatingButton = () => {
   document.body.appendChild(btn);
 };
 
+/**
+ * 注册Tampermonkey菜单命令
+ */
 const ensureMenu = () => {
   GM_registerMenuCommand("Open Home Masonry", () => {
     GM_openInTab(`https://x.com/home?${PARAM_FLAG}=1`, { active: true });
   });
 };
 
+/**
+ * 检查是否应该挂载Masonry应用
+ * @returns {boolean}
+ */
 const shouldMount = () => {
   const url = new URL(location.href);
   return url.searchParams.has(PARAM_FLAG) || url.hash.includes(PARAM_FLAG);
@@ -159,6 +198,9 @@ const shouldMount = () => {
 const toast = createToast();
 setToast(toast);
 
+/**
+ * 启动应用
+ */
 const bootstrap = () => {
   console.info("[tm-masonry] script loaded");
   ensureMenu();
