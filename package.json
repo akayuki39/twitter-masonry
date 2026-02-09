@@ -1,6 +1,6 @@
 {
   "name": "home-timeline-masonry",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "X/Twitter Home Masonry Timeline Userscript",
   "type": "module",
   "scripts": {

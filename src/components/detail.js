@@ -5,6 +5,7 @@ import { pickMedia, isNoteTweet, unwrapTweetResult, getFullTweetText, getEntitie
 import { processText } from "../utils/entity.js";
 import { openImagePreview } from "./imagePreview.js";
 import { setDetailOpen } from "../utils/state.js";
+import { pauseVideosInContainer, pauseTimelineVideos } from "../utils/videoObserver.js";
 
 let activeCarouselControls = null;
 
@@ -152,6 +153,8 @@ export const ensureDetailLayer = () => {
 
 export const closeDetail = () => {
   if (!detailOverlay) return;
+  // 暂停detail中的视频
+  pauseVideosInContainer(detailModal);
   detailOverlay.classList.remove("show");
   document.body.classList.remove("tm-detail-open");
   document.documentElement.style.overflow = "";
@@ -295,6 +298,8 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
 };
 
 export const openDetail = (tweet, initialImageIndex = 0) => {
+  // 暂停timeline中所有正在播放的视频，避免与detail中的视频同时播放
+  pauseTimelineVideos();
   setDetailOpen(true);
   const { overlay, modal } = ensureDetailLayer();
   scrollBackup = window.scrollY;

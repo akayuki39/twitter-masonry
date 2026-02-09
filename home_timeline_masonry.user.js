@@ -1,11 +1,16 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.11
+// @version      0.1.12
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       akayuki39
 // @homepage     https://github.com/akayuki39/twitter-masonry
-// @changelog    0.1.11 (2026-02-02)
+// @changelog    0.1.12 (2026-02-09)
+//                 - 新增视频自动暂停功能：当视频滑出可视区域时自动暂停，节省系统资源
+//                 - 优化视频播放管理：打开/关闭detail时自动暂停相应区域的视频，避免多个视频同时播放
+//                 - 新增videoObserver工具模块：集中管理视频观察、暂停、清理逻辑，提高代码可维护性
+//                 - 修复内存泄漏：页面刷新时正确清理IntersectionObserver观察的视频元素
+//                 0.1.11 (2026-02-02)
 //                 - 修复时间线重复问题：通过准确的seenTweetIds让服务器返回更个性化的时间线
 //                 - 重构状态管理模块，将时间线状态和可见性追踪逻辑提取到独立模块，提高可维护性
 //                 - 新增"已查看推文"检测：用户需在卡片上停留5秒且50%可见才算已查看
@@ -1458,6 +1463,94 @@
     return { el: carousel, controls: { prev, next } };
   };
 
+  /**
+   * 视频可见性观察器
+   * 当视频滑出可视区域时自动暂停
+   */
+
+  let videoObserver = null;
+
+  /**
+   * 获取或创建视频观察器实例
+   * @returns {IntersectionObserver}
+   */
+  const getVideoObserver = () => {
+    if (videoObserver) return videoObserver;
+
+    videoObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          // 当视频可见比例低于10%时暂停（几乎完全滑出视口）
+          if (entry.intersectionRatio < 0.1 && !video.paused) {
+            video.pause();
+          }
+        });
+      },
+      {
+        // 使用较大的rootMargin，在视频即将离开视口前就暂停
+        rootMargin: "-10% 0px -10% 0px",
+        threshold: [0, 0.1],
+      }
+    );
+
+    return videoObserver;
+  };
+
+  /**
+   * 观察视频元素，当滑出可视区域时自动暂停
+   * @param {HTMLVideoElement} video - 视频元素
+   */
+  const observeVideo = (video) => {
+    if (!video || video.tagName !== "VIDEO") return;
+    const observer = getVideoObserver();
+    observer.observe(video);
+  };
+
+  /**
+   * 观察容器中所有视频元素
+   * @param {HTMLElement} container - 容器元素
+   */
+  const observeVideosInContainer = (container) => {
+    if (!container) return;
+    const videos = container.querySelectorAll("video");
+    videos.forEach((video) => observeVideo(video));
+  };
+
+  /**
+   * 停止观察容器中所有视频元素
+   * @param {HTMLElement} container - 容器元素
+   */
+  const unobserveVideosInContainer = (container) => {
+    if (!container || !videoObserver) return;
+    const videos = container.querySelectorAll("video");
+    videos.forEach((video) => videoObserver.unobserve(video));
+  };
+
+  /**
+   * 暂停指定容器内的所有视频
+   * @param {HTMLElement} container - 容器元素
+   */
+  const pauseVideosInContainer = (container) => {
+    if (!container) return;
+    const videos = container.querySelectorAll("video");
+    videos.forEach((video) => {
+      if (!video.paused) {
+        video.pause();
+      }
+    });
+  };
+
+  /**
+   * 暂停timeline容器内所有正在播放的视频
+   */
+  const pauseTimelineVideos = () => {
+    const timelineContainer = document.querySelector(".tm-grid");
+    if (timelineContainer) {
+      pauseVideosInContainer(timelineContainer);
+    }
+  };
+
   let activeCarouselControls = null;
 
   const createDetailQuoteTweet = (quotedTweet) => {
@@ -1598,6 +1691,8 @@
 
   const closeDetail = () => {
     if (!detailOverlay) return;
+    // 暂停detail中的视频
+    pauseVideosInContainer(detailModal);
     detailOverlay.classList.remove("show");
     document.body.classList.remove("tm-detail-open");
     document.documentElement.style.overflow = "";
@@ -1741,6 +1836,8 @@
   };
 
   const openDetail = (tweet, initialImageIndex = 0) => {
+    // 暂停timeline中所有正在播放的视频，避免与detail中的视频同时播放
+    pauseTimelineVideos();
     setDetailOpen(true);
     const { overlay, modal } = ensureDetailLayer();
     scrollBackup = window.scrollY;
@@ -1854,6 +1951,9 @@
     card.style.visibility = "visible";
     heights[target] = y + h + layout.gutter;
     grid.style.height = `${Math.max(...heights)}px`;
+
+    // 为卡片中的视频元素添加可见性观察，滑出视口时自动暂停
+    observeVideosInContainer(card);
   };
 
   const pickAnchor = () => {
@@ -2121,6 +2221,8 @@
     reloadBtn.className = "tm-btn";
     reloadBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
     reloadBtn.onclick = () => {
+      // 清理视频观察器，避免内存泄漏
+      unobserveVideosInContainer(grid);
       resetState();
       resetViewed();
       resetLayout();

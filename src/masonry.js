@@ -1,4 +1,5 @@
 import { LAYOUT_CONFIG } from "./config.js";
+import { observeVideosInContainer } from "./utils/videoObserver.js";
 
 const layout = {
   colWidth: LAYOUT_CONFIG.colWidth,
@@ -82,6 +83,9 @@ export const placeCard = async (card, grid) => {
   card.style.visibility = "visible";
   heights[target] = y + h + layout.gutter;
   grid.style.height = `${Math.max(...heights)}px`;
+
+  // 为卡片中的视频元素添加可见性观察，滑出视口时自动暂停
+  observeVideosInContainer(card);
 };
 
 export const pickAnchor = () => {

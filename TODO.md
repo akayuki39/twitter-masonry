@@ -1,3 +1,7 @@
+参考：
+https://github.com/d60/twikit
+https://github.com/fa0311/TwitterInternalAPIDocument
+
 点击推特卡片之后打开一个单独的推特详情卡。
 原本的页面保持不变，详情卡浮现在页面上方。原本页面作为背景变暗
 media的type如果是photo的话，在详情卡里加载原图。原图通过在图片url后面加上?name=orig来获取。
@@ -90,6 +94,19 @@ Hover到头像之后显示profile
 * profile card里的name有时候会离banner非常近，主要是非英文的时候。显得很不自然。
 * location的icon不太好看，改成推特的
 * 不只是tweet card，在detail以及quote里也需要添加这个hover显示profile的功能
+
+hometimeline现在每次刷新之后还会显示之前的推文。
+需要看看实际hometimeline的api调用的时候都带了什么参数。
+* 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
+    * 这个是通过websocket的streaming api事实更新推文的互动数据的。[参考](https://blog.gitcode.com/a858f26c23782c9163adda2db535f25a.html)
+* 感觉得研究hometimeline api
+方案：
+在hometimeline里把seentweetids参数给带上了。如果一个推文被显示超过5秒就加进来。在0.1.11版本做的更新。
+发现能解决问题，推特服务器那面可能用的就是这个。
+
+关掉detail的时候自动关闭detail中的视频
+在timeline里进入detail的时候如果有视频在播放，也同样关闭timeline里的视频
+
 ---
 
 点击quote部分显示quote推文的detail
@@ -154,12 +171,6 @@ quote部分增加hover时高亮的效果
       }
 ```
 
-hometimeline现在每次刷新之后还会显示之前的推文。
-需要看看实际hometimeline的api调用的时候都带了什么参数。
-* 每看一个推好像就会POST https://api.x.com/1.1/live_pipeline/update_subscriptions，在form里带上交互行为。
-    * 这个是通过websocket的streaming api事实更新推文的互动数据的。[参考](https://blog.gitcode.com/a858f26c23782c9163adda2db535f25a.html)
-* 感觉得研究hometimeline api
-
 更改详情页的样式。左边图片，右边上面推文，下面是回复。
 * 获得回复等信息可能需要访问TweetDetail的api
 
@@ -173,8 +184,6 @@ hometimeline现在每次刷新之后还会显示之前的推文。
 * 推特新更新的功能，点开推文之后竖版显示的顺序可能跟四宫格的时候不一样。也许有参数来指定排列顺序。
 
 detail中的视频指定最高画质
-
-关掉detail的时候自动关闭detail中的视频
 
 添加translateTweet功能
 
@@ -218,3 +227,16 @@ readme里加截图
 
 文本解析还是有问题。现在如果视频来源是别人，那么带视频的推文后面都会带一个链接，而且链接没有被渲染。需要移除
 * 发现display_text_range就是把这个链接带在里面的。这个链接也是个entity，在media里面。所以这个链接被渲染成视频了。
+
+添加I18N支持
+
+添加设置功能
+* 可以设置关闭tweet card的鼠标/键盘按键
+
+有时候tweet card会重叠到一起
+* 只有带图片的card会被压在底下。图片会露出上面的一部分，但是下面会被压住
+* 被压住的图片的加载时间都比较长：4.22s，5.31s，6.08s这种
+    * 怀疑是因为图片没加载出来，所以下一张card计算位置的时候就出错了。
+    * hometimeline api里是有图片的尺寸的。直接用那个计算位置？
+
+推特文章卡片渲染

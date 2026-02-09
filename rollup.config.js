@@ -10,6 +10,11 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"));
 
 const CHANGELOG = `
+  0.1.12 (2026-02-09)
+  - 新增视频自动暂停功能：当视频滑出可视区域时自动暂停，节省系统资源
+  - 优化视频播放管理：打开/关闭detail时自动暂停相应区域的视频，避免多个视频同时播放
+  - 新增videoObserver工具模块：集中管理视频观察、暂停、清理逻辑，提高代码可维护性
+  - 修复内存泄漏：页面刷新时正确清理IntersectionObserver观察的视频元素
   0.1.11 (2026-02-02)
   - 修复时间线重复问题：通过准确的seenTweetIds让服务器返回更个性化的时间线
   - 重构状态管理模块，将时间线状态和可见性追踪逻辑提取到独立模块，提高可维护性
