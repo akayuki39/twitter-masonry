@@ -1,5 +1,13 @@
 import { openImagePreview } from "./imagePreview.js";
 
+/**
+ * 规范化图片URL，确保获取原图
+ * @param {string} url - 原始图片URL
+ * @returns {string} 带name=orig参数的URL
+ */
+const normalizeImageUrl = (url) =>
+  url.includes("?name=orig") ? url : `${url}${url.includes("?") ? "&" : "?"}name=orig`;
+
 export const createCarousel = (media, initialIndex = 0) => {
   const carousel = document.createElement("div");
   carousel.className = "tm-carousel";
@@ -8,18 +16,23 @@ export const createCarousel = (media, initialIndex = 0) => {
   track.className = "tm-carousel-track";
   carousel.appendChild(track);
 
+  // 收集所有图片URL，用于大图预览时左右切换
+  const photoUrls = media.filter((m) => m.type === "photo").map((m) => normalizeImageUrl(m.url));
+  let photoCounter = 0;
+
   media.forEach((m) => {
     const slide = document.createElement("div");
     slide.className = "tm-carousel-slide";
     if (m.type === "photo") {
+      const url = normalizeImageUrl(m.url);
+      const currentPhotoIdx = photoCounter++;
       const img = document.createElement("img");
-      const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
       img.src = url;
       img.loading = "lazy";
       img.style.cursor = "pointer";
       img.addEventListener("click", (e) => {
         e.stopPropagation();
-        openImagePreview(url);
+        openImagePreview(photoUrls, currentPhotoIdx);
       });
       slide.appendChild(img);
     } else if (m.type === "video") {

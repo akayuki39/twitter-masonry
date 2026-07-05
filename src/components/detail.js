@@ -87,6 +87,12 @@ const createDetailQuoteTweet = (quotedTweet) => {
       const { el, controls } = createCarousel(media, 0);
       mediaWrap.appendChild(el);
     } else {
+      const photoUrls = [];
+      for (const m of media) {
+        if (m.type === "photo") {
+          photoUrls.push(m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`);
+        }
+      }
       for (const m of media) {
         if (m.type === "photo") {
           const img = document.createElement("img");
@@ -96,7 +102,7 @@ const createDetailQuoteTweet = (quotedTweet) => {
           img.style.cursor = "pointer";
           img.addEventListener("click", (e) => {
             e.stopPropagation();
-            openImagePreview(url);
+            openImagePreview(photoUrls, 0);
           });
           mediaWrap.appendChild(img);
         } else if (m.type === "video") {
@@ -242,6 +248,12 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
     mediaWrap.appendChild(el);
     activeCarouselControls = controls;
   } else {
+    const photoUrls = [];
+    for (const m of media) {
+      if (m.type === "photo") {
+        photoUrls.push(m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`);
+      }
+    }
     for (const m of media) {
       if (m.type === "photo") {
         const img = document.createElement("img");
@@ -251,7 +263,7 @@ export const createDetailCard = (tweet, initialImageIndex = 0) => {
         img.style.cursor = "pointer";
         img.addEventListener("click", (e) => {
           e.stopPropagation();
-          openImagePreview(url);
+          openImagePreview(photoUrls, 0);
         });
         mediaWrap.appendChild(img);
       } else if (m.type === "video") {

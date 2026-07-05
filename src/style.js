@@ -122,6 +122,12 @@ export const injectStyles = () => {
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
     .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: zoom-out; transform: scale(0.9); transition: transform 0.15s ease; }
     .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
+    .tm-preview-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(15,23,42,0.65); color: #fff; cursor: pointer; display: grid; place-items: center; font-size: 22px; font-weight: 700; box-shadow: 0 10px 26px rgba(0,0,0,0.35); opacity: 0.6; transition: opacity 0.15s ease, background 0.15s ease; z-index: 2; }
+    .tm-preview-arrow:hover:not(:disabled) { opacity: 1; background: rgba(15,23,42,0.8); }
+    .tm-preview-arrow:disabled { opacity: 0; cursor: not-allowed; }
+    .tm-preview-arrow.prev { left: 16px; }
+    .tm-preview-arrow.next { right: 16px; }
+    .tm-preview-counter { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); padding: 4px 12px; border-radius: 999px; background: rgba(15,23,42,0.6); color: #fff; font-size: 13px; font-weight: 500; pointer-events: none; z-index: 2; }
     .tm-show-more { color: #0f7ae5; cursor: pointer; font-size: 14px; font-weight: 500; transition: color 0.12s ease; }
     .tm-show-more:hover { color: #2563eb; }
     

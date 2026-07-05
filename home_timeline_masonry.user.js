@@ -253,6 +253,12 @@
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
     .tm-preview-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.4); cursor: zoom-out; transform: scale(0.9); transition: transform 0.15s ease; }
     .tm-image-backdrop.show .tm-preview-image { transform: scale(1); }
+    .tm-preview-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(15,23,42,0.65); color: #fff; cursor: pointer; display: grid; place-items: center; font-size: 22px; font-weight: 700; box-shadow: 0 10px 26px rgba(0,0,0,0.35); opacity: 0.6; transition: opacity 0.15s ease, background 0.15s ease; z-index: 2; }
+    .tm-preview-arrow:hover:not(:disabled) { opacity: 1; background: rgba(15,23,42,0.8); }
+    .tm-preview-arrow:disabled { opacity: 0; cursor: not-allowed; }
+    .tm-preview-arrow.prev { left: 16px; }
+    .tm-preview-arrow.next { right: 16px; }
+    .tm-preview-counter { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); padding: 4px 12px; border-radius: 999px; background: rgba(15,23,42,0.6); color: #fff; font-size: 13px; font-weight: 500; pointer-events: none; z-index: 2; }
     .tm-show-more { color: #0f7ae5; cursor: pointer; font-size: 14px; font-weight: 500; transition: color 0.12s ease; }
     .tm-show-more:hover { color: #2563eb; }
     
@@ -1339,7 +1345,12 @@
 
   let imageOverlay = null;
   let imageModal = null;
+  let imageKeyHandler = null;
 
+  /**
+   * 确保大图预览层存在，只创建一次
+   * @returns {{overlay: HTMLElement, modal: HTMLElement}}
+   */
   const ensureImageLayer = () => {
     if (imageOverlay && imageModal) return { overlay: imageOverlay, modal: imageModal };
     const overlay = document.createElement("div");
@@ -1350,34 +1361,118 @@
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) closeImagePreview();
     });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeImagePreview();
-    });
     document.body.appendChild(overlay);
     imageOverlay = overlay;
     imageModal = modal;
     return { overlay, modal };
   };
 
-  const openImagePreview = (imageUrl) => {
+  /**
+   * 打开大图预览，支持多图左右切换
+   * @param {string|string[]} images - 图片URL或URL数组
+   * @param {number} [startIndex=0] - 起始图片索引（多图时生效）
+   */
+  const openImagePreview = (images, startIndex = 0) => {
     setDetailOpen(true);
     const { overlay, modal } = ensureImageLayer();
+
+    // 统一为数组
+    const list = Array.isArray(images) ? images.filter(Boolean) : [images].filter(Boolean);
+    if (list.length === 0) return;
+
+    // 移除上一次的键盘监听
+    if (imageKeyHandler) {
+      document.removeEventListener("keydown", imageKeyHandler);
+      imageKeyHandler = null;
+    }
+
     modal.innerHTML = "";
+    let idx = Math.min(Math.max(0, startIndex), list.length - 1);
+    const total = list.length;
+
     const img = document.createElement("img");
-    img.src = imageUrl;
     img.className = "tm-preview-image";
     img.addEventListener("click", closeImagePreview);
     modal.appendChild(img);
+
+    // 多图时添加左右切换
+    let prevBtn = null;
+    let nextBtn = null;
+    let counter = null;
+
+    const clamp = (i) => Math.min(total - 1, Math.max(0, i));
+    const render = () => {
+      img.src = list[idx];
+      if (total > 1) {
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === total - 1;
+        counter.textContent = `${idx + 1} / ${total}`;
+      }
+    };
+
+    const prev = () => { idx = clamp(idx - 1); render(); };
+    const next = () => { idx = clamp(idx + 1); render(); };
+
+    if (total > 1) {
+      prevBtn = document.createElement("button");
+      prevBtn.className = "tm-preview-arrow prev";
+      prevBtn.type = "button";
+      prevBtn.innerHTML = "&#8249;";
+      prevBtn.setAttribute("aria-label", "上一张");
+      prevBtn.onclick = (e) => { e.stopPropagation(); prev(); };
+
+      nextBtn = document.createElement("button");
+      nextBtn.className = "tm-preview-arrow next";
+      nextBtn.type = "button";
+      nextBtn.innerHTML = "&#8250;";
+      nextBtn.setAttribute("aria-label", "下一张");
+      nextBtn.onclick = (e) => { e.stopPropagation(); next(); };
+
+      counter = document.createElement("div");
+      counter.className = "tm-preview-counter";
+
+      modal.appendChild(prevBtn);
+      modal.appendChild(nextBtn);
+      modal.appendChild(counter);
+    }
+
+    imageKeyHandler = (e) => {
+      if (e.key === "Escape") {
+        closeImagePreview();
+        e.preventDefault();
+      } else if (total > 1 && e.key === "ArrowRight") {
+        next();
+        e.preventDefault();
+      } else if (total > 1 && e.key === "ArrowLeft") {
+        prev();
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("keydown", imageKeyHandler);
+
+    render();
     overlay.classList.add("show");
     document.body.classList.add("tm-image-open");
   };
 
   const closeImagePreview = () => {
     if (!imageOverlay) return;
+    if (imageKeyHandler) {
+      document.removeEventListener("keydown", imageKeyHandler);
+      imageKeyHandler = null;
+    }
     imageOverlay.classList.remove("show");
     document.body.classList.remove("tm-image-open");
     setDetailOpen(false);
   };
+
+  /**
+   * 规范化图片URL，确保获取原图
+   * @param {string} url - 原始图片URL
+   * @returns {string} 带name=orig参数的URL
+   */
+  const normalizeImageUrl = (url) =>
+    url.includes("?name=orig") ? url : `${url}${url.includes("?") ? "&" : "?"}name=orig`;
 
   const createCarousel = (media, initialIndex = 0) => {
     const carousel = document.createElement("div");
@@ -1387,18 +1482,23 @@
     track.className = "tm-carousel-track";
     carousel.appendChild(track);
 
+    // 收集所有图片URL，用于大图预览时左右切换
+    const photoUrls = media.filter((m) => m.type === "photo").map((m) => normalizeImageUrl(m.url));
+    let photoCounter = 0;
+
     media.forEach((m) => {
       const slide = document.createElement("div");
       slide.className = "tm-carousel-slide";
       if (m.type === "photo") {
+        const url = normalizeImageUrl(m.url);
+        const currentPhotoIdx = photoCounter++;
         const img = document.createElement("img");
-        const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
         img.src = url;
         img.loading = "lazy";
         img.style.cursor = "pointer";
         img.addEventListener("click", (e) => {
           e.stopPropagation();
-          openImagePreview(url);
+          openImagePreview(photoUrls, currentPhotoIdx);
         });
         slide.appendChild(img);
       } else if (m.type === "video") {
@@ -1631,6 +1731,12 @@
         const { el} = createCarousel(media, 0);
         mediaWrap.appendChild(el);
       } else {
+        const photoUrls = [];
+        for (const m of media) {
+          if (m.type === "photo") {
+            photoUrls.push(m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`);
+          }
+        }
         for (const m of media) {
           if (m.type === "photo") {
             const img = document.createElement("img");
@@ -1640,7 +1746,7 @@
             img.style.cursor = "pointer";
             img.addEventListener("click", (e) => {
               e.stopPropagation();
-              openImagePreview(url);
+              openImagePreview(photoUrls, 0);
             });
             mediaWrap.appendChild(img);
           } else if (m.type === "video") {
@@ -1780,6 +1886,12 @@
       mediaWrap.appendChild(el);
       activeCarouselControls = controls;
     } else {
+      const photoUrls = [];
+      for (const m of media) {
+        if (m.type === "photo") {
+          photoUrls.push(m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`);
+        }
+      }
       for (const m of media) {
         if (m.type === "photo") {
           const img = document.createElement("img");
@@ -1789,7 +1901,7 @@
           img.style.cursor = "pointer";
           img.addEventListener("click", (e) => {
             e.stopPropagation();
-            openImagePreview(url);
+            openImagePreview(photoUrls, 0);
           });
           mediaWrap.appendChild(img);
         } else if (m.type === "video") {
