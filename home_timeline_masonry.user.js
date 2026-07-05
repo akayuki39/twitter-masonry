@@ -349,6 +349,14 @@
     return `${API_ENDPOINTS.HOME_TIMELINE}?${qs.toString()}`;
   };
 
+  /**
+   * 从首页时间线响应中提取推文列表和底部游标
+   * 会自动过滤推广推文（广告），识别依据：
+   *   - entryId 以 "promoted-tweet-" 开头
+   *   - itemContent.promotedMetadata 或 result.promotedMetadata 存在
+   * @param {object} data - GraphQL 响应 JSON
+   * @returns {{tweets: object[], cursor: string|null}}
+   */
   const extractEntries = (data) => {
     const instructions =
       data?.data?.home?.home_timeline_urt?.instructions ||
@@ -374,9 +382,13 @@
       .map((e) => {
         const content = e?.content;
         if (content?.entryType !== "TimelineTimelineItem") return null;
+        // 过滤推广推文（广告）
+        if (typeof e.entryId === "string" && e.entryId.startsWith("promoted-tweet-")) return null;
         const item = content.itemContent;
+        if (item?.promotedMetadata) return null;
         const res = item?.tweet_results?.result;
         if (!res) return null;
+        if (res.promotedMetadata) return null;
         const typename = res.__typename;
         if (typename === "TweetWithVisibilityResults") return res.tweet;
         if (typename === "Tweet") return res;
