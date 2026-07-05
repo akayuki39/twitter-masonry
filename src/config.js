@@ -1,5 +1,6 @@
 export const API_ENDPOINTS = {
   HOME_TIMELINE: "https://x.com/i/api/graphql/cch4haXSDkHZ2Bp5sXb9NQ/HomeTimeline",
+  TWEET_DETAIL: "https://x.com/i/api/graphql/jd3V43oDY9cY7obs1YMfbQ/TweetDetail",
   FAVORITE_TWEET: "https://x.com/i/api/graphql/lI07N6Otwv1PhnEgXILM7A/FavoriteTweet",
   UNFAVORITE_TWEET: "https://x.com/i/api/graphql/ZYKSe-w7KEslx3JhSIk5LA/UnfavoriteTweet",
 };

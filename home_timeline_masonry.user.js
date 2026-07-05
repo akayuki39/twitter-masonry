@@ -68,6 +68,7 @@
 
   const API_ENDPOINTS = {
     HOME_TIMELINE: "https://x.com/i/api/graphql/cch4haXSDkHZ2Bp5sXb9NQ/HomeTimeline",
+    TWEET_DETAIL: "https://x.com/i/api/graphql/jd3V43oDY9cY7obs1YMfbQ/TweetDetail",
     FAVORITE_TWEET: "https://x.com/i/api/graphql/lI07N6Otwv1PhnEgXILM7A/FavoriteTweet",
     UNFAVORITE_TWEET: "https://x.com/i/api/graphql/ZYKSe-w7KEslx3JhSIk5LA/UnfavoriteTweet",
   };
@@ -187,30 +188,74 @@
     .tm-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .tm-loader { padding: 20px; text-align: center; color: #94a3b8; font-weight: 600; }
     :root { --tm-detail-media-max-h: min(72vh, 880px); }
-    .tm-detail-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.65); display: none; align-items: flex-start; justify-content: center; padding: 32px 18px; z-index: 99999; overflow-y: auto; }
+    .tm-detail-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.65); display: none; align-items: center; justify-content: center; z-index: 99999; overflow: hidden; padding-top: 56px; padding-bottom: 16px; }
     .tm-detail-backdrop.show { display: flex; }
-    .tm-detail-modal { position: relative; width: min(960px, 96vw); margin: auto; }
-    .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: 1px solid rgba(15,23,42,0.08); overflow-y: auto; max-height: calc(100vh - 64px); }
+    .tm-detail-modal { position: relative; width: min(1400px, 96vw); height: calc(100vh - 72px); margin: auto; }
+    .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: none; width: 100%; height: 100%; overflow: hidden; position: relative; box-sizing: border-box; }
+    .tm-detail-layout { display: flex; align-items: stretch; height: 100%; width: 100%; }
+    .tm-detail-left { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; background: #0b1220; overflow: hidden; }
+    .tm-detail-left img, .tm-detail-left video { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .tm-detail-left .tm-carousel { width: 100%; height: 100%; border-radius: 0; background: transparent; flex: 1 1 auto; }
+    .tm-detail-left .tm-carousel-track { height: 100%; }
+    .tm-detail-left .tm-carousel-slide { height: 100%; }
+    .tm-detail-left .tm-carousel-slide img, .tm-detail-left .tm-carousel-slide video { width: 100%; height: 100%; max-height: none; object-fit: contain; }
+    .tm-detail-card.no-media { width: 680px; max-width: 96vw; margin: 0 auto; }
+    .tm-detail-card.no-media .tm-detail-left { display: none; }
+    .tm-detail-card.no-media .tm-detail-right { flex: 1 1 100%; width: 100%; max-width: none; margin: 0; }
+    .tm-detail-right { flex: 0 0 440px; width: 440px; min-width: 0; display: flex; flex-direction: column; height: 100%; overflow-y: scroll; scrollbar-gutter: stable; }
+    .tm-detail-right::-webkit-scrollbar { width: 6px; }
+    .tm-detail-right::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.15); border-radius: 3px; }
+    .tm-detail-right-top { flex-shrink: 0; }
+    @media (max-width: 760px) {
+      .tm-detail-modal { width: 96vw; height: auto; max-height: calc(100vh - 72px); }
+      .tm-detail-card { height: auto; max-height: calc(100vh - 72px); }
+      .tm-detail-layout { flex-direction: column; height: auto; }
+      .tm-detail-left, .tm-detail-right { flex: 1 1 100%; width: 100%; height: auto; }
+      .tm-detail-right { max-height: none; overflow-y: visible; }
+      .tm-detail-left { min-height: 200px; }
+      .tm-detail-left img, .tm-detail-left video, .tm-detail-left .tm-carousel-slide img, .tm-detail-left .tm-carousel-slide video { max-height: 60vh; }
+      .tm-detail-card.no-media .tm-detail-left { display: none; }
+      .tm-detail-card.no-media .tm-detail-right { flex: 1 1 100%; width: 100%; }
+    }
     .tm-detail-card::-webkit-scrollbar { width: 0; height: 0; }
     .tm-detail-card { scrollbar-width: none; -ms-overflow-style: none; }
-    .tm-detail-card .retweet-info { padding: 12px 20px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
+    .tm-replies-header { padding: 14px 20px 10px; font-size: 16px; font-weight: 800; color: #0f172a; border-top: 1px solid rgba(15,23,42,0.06); border-bottom: 1px solid rgba(15,23,42,0.06); position: sticky; top: 0; background: #fff; z-index: 1; }
+    .tm-replies-list { padding: 4px 0 12px; }
+    .tm-replies-loading { padding: 24px 20px; text-align: center; color: #94a3b8; font-size: 14px; font-weight: 500; }
+    .tm-replies-empty { padding: 24px 20px; text-align: center; color: #94a3b8; font-size: 14px; }
+    .tm-reply-card { padding: 12px 20px; transition: background 0.12s ease; }
+    .tm-reply-card:hover { background: rgba(15,23,42,0.02); }
+    .tm-reply-card.tm-reply-nested { padding-left: calc(20px + var(--tm-reply-depth, 0) * 16px); padding-top: 10px; padding-bottom: 10px; }
+    .tm-reply-children { border-left: 2px solid rgba(15,23,42,0.08); margin-left: 28px; }
+    .tm-reply-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .tm-reply-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .tm-reply-avatar.small { width: 28px; height: 28px; }
+    .tm-reply-user { display: flex; flex-direction: column; gap: 1px; line-height: 1.2; flex: 1; min-width: 0; }
+    .tm-reply-name { font-weight: 700; color: #0f172a; font-size: 14px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-reply-name:hover { text-decoration: underline; }
+    .tm-reply-screen { color: #64748b; font-size: 12px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-reply-time { color: #94a3b8; font-size: 12px; flex-shrink: 0; }
+    .tm-reply-text { padding: 4px 0 8px; line-height: 1.6; color: #1f2937; word-break: break-word; font-size: 15px; white-space: pre-wrap; }
+    .tm-reply-media { display: grid; gap: 8px; margin-bottom: 8px; max-height: 300px; overflow: hidden; }
+    .tm-reply-media img { width: 100%; border-radius: 12px; object-fit: cover; background: linear-gradient(180deg,#f8fafc,#e2e8f0); max-height: 300px; }
+    .tm-reply-media video { width: 100%; border-radius: 12px; background: #0b1220; max-height: 300px; }
+    .tm-reply-media .tm-carousel-slide img, .tm-reply-media .tm-carousel-slide video { max-height: 300px; }
+    .tm-reply-actions { display: flex; align-items: center; gap: 16px; color: #64748b; font-size: 12px; }
+    .tm-reply-count { color: #64748b; }
+    .tm-detail-card .retweet-info { padding: 14px 20px 0; display: flex; align-items: center; gap: 6px; color: rgb(83, 100, 113); font-size: 13px; font-weight: 600; }
     .tm-detail-card .retweet-info svg { flex-shrink: 0; }
     .tm-detail-card .retweet-info a { color: inherit; text-decoration: none; transition: text-decoration 0.12s ease; }
     .tm-detail-card .retweet-info a:hover { text-decoration: underline; }
-    .tm-detail-card .meta { padding: 18px 20px 0; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
+    .tm-detail-card .meta { padding: 16px 20px 0; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
     .tm-detail-card .meta .user { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .tm-detail-card .meta .user img { flex-shrink: 0; box-shadow: 0 6px 16px rgba(15,23,42,0.12); width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+    .tm-detail-card .meta .user img { flex-shrink: 0; box-shadow: 0 6px 16px rgba(15,23,42,0.12); width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
     .tm-detail-card .meta .user .info { display: flex; flex-direction: column; gap: 3px; line-height: 1.25; min-width: 0; flex: 1; }
-    .tm-detail-card .meta .user .name { font-weight: 800; color: #0f172a; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-detail-card .meta .user .name { font-weight: 800; color: #0f172a; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-detail-card .meta .user .screen { color: #64748b; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tm-detail-card .meta .time { color: #94a3b8; font-size: 12px; }
-    .tm-detail-card .text { padding: 10px 20px 18px; line-height: 1.7; color: #1f2937; word-break: break-word; font-size: 17px; white-space: pre-wrap; }
-    .tm-detail-card .media { display: grid; gap: 12px; padding: 0 18px 20px; max-height: var(--tm-detail-media-max-h); overflow-y: auto; }
-    .tm-detail-card .media img { width: 100%; border-radius: 16px; object-fit: contain; background: linear-gradient(180deg,#f8fafc,#e2e8f0); max-height: var(--tm-detail-media-max-h); }
-    .tm-detail-card .media video { width: 100%; border-radius: 16px; background: #0b1220; max-height: var(--tm-detail-media-max-h); object-fit: contain; }
-    .tm-detail-card .actions { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px 18px; color: #64748b; font-size: 13px; border-top: 1px solid rgba(15,23,42,0.06); }
-    .tm-detail-close { position: absolute; top: -12px; right: -12px; width: 40px; height: 40px; border-radius: 999px; border: none; background: #fff; box-shadow: 0 12px 30px rgba(0,0,0,0.18); cursor: pointer; display: grid; place-items: center; font-size: 18px; font-weight: 700; color: #0f172a; }
-    .tm-detail-close:hover { transform: translateY(-1px); box-shadow: 0 16px 40px rgba(0,0,0,0.2); }
+    .tm-detail-card .text { padding: 10px 20px 16px; line-height: 1.7; color: #1f2937; word-break: break-word; font-size: 16px; white-space: pre-wrap; }
+    .tm-detail-card .actions { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 14px; color: #64748b; font-size: 13px; border-top: 1px solid rgba(15,23,42,0.06); }
+    .tm-detail-close { display: none; }
     .tm-carousel { position: relative; overflow: hidden; border-radius: 16px; background: linear-gradient(180deg,#f8fafc,#e2e8f0); }
     .tm-carousel-track { display: flex; transition: transform 0.28s ease; width: 100%; }
     .tm-carousel-slide { flex: 0 0 100%; display: flex; justify-content: center; align-items: center; }
@@ -247,7 +292,7 @@
     .tm-detail-card .tm-quote-media video { background: #0b1220; }
     .tm-detail-card .tm-quote-media .tm-carousel { border-radius: 14px; background: linear-gradient(180deg,#f8fafc,#e2e8f0); }
     .tm-detail-card .tm-quote-media .tm-carousel-slide img, .tm-detail-card .tm-quote-media .tm-carousel-slide video { border-radius: 14px; max-height: var(--tm-detail-media-max-h); object-fit: contain; }
-    .tm-card.no-text .media, .tm-detail-card.no-text .media { padding-top: 14px; }
+    .tm-card.no-text .media { padding-top: 14px; }
     .tm-image-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; cursor: zoom-out; opacity: 0; transition: opacity 0.2s ease; }
     .tm-image-backdrop.show { display: flex; opacity: 1; }
     .tm-image-modal { position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center; }
@@ -1576,6 +1621,215 @@
   };
 
   /**
+   * 创建单条回复卡片（用于 detail 右侧回复列表）
+   * @param {object} tweet - 回复推文对象（已 unwrapTweetResult）
+   * @param {number} [depth=0] - 嵌套深度，影响缩进和头像大小
+   * @returns {HTMLElement} 回复卡片 DOM 元素
+   */
+  const createReplyCard = (tweet, depth = 0) => {
+    const legacy = tweet.legacy || tweet;
+    const user = tweet.core?.user_results?.result?.core;
+    const avatar = tweet.core?.user_results?.result?.avatar?.image_url;
+    const name = user?.name || legacy.user_id_str || "unknown";
+    const screenName = user?.screen_name || legacy.user_id_str || "unknown";
+    const profileUrl = `https://x.com/${encodeURIComponent(screenName)}`;
+    const id = tweet.rest_id || legacy.id_str;
+    const text = getFullTweetText(tweet);
+    const media = pickMedia(tweet);
+
+    const card = document.createElement("div");
+    card.className = "tm-reply-card";
+    if (depth > 0) card.classList.add("tm-reply-nested");
+    card.style.setProperty("--tm-reply-depth", depth);
+
+    // 头部：头像 + 用户名 + 时间
+    const header = document.createElement("div");
+    header.className = "tm-reply-header";
+
+    const avatarLink = document.createElement("a");
+    avatarLink.href = profileUrl;
+    avatarLink.target = "_blank";
+    avatarLink.rel = "noopener noreferrer";
+    const avatarImg = document.createElement("img");
+    avatarImg.className = "tm-reply-avatar";
+    if (depth > 0) avatarImg.classList.add("small");
+    avatarImg.src = avatar || "";
+    avatarImg.loading = "lazy";
+    avatarLink.appendChild(avatarImg);
+
+    const userInfo = document.createElement("div");
+    userInfo.className = "tm-reply-user";
+    const nameLink = document.createElement("a");
+    nameLink.className = "tm-reply-name";
+    nameLink.href = profileUrl;
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.textContent = name;
+    const screenLink = document.createElement("a");
+    screenLink.className = "tm-reply-screen";
+    screenLink.href = profileUrl;
+    screenLink.target = "_blank";
+    screenLink.rel = "noopener noreferrer";
+    screenLink.textContent = `@${screenName}`;
+    userInfo.appendChild(nameLink);
+    userInfo.appendChild(screenLink);
+
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "tm-reply-time";
+    timeSpan.textContent = legacy.created_at ? formatTime(legacy.created_at) : "";
+
+    header.appendChild(avatarLink);
+    header.appendChild(userInfo);
+    header.appendChild(timeSpan);
+    card.appendChild(header);
+
+    // 文本内容
+    if (text) {
+      const textDiv = document.createElement("div");
+      textDiv.className = "tm-reply-text";
+      const entities = getEntities(tweet);
+      const displayRange = isNoteTweet(tweet) ? null : legacy.display_text_range;
+      textDiv.appendChild(processText(text, entities, displayRange));
+      card.appendChild(textDiv);
+    }
+
+    // 媒体
+    if (media.length) {
+      const mediaWrap = document.createElement("div");
+      mediaWrap.className = "tm-reply-media";
+      if (media.length > 1) {
+        const { el } = createCarousel(media, 0);
+        mediaWrap.appendChild(el);
+      } else {
+        const photoUrls = [];
+        for (const m of media) {
+          if (m.type === "photo") {
+            photoUrls.push(m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`);
+          }
+        }
+        for (const m of media) {
+          if (m.type === "photo") {
+            const img = document.createElement("img");
+            const url = m.url.includes("?name=orig") ? m.url : `${m.url}${m.url.includes("?") ? "&" : "?"}name=orig`;
+            img.src = url;
+            img.loading = "lazy";
+            img.style.cursor = "pointer";
+            img.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openImagePreview(photoUrls, 0);
+            });
+            mediaWrap.appendChild(img);
+          } else if (m.type === "video") {
+            const v = document.createElement("video");
+            v.controls = true;
+            v.src = m.url;
+            mediaWrap.appendChild(v);
+          }
+        }
+      }
+      card.appendChild(mediaWrap);
+    }
+
+    // 操作栏
+    const actions = document.createElement("div");
+    actions.className = "tm-reply-actions";
+    const likeBtn = createLikeButton(legacy, id);
+    actions.appendChild(likeBtn);
+
+    const rtChip = document.createElement("span");
+    rtChip.className = "tm-reply-count";
+    rtChip.textContent = `${legacy.retweet_count || 0} 转推`;
+    actions.appendChild(rtChip);
+
+    card.appendChild(actions);
+    return card;
+  };
+
+  /**
+   * 构建 TweetDetail GraphQL 请求 URL
+   * @param {string} focalTweetId - 目标推文 ID
+   * @returns {string} 完整的请求 URL
+   */
+  const buildDetailUrl = (focalTweetId) => {
+    const variables = {
+      focalTweetId,
+      with_rux_injections: false,
+      includePromotedContent: true,
+      withCommunity: true,
+      withQuickPromoteEligibilityTweetFields: true,
+      withBirdwatchNotes: true,
+      withVoice: true,
+      withV2Timeline: true,
+    };
+    const qs = new URLSearchParams({
+      variables: JSON.stringify(variables),
+      features: JSON.stringify(FEATURES),
+      fieldToggles: JSON.stringify(FIELD_TOGGLES),
+    });
+    return `${API_ENDPOINTS.TWEET_DETAIL}?${qs.toString()}`;
+  };
+
+  /**
+   * 从 TweetDetail 响应中提取回复列表
+   * 解析 conversationthread-* 条目，过滤掉推广推文
+   * @param {object} data - TweetDetail GraphQL 响应
+   * @param {string} focalTweetId - 焦点推文 ID，用于过滤
+   * @returns {Array<object>} 回复推文数组（已 unwrapTweetResult）
+   */
+  const extractReplies = (data, focalTweetId) => {
+    const instructions =
+      data?.data?.threaded_conversation_with_injections_v2?.instructions || [];
+    let entries = [];
+    for (const ins of instructions) {
+      if (ins.type === "TimelineAddEntries" && Array.isArray(ins.entries)) {
+        entries = entries.concat(ins.entries);
+      }
+      if (ins.type === "TimelineReplaceEntry" && ins.entry) {
+        entries.push(ins.entry);
+      }
+    }
+
+    const replies = [];
+    for (const entry of entries) {
+      const content = entry?.content;
+      if (!content) continue;
+
+      // 回复线程：conversationthread-* → content.items[]
+      if (
+        content.entryType === "TimelineTimelineModule" &&
+        typeof entry.entryId === "string" &&
+        entry.entryId.startsWith("conversationthread-")
+      ) {
+        const items = content.items || [];
+        for (const item of items) {
+          const result = item?.item?.itemContent?.tweet_results?.result;
+          if (!result) continue;
+          // 过滤推广推文
+          if (result.promotedMetadata) continue;
+          const tweet = unwrapTweetResult(result);
+          if (!tweet) continue;
+          // 只收集同一会话内的回复
+          const convId = tweet.legacy?.conversation_id_str;
+          if (convId && convId !== focalTweetId) continue;
+          replies.push(tweet);
+        }
+      }
+    }
+    return replies;
+  };
+
+  /**
+   * 获取推文详情（含回复）
+   * @param {string} focalTweetId - 目标推文 ID
+   * @returns {Promise<object>} TweetDetail 响应 JSON
+   */
+  const fetchTweetDetail = async (focalTweetId) => {
+    const url = buildDetailUrl(focalTweetId);
+    const headers = buildHeaders();
+    return xhr(url, { headers });
+  };
+
+  /**
    * 视频可见性观察器
    * 当视频滑出可视区域时自动暂停
    */
@@ -1787,7 +2041,7 @@
     modal.className = "tm-detail-modal";
     overlay.appendChild(modal);
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeDetail();
+      if (e.target === overlay || e.target === modal) closeDetail();
     });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeDetail();
@@ -1822,80 +2076,22 @@
     setDetailOpen(false);
   };
 
-  const createDetailCard = (tweet, initialImageIndex = 0) => {
-    activeCarouselControls = null;
-    const legacy = tweet.legacy || tweet;
-    const isRetweet = legacy.retweeted_status_result;
-    const retweetData = isRetweet ? unwrapTweetResult(legacy.retweeted_status_result.result) : null;
-    const displayLegacy = retweetData?.legacy || legacy;
-    const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
-    const displayCore = retweetData?.core || tweet.core;
-    const displayTweet = retweetData || tweet;
-    const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
-    const quotedData = unwrapTweetResult(quotedDataRaw);
-
-    const text = getFullTweetText(displayTweet);
-    const media = pickMedia(displayTweet);
-    const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
-    const avatar = displayCore?.user_results?.result?.avatar?.image_url;
-    const name = displayUser?.name || user;
-    const id = displayTweet.rest_id || displayLegacy.id_str;
-    const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
-
-    const retweetUser = tweet.core?.user_results?.result?.core;
-    const retweetName = retweetUser?.name || "";
-    const retweetScreenName = retweetUser?.screen_name || "";
-    const retweetProfileUrl = retweetScreenName ? `https://x.com/${encodeURIComponent(retweetScreenName)}` : "";
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "tm-detail-card";
-    if (!text) wrapper.classList.add("no-text");
-
-    const closeBtn = document.createElement("button");
-    closeBtn.className = "tm-detail-close";
-    closeBtn.type = "button";
-    closeBtn.textContent = "×";
-    closeBtn.onclick = closeDetail;
-
-    if (isRetweet && retweetName) {
-      const retweetInfo = document.createElement("div");
-      retweetInfo.className = "retweet-info";
-      retweetInfo.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
-      ${retweetProfileUrl ? `<a href="${retweetProfileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(retweetName)} 已转帖</a>` : `<span>${escapeHTML(retweetName)} 已转帖</span>`}
-    `;
-      wrapper.appendChild(retweetInfo);
+  /**
+   * 创建 detail 卡片左侧：仅媒体区域（图片/视频）
+   * @param {Array<{type:string,url:string}>} media - 媒体数组
+   * @param {number} initialImageIndex - 初始图片索引
+   * @returns {HTMLElement} 左侧媒体容器
+   */
+  const createDetailLeft = (media, initialImageIndex = 0) => {
+    const left = document.createElement("div");
+    left.className = "tm-detail-left";
+    if (media.length === 0) {
+      // 无媒体时左列会被 CSS 隐藏，这里直接返回空容器
+      return left;
     }
-
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    const userSpan = document.createElement("div");
-    userSpan.className = "user";
-    userSpan.innerHTML = `
-    ${avatar ? `<a class="tm-user-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer"><img class="tm-avatar" src="${avatar}" loading="lazy"></a>` : ""}
-    <div class="info">
-      <a class="name tm-name-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>
-      <a class="screen tm-screen-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">@${escapeHTML(user)}</a>
-    </div>
-  `;
-    const time = document.createElement("div");
-    time.className = "time";
-    time.textContent = formatTime(displayLegacy.created_at);
-    meta.appendChild(userSpan);
-    meta.appendChild(time);
-
-    const textDiv = document.createElement("div");
-    textDiv.className = "text";
-    const entities = getEntities(displayTweet);
-    const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
-    const processedText = processText(text, entities, displayRange);
-    textDiv.appendChild(processedText);
-
-    const mediaWrap = document.createElement("div");
-    mediaWrap.className = "media";
     if (media.length > 1) {
       const { el, controls } = createCarousel(media, initialImageIndex);
-      mediaWrap.appendChild(el);
+      left.appendChild(el);
       activeCarouselControls = controls;
     } else {
       const photoUrls = [];
@@ -1915,48 +2111,239 @@
             e.stopPropagation();
             openImagePreview(photoUrls, 0);
           });
-          mediaWrap.appendChild(img);
+          left.appendChild(img);
         } else if (m.type === "video") {
           const v = document.createElement("video");
           v.controls = true;
           v.src = m.url;
-          mediaWrap.appendChild(v);
+          left.appendChild(v);
         }
       }
+    }
+    return left;
+  };
+
+  /**
+   * 创建 detail 卡片右侧上半部分：原推文内容（meta + text + quote + actions）
+   * @param {object} tweet - 原推文对象
+   * @returns {HTMLElement} 右侧内容容器
+   */
+  const createDetailRight = (tweet) => {
+    const legacy = tweet.legacy || tweet;
+    const isRetweet = legacy.retweeted_status_result;
+    const retweetData = isRetweet ? unwrapTweetResult(legacy.retweeted_status_result.result) : null;
+    const displayLegacy = retweetData?.legacy || legacy;
+    const displayUser = retweetData?.core?.user_results?.result?.core || tweet.core?.user_results?.result?.core;
+    const displayCore = retweetData?.core || tweet.core;
+    const displayTweet = retweetData || tweet;
+    const quotedDataRaw = retweetData?.quoted_status_result?.result || legacy.quoted_status_result?.result || tweet.quoted_status_result?.result;
+    const quotedData = unwrapTweetResult(quotedDataRaw);
+
+    const text = getFullTweetText(displayTweet);
+    const user = displayUser?.screen_name || displayLegacy.user_id_str || "unknown";
+    const avatar = displayCore?.user_results?.result?.avatar?.image_url;
+    const name = displayUser?.name || user;
+    const id = displayTweet.rest_id || displayLegacy.id_str;
+    const profileUrl = `https://x.com/${encodeURIComponent(user)}`;
+
+    const retweetUser = tweet.core?.user_results?.result?.core;
+    const retweetName = retweetUser?.name || "";
+    const retweetScreenName = retweetUser?.screen_name || "";
+    const retweetProfileUrl = retweetScreenName ? `https://x.com/${encodeURIComponent(retweetScreenName)}` : "";
+
+    const right = document.createElement("div");
+    right.className = "tm-detail-right-top";
+
+    if (isRetweet && retweetName) {
+      const retweetInfo = document.createElement("div");
+      retweetInfo.className = "retweet-info";
+      retweetInfo.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
+      ${retweetProfileUrl ? `<a href="${retweetProfileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(retweetName)} 已转帖</a>` : `<span>${escapeHTML(retweetName)} 已转帖</span>`}
+    `;
+      right.appendChild(retweetInfo);
+    }
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const userSpan = document.createElement("div");
+    userSpan.className = "user";
+    userSpan.innerHTML = `
+    ${avatar ? `<a class="tm-user-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer"><img class="tm-avatar" src="${avatar}" loading="lazy"></a>` : ""}
+    <div class="info">
+      <a class="name tm-name-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>
+      <a class="screen tm-screen-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">@${escapeHTML(user)}</a>
+    </div>
+  `;
+    const time = document.createElement("div");
+    time.className = "time";
+    time.textContent = formatTime(displayLegacy.created_at);
+    meta.appendChild(userSpan);
+    meta.appendChild(time);
+    right.appendChild(meta);
+
+    if (text) {
+      const textDiv = document.createElement("div");
+      textDiv.className = "text";
+      const entities = getEntities(displayTweet);
+      const displayRange = isNoteTweet(displayTweet) ? null : displayLegacy.display_text_range;
+      textDiv.appendChild(processText(text, entities, displayRange));
+      right.appendChild(textDiv);
+    }
+
+    if (quotedData) {
+      right.appendChild(createDetailQuoteTweet(quotedData));
     }
 
     const actions = document.createElement("div");
     actions.className = "actions";
-    const left = document.createElement("div");
-    left.className = "tm-actions-left";
-
+    const leftActions = document.createElement("div");
+    leftActions.className = "tm-actions-left";
     const likeBtn = createLikeButton(displayLegacy, id);
-
     const rtChip = document.createElement("div");
     rtChip.className = "tm-count-chip";
     rtChip.textContent = `${displayLegacy.retweet_count || 0} 转推`;
-
-    left.appendChild(likeBtn);
-    left.appendChild(rtChip);
+    leftActions.appendChild(likeBtn);
+    leftActions.appendChild(rtChip);
 
     const openLink = document.createElement("a");
     openLink.href = `https://x.com/${user}/status/${id}`;
     openLink.target = "_blank";
     openLink.textContent = "在 X 打开";
-    actions.appendChild(left);
+    actions.appendChild(leftActions);
     actions.appendChild(openLink);
+    right.appendChild(actions);
 
+    return right;
+  };
+
+  /**
+   * 创建整体 detail 卡片（左图右内容 + 回复区）
+   * 返回 { card, repliesList } 供 openDetail 异步填充回复
+   * @param {object} tweet - 推文对象
+   * @param {number} initialImageIndex - 初始图片索引
+   * @returns {{card: HTMLElement, repliesList: HTMLElement, focalTweetId: string|null}}
+   */
+  const createDetailCard = (tweet, initialImageIndex = 0) => {
+    activeCarouselControls = null;
+    const legacy = tweet.legacy || tweet;
+    const isRetweet = legacy.retweeted_status_result;
+    const retweetData = isRetweet ? unwrapTweetResult(legacy.retweeted_status_result.result) : null;
+    const displayTweet = retweetData || tweet;
+    const displayLegacy = retweetData?.legacy || legacy;
+    const media = pickMedia(displayTweet);
+    const id = displayTweet.rest_id || displayLegacy.id_str;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "tm-detail-card";
+    if (media.length === 0) wrapper.classList.add("no-media");
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "tm-detail-close";
+    closeBtn.type = "button";
+    closeBtn.textContent = "×";
+    closeBtn.onclick = closeDetail;
     wrapper.appendChild(closeBtn);
-    wrapper.appendChild(meta);
-    if (text) wrapper.appendChild(textDiv);
-    if (media.length) wrapper.appendChild(mediaWrap);
-    if (quotedData) {
-      const quoteCard = createDetailQuoteTweet(quotedData);
-      wrapper.appendChild(quoteCard);
-    }
-    wrapper.appendChild(actions);
+
+    // 内部双列布局
+    const layout = document.createElement("div");
+    layout.className = "tm-detail-layout";
+
+    // 左列：仅媒体
+    const leftCol = createDetailLeft(media, initialImageIndex);
+    layout.appendChild(leftCol);
+
+    // 右列：内容 + 回复
+    const rightCol = document.createElement("div");
+    rightCol.className = "tm-detail-right";
+
+    // 右列上半：原推文内容
+    const rightTop = createDetailRight(tweet);
+    rightCol.appendChild(rightTop);
+
+    // 右列下半：回复列表
+    const repliesHeader = document.createElement("div");
+    repliesHeader.className = "tm-replies-header";
+    repliesHeader.textContent = "回复";
+    rightCol.appendChild(repliesHeader);
+
+    const repliesList = document.createElement("div");
+    repliesList.className = "tm-replies-list";
+    const loadingHint = document.createElement("div");
+    loadingHint.className = "tm-replies-loading";
+    loadingHint.textContent = "正在加载回复…";
+    repliesList.appendChild(loadingHint);
+    rightCol.appendChild(repliesList);
+
+    layout.appendChild(rightCol);
+    wrapper.appendChild(layout);
     wrapper.addEventListener("click", (e) => e.stopPropagation());
-    return wrapper;
+
+    return { card: wrapper, repliesList, focalTweetId: id };
+  };
+
+  /**
+   * 构建回复树
+   * 根据 in_reply_to_status_id_str 建立父子关系
+   * @param {object[]} replies - 平铺的回复数组
+   * @param {string} focalTweetId - 焦点推文 ID
+   * @param {number} [maxDepth=3] - 最大嵌套深度
+   * @returns {Array<{tweet: object, children: Array}>} 树形结构
+   */
+  const buildReplyTree = (replies, focalTweetId, maxDepth = 3) => {
+    const byId = new Map();
+    for (const r of replies) {
+      const id = r.rest_id || r.legacy?.id_str;
+      if (id) byId.set(id, { tweet: r, children: [] });
+    }
+    const roots = [];
+    for (const r of replies) {
+      const id = r.rest_id || r.legacy?.id_str;
+      const parentId = r.legacy?.in_reply_to_status_id_str;
+      const node = byId.get(id);
+      if (!node) continue;
+      // 父是焦点推文 或 找不到父回复 → 顶层
+      if (parentId === focalTweetId || !parentId || !byId.has(parentId)) {
+        roots.push(node);
+      } else {
+        byId.get(parentId).children.push(node);
+      }
+    }
+    // 限制深度：超过 maxDepth 的子节点提升为顶层
+    const flattenDeep = (node, depth) => {
+      if (depth >= maxDepth) {
+        for (const child of node.children) {
+          roots.push({ ...child, children: [] });
+          flattenDeep(child, depth + 1);
+        }
+        node.children = [];
+        return;
+      }
+      for (const child of node.children) flattenDeep(child, depth + 1);
+    };
+    for (const root of roots) flattenDeep(root, 1);
+    return roots;
+  };
+
+  /**
+   * 递归渲染回复树为 DOM
+   * @param {Array<{tweet: object, children: Array}>} nodes - 树节点数组
+   * @param {number} depth - 当前深度
+   * @returns {DocumentFragment} DOM 片段
+   */
+  const renderReplyTree = (nodes, depth = 0) => {
+    const frag = document.createDocumentFragment();
+    for (const node of nodes) {
+      const card = createReplyCard(node.tweet, depth);
+      frag.appendChild(card);
+      if (node.children.length > 0) {
+        const childWrap = document.createElement("div");
+        childWrap.className = "tm-reply-children";
+        childWrap.appendChild(renderReplyTree(node.children, depth + 1));
+        frag.appendChild(childWrap);
+      }
+    }
+    return frag;
   };
 
   const openDetail = (tweet, initialImageIndex = 0) => {
@@ -1974,9 +2361,42 @@
     document.body.scrollTop = scrollBackup;
     window.scrollTo({ top: scrollBackup, behavior: "auto" });
     modal.innerHTML = "";
-    modal.appendChild(createDetailCard(tweet, initialImageIndex));
+
+    const { card, repliesList, focalTweetId } = createDetailCard(tweet, initialImageIndex);
+    modal.appendChild(card);
     overlay.classList.add("show");
     document.body.classList.add("tm-detail-open");
+
+    // 异步加载回复
+    if (focalTweetId) {
+      fetchTweetDetail(focalTweetId)
+        .then((data) => {
+          const replies = extractReplies(data, focalTweetId);
+          repliesList.innerHTML = "";
+          if (replies.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "tm-replies-empty";
+            empty.textContent = "暂无回复";
+            repliesList.appendChild(empty);
+            return;
+          }
+          const tree = buildReplyTree(replies, focalTweetId);
+          repliesList.appendChild(renderReplyTree(tree));
+        })
+        .catch((err) => {
+          repliesList.innerHTML = "";
+          const errEl = document.createElement("div");
+          errEl.className = "tm-replies-empty";
+          errEl.textContent = `回复加载失败: ${err.message || err}`;
+          repliesList.appendChild(errEl);
+        });
+    } else {
+      repliesList.innerHTML = "";
+      const empty = document.createElement("div");
+      empty.className = "tm-replies-empty";
+      empty.textContent = "无法获取回复";
+      repliesList.appendChild(empty);
+    }
   };
 
   const createToast = () => {
