@@ -1,11 +1,22 @@
 // ==UserScript==
 // @name         X Home Masonry Timeline V2
 // @namespace    https://github.com/akayuki39/twitter-masonry
-// @version      0.1.12
+// @version      0.1.13
 // @description  在浏览器直接把 X/Twitter 主页渲染成瀑布流（类似 Pinterest/小红书），无需自建后端。
 // @author       akayuki39
 // @homepage     https://github.com/akayuki39/twitter-masonry
-// @changelog    0.1.12 (2026-02-09)
+// @changelog    0.1.13 (2026-07-05)
+//                 - 重构 detail 卡片为双列布局：左侧纯媒体展示（深色背景），右侧推文内容+回复列表
+//                 - 新增 TweetDetail API：异步加载推文回复，支持回复树嵌套关系（缩进+竖线体现层级）
+//                 - 新增 replyCard 组件：回复卡片含头像、用户名、文本、媒体、点赞按钮
+//                 - 回复媒体高度限制 300px，避免单条回复过长
+//                 - 纯文字推文卡片缩窄至 680px 并居中，提升阅读体验
+//                 - 右侧面板固定宽度 440px，scrollbar-gutter 防止回复加载时布局跳动
+//                 - 无媒体推文隐藏左列，右列占满
+//                 - 修复大图预览多图导航：carousel slide 改为 block，max-height 覆盖为 none
+//                 - 过滤首页时间线推广推文（广告）：entryId 前缀 + promotedMetadata 双重检测
+//                 - 更新 TweetDetail queryId（参考 fa0311/TwitterInternalAPIDocument）
+//                 0.1.12 (2026-02-09)
 //                 - 新增视频自动暂停功能：当视频滑出可视区域时自动暂停，节省系统资源
 //                 - 优化视频播放管理：打开/关闭detail时自动暂停相应区域的视频，避免多个视频同时播放
 //                 - 新增videoObserver工具模块：集中管理视频观察、暂停、清理逻辑，提高代码可维护性
