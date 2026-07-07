@@ -201,7 +201,7 @@
     :root { --tm-detail-media-max-h: min(72vh, 880px); }
     .tm-detail-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.65); display: none; align-items: center; justify-content: center; z-index: 99999; overflow: hidden; padding-top: 56px; padding-bottom: 16px; }
     .tm-detail-backdrop.show { display: flex; }
-    .tm-detail-modal { position: relative; width: min(1400px, 96vw); height: calc(100vh - 72px); margin: auto; }
+    .tm-detail-modal { position: relative; width: min(1340px, 96vw); height: calc(100vh - 72px); margin: auto; }
     .tm-detail-card { background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.25); border: none; width: 100%; height: 100%; overflow: hidden; position: relative; box-sizing: border-box; }
     .tm-detail-layout { display: flex; align-items: stretch; height: 100%; width: 100%; }
     .tm-detail-left { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; background: #0b1220; overflow: hidden; }
@@ -213,7 +213,7 @@
     .tm-detail-card.no-media { width: 680px; max-width: 96vw; margin: 0 auto; }
     .tm-detail-card.no-media .tm-detail-left { display: none; }
     .tm-detail-card.no-media .tm-detail-right { flex: 1 1 100%; width: 100%; max-width: none; margin: 0; }
-    .tm-detail-right { flex: 0 0 440px; width: 440px; min-width: 0; display: flex; flex-direction: column; height: 100%; overflow-y: scroll; scrollbar-gutter: stable; }
+    .tm-detail-right { flex: 0 0 380px; width: 380px; min-width: 0; display: flex; flex-direction: column; height: 100%; overflow-y: scroll; scrollbar-gutter: stable; }
     .tm-detail-right::-webkit-scrollbar { width: 6px; }
     .tm-detail-right::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.15); border-radius: 3px; }
     .tm-detail-right-top { flex-shrink: 0; }
